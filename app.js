@@ -60,31 +60,21 @@ class ChordModal {
         const susAddButtons = document.getElementById('susAddChords');
         const specialButtons = document.getElementById('specialChords');
         
-        if (toggleSusAdd && susAddCategory) {
-            toggleSusAdd.addEventListener('click', () => {
+        if (toggleSusAdd) {
+            toggleSusAdd.addEventListener('click', (e) => {
+                e.stopPropagation();
                 const isHidden = susAddButtons.classList.contains('hidden');
                 susAddButtons.classList.toggle('hidden');
                 toggleSusAdd.textContent = isHidden ? 'Verberg' : 'Toon';
-                // Show/hide entire category
-                if (isHidden) {
-                    susAddCategory.style.display = 'block';
-                } else {
-                    susAddCategory.style.display = 'none';
-                }
             });
         }
         
-        if (toggleSpecial && specialCategory) {
-            toggleSpecial.addEventListener('click', () => {
+        if (toggleSpecial) {
+            toggleSpecial.addEventListener('click', (e) => {
+                e.stopPropagation();
                 const isHidden = specialButtons.classList.contains('hidden');
                 specialButtons.classList.toggle('hidden');
                 toggleSpecial.textContent = isHidden ? 'Verberg' : 'Toon';
-                // Show/hide entire category
-                if (isHidden) {
-                    specialCategory.style.display = 'block';
-                } else {
-                    specialCategory.style.display = 'none';
-                }
             });
         }
         
@@ -108,24 +98,20 @@ class ChordModal {
             return;
         }
         
-        // Reset toggle states - hide Sus & Add and Special by default
-        const susAddCategory = document.getElementById('susAddCategory');
-        const specialCategory = document.getElementById('specialCategory');
+        // Reset toggle states - hide Sus & Add and Special buttons by default, but keep category visible
         const susAddButtons = document.getElementById('susAddChords');
         const specialButtons = document.getElementById('specialChords');
         const toggleSusAdd = document.getElementById('toggleSusAdd');
         const toggleSpecial = document.getElementById('toggleSpecial');
         
-        if (susAddButtons && toggleSusAdd && susAddCategory) {
+        if (susAddButtons && toggleSusAdd) {
             susAddButtons.classList.add('hidden');
             toggleSusAdd.textContent = 'Toon';
-            susAddCategory.style.display = 'none';
         }
         
-        if (specialButtons && toggleSpecial && specialCategory) {
+        if (specialButtons && toggleSpecial) {
             specialButtons.classList.add('hidden');
             toggleSpecial.textContent = 'Toon';
-            specialCategory.style.display = 'none';
         }
         
         // Clear custom input and focus on it

@@ -341,6 +341,7 @@ tbody tr {
     min-height: 70px;
     cursor: pointer;
     background: white;
+    opacity: 1;
 }
 
 tbody tr:hover {
@@ -349,7 +350,17 @@ tbody tr:hover {
     box-shadow: -4px 0 0 var(--secondary-color);
 }
 
+/* Make non-selected rows fade when there is a selected row */
+.table-wrapper:has(tr.selected) tbody tr:not(.selected) {
+    opacity: 0.4;
+}
+
+.table-wrapper:has(tr.selected) tbody tr:not(.selected):hover {
+    opacity: 0.7;
+}
+
 tbody tr.selected {
+    opacity: 1 !important;
     background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%) !important;
     border-left: 5px solid var(--secondary-color) !important;
     box-shadow: 0 8px 20px rgba(99, 102, 241, 0.15) !important;
@@ -832,12 +843,9 @@ td input:focus {
     transition: all 0.3s ease;
 }
 
-.chord-category.toggleable[style*="display: none"] {
-    display: none !important;
-    height: 0;
-    margin: 0;
-    padding: 0;
-    overflow: hidden;
+/* Toggleable categories - header always visible, buttons can be hidden */
+.chord-category.toggleable {
+    display: block;
 }
 
 .chord-category h4 {
