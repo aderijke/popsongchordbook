@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PopSong Chord Book</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>PopSong Chord Book</h1>
+            <div class="header-controls">
+                <button id="addSongBtn" class="add-song-btn">+ Nieuwe Song Toevoegen</button>
+                <div class="filter-controls">
+                    <button id="filterAll" class="filter-btn active">Alle</button>
+                    <button id="filterFavorites" class="filter-btn">⭐ Favorieten</button>
+                </div>
+            </div>
+        </header>
+        
+        <div class="table-wrapper">
+            <table id="songsTable">
+                <thead>
+                    <tr>
+                        <th class="sortable" data-column="artist">
+                            Artiest
+                            <span class="sort-indicator"></span>
+                        </th>
+                        <th class="sortable" data-column="title">
+                            Songtitel
+                            <span class="sort-indicator"></span>
+                        </th>
+                        <th class="sortable favorite-column" data-column="favorite">
+                            ⭐
+                            <span class="sort-indicator"></span>
+                        </th>
+                        <th>Verse</th>
+                        <th class="chorus-column">Chorus</th>
+                        <th>Pre-Chorus</th>
+                        <th>Bridge</th>
+                        <th class="actions-column">Acties</th>
+                    </tr>
+                </thead>
+                <tbody id="songsTableBody">
+                    <!-- Songs will be dynamically inserted here -->
+                </tbody>
+            </table>
+        </div>
+        
+        <div id="chordDisplay" class="chord-display hidden">
+            <h2 id="chordDisplayTitle"></h2>
+            <div class="chord-blocks">
+                <div class="chord-block" id="verseBlock">
+                    <h3>Verse</h3>
+                    <div class="chord-content" id="verseContent"></div>
+                </div>
+                <div class="chord-block" id="preChorusBlock">
+                    <h3>Pre-Chorus</h3>
+                    <div class="chord-content" id="preChorusContent"></div>
+                </div>
+                <div class="chord-block chorus-block" id="chorusBlock">
+                    <h3>Chorus</h3>
+                    <div class="chord-content" id="chorusContent"></div>
+                </div>
+                <div class="chord-block" id="bridgeBlock">
+                    <h3>Bridge</h3>
+                    <div class="chord-content" id="bridgeContent"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Chord Selection Modal -->
+    <div id="chordModal" class="chord-modal hidden">
+        <div class="chord-modal-content">
+            <div class="chord-modal-header">
+                <h3>Selecteer Akkoorden</h3>
+                <button class="chord-modal-close" id="chordModalClose">&times;</button>
+            </div>
+            <div class="chord-modal-body">
+                <div class="chord-categories">
+                    <div class="chord-category">
+                        <h4>Majeur</h4>
+                        <div class="chord-buttons" id="majorChords"></div>
+                    </div>
+                    <div class="chord-category">
+                        <h4>Mineur</h4>
+                        <div class="chord-buttons" id="minorChords"></div>
+                    </div>
+                    <div class="chord-category">
+                        <h4>Sus & Add</h4>
+                        <div class="chord-buttons" id="susAddChords"></div>
+                    </div>
+                    <div class="chord-category">
+                        <h4>Speciale</h4>
+                        <div class="chord-buttons" id="specialChords"></div>
+                    </div>
+                </div>
+                <div class="chord-input-section">
+                    <label>Of typ zelf akkoorden:</label>
+                    <input type="text" id="chordCustomInput" placeholder="Bijv: C G Am F" />
+                    <button id="chordAddCustom" class="chord-add-btn">Toevoegen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="defaultSongs.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
+
