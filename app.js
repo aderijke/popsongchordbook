@@ -52,6 +52,42 @@ class ChordModal {
             }
         });
         
+        // Toggle category buttons
+        const toggleSusAdd = document.getElementById('toggleSusAdd');
+        const toggleSpecial = document.getElementById('toggleSpecial');
+        const susAddCategory = document.getElementById('susAddCategory');
+        const specialCategory = document.getElementById('specialCategory');
+        const susAddButtons = document.getElementById('susAddChords');
+        const specialButtons = document.getElementById('specialChords');
+        
+        if (toggleSusAdd && susAddCategory) {
+            toggleSusAdd.addEventListener('click', () => {
+                const isHidden = susAddButtons.classList.contains('hidden');
+                susAddButtons.classList.toggle('hidden');
+                toggleSusAdd.textContent = isHidden ? 'Verberg' : 'Toon';
+                // Show/hide entire category
+                if (isHidden) {
+                    susAddCategory.style.display = 'block';
+                } else {
+                    susAddCategory.style.display = 'none';
+                }
+            });
+        }
+        
+        if (toggleSpecial && specialCategory) {
+            toggleSpecial.addEventListener('click', () => {
+                const isHidden = specialButtons.classList.contains('hidden');
+                specialButtons.classList.toggle('hidden');
+                toggleSpecial.textContent = isHidden ? 'Verberg' : 'Toon';
+                // Show/hide entire category
+                if (isHidden) {
+                    specialCategory.style.display = 'block';
+                } else {
+                    specialCategory.style.display = 'none';
+                }
+            });
+        }
+        
         // Close modal on Escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && !this.modal.classList.contains('hidden')) {
@@ -70,6 +106,26 @@ class ChordModal {
         if (!chordFields.includes(field)) {
             // Don't show modal for non-chord fields
             return;
+        }
+        
+        // Reset toggle states - hide Sus & Add and Special by default
+        const susAddCategory = document.getElementById('susAddCategory');
+        const specialCategory = document.getElementById('specialCategory');
+        const susAddButtons = document.getElementById('susAddChords');
+        const specialButtons = document.getElementById('specialChords');
+        const toggleSusAdd = document.getElementById('toggleSusAdd');
+        const toggleSpecial = document.getElementById('toggleSpecial');
+        
+        if (susAddButtons && toggleSusAdd && susAddCategory) {
+            susAddButtons.classList.add('hidden');
+            toggleSusAdd.textContent = 'Toon';
+            susAddCategory.style.display = 'none';
+        }
+        
+        if (specialButtons && toggleSpecial && specialCategory) {
+            specialButtons.classList.add('hidden');
+            toggleSpecial.textContent = 'Toon';
+            specialCategory.style.display = 'none';
         }
         
         // Clear custom input and focus on it
@@ -232,15 +288,35 @@ class TableRenderer {
         this.onToggleFavorite = onToggleFavorite;
         this.tbody = document.getElementById('songsTableBody');
         this.selectedRowId = null;
+        this.editingRowId = null;
     }
 
     render(songs) {
+        // Save current editing state
+        const wasEditing = this.editingRowId;
+        
         this.tbody.innerHTML = '';
         songs.forEach(song => {
             const row = this.createRow(song);
             this.tbody.appendChild(row);
         });
+        
+        // Restore edit mode if it was active
+        if (wasEditing) {
+            const song = this.songManager.getSongById(wasEditing);
+            if (song) {
+                const row = this.tbody.querySelector(`tr[data-id="${wasEditing}"]`);
+                if (row) {
+                    this.enterEditMode(wasEditing, row, song);
+                }
+            }
+        }
+        
         this.updateSelection();
+        // Update header if a row is selected
+        if (this.selectedRowId) {
+            this.updateSelectedSongHeader(this.selectedRowId);
+        }
     }
 
     updateFavoriteButton(songId, isFavorite) {
@@ -248,6 +324,12 @@ class TableRenderer {
         if (btn) {
             btn.innerHTML = isFavorite ? '⭐' : '☆';
             btn.title = isFavorite ? 'Verwijder uit favorieten' : 'Voeg toe aan favorieten';
+            btn.dataset.favorite = isFavorite ? 'true' : 'false';
+            if (isFavorite) {
+                btn.classList.add('favorite-active');
+            } else {
+                btn.classList.remove('favorite-active');
+            }
         }
     }
 
@@ -258,8 +340,9 @@ class TableRenderer {
         
         // Make entire row clickable for selection (except when editing)
         row.addEventListener('click', (e) => {
-            // Don't select if clicking on delete button, favorite button, or input field
+            // Don't select if clicking on buttons or input fields
             if (e.target.classList.contains('delete-btn') || 
+                e.target.classList.contains('edit-btn') ||
                 e.target.classList.contains('favorite-btn') ||
                 e.target.closest('.favorite-btn') ||
                 e.target.tagName === 'INPUT') {
@@ -267,6 +350,10 @@ class TableRenderer {
             }
             // Don't select if double-clicking (for editing)
             if (e.detail === 2) {
+                return;
+            }
+            // Don't select if row is in edit mode
+            if (this.editingRowId === song.id) {
                 return;
             }
             this.selectRow(song.id);
@@ -299,6 +386,10 @@ class TableRenderer {
         favoriteBtn.innerHTML = song.favorite ? '⭐' : '☆';
         favoriteBtn.title = song.favorite ? 'Verwijder uit favorieten' : 'Voeg toe aan favorieten';
         favoriteBtn.dataset.songId = song.id;
+        favoriteBtn.dataset.favorite = song.favorite ? 'true' : 'false';
+        if (song.favorite) {
+            favoriteBtn.classList.add('favorite-active');
+        }
         favoriteBtn.addEventListener('click', (e) => {
             e.stopPropagation();
             if (this.onToggleFavorite) {
@@ -328,9 +419,21 @@ class TableRenderer {
         bridgeCell.className += ' chord-cell';
         row.appendChild(bridgeCell);
 
-        // Delete button
+        // Actions cell with Edit and Delete buttons
         const actionsCell = document.createElement('td');
         actionsCell.className = 'actions-cell';
+        
+        const editBtn = document.createElement('button');
+        editBtn.className = 'edit-btn';
+        editBtn.textContent = '✏️';
+        editBtn.title = 'Bewerken';
+        editBtn.dataset.songId = song.id;
+        editBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.toggleEditMode(song.id);
+        });
+        actionsCell.appendChild(editBtn);
+        
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-btn';
         deleteBtn.textContent = 'Verwijder';
@@ -346,6 +449,162 @@ class TableRenderer {
         row.appendChild(actionsCell);
 
         return row;
+    }
+
+    toggleEditMode(songId) {
+        const row = this.tbody.querySelector(`tr[data-id="${songId}"]`);
+        if (!row) return;
+
+        const song = this.songManager.getSongById(songId);
+        if (!song) return;
+
+        if (this.editingRowId === songId) {
+            // Save and exit edit mode
+            this.saveRowEdit(songId, row);
+            this.editingRowId = null;
+        } else {
+            // Enter edit mode
+            if (this.editingRowId) {
+                // Save previous row first
+                const prevRow = this.tbody.querySelector(`tr[data-id="${this.editingRowId}"]`);
+                if (prevRow) {
+                    this.saveRowEdit(this.editingRowId, prevRow);
+                }
+            }
+            this.editingRowId = songId;
+            this.enterEditMode(songId, row, song);
+        }
+    }
+
+    enterEditMode(songId, row, song) {
+        const cells = row.querySelectorAll('td');
+        const fieldOrder = ['artist', 'title', 'favorite', 'verse', 'chorus', 'preChorus', 'bridge'];
+        const inputs = [];
+        
+        cells.forEach((cell, index) => {
+            // Skip actions cell (last one)
+            if (index >= cells.length - 1) return;
+            
+            // Skip favorite cell (it's a button, not editable)
+            if (cell.classList.contains('favorite-cell')) return;
+            
+            const field = fieldOrder[index];
+            if (!field) return;
+
+            const currentValue = cell.textContent.trim();
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentValue;
+            input.className = 'row-edit-input';
+            input.dataset.field = field;
+            input.dataset.songId = songId;
+            inputs.push(input);
+
+            // Special handling for chord fields
+            const chordFields = ['verse', 'chorus', 'preChorus', 'bridge'];
+            if (chordFields.includes(field)) {
+                input.addEventListener('focus', () => {
+                    if (this.chordModal) {
+                        this.chordModal.show(input, field);
+                    }
+                });
+            }
+
+            // Tab navigation between inputs
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Tab' || e.key === 'Enter') {
+                    e.preventDefault();
+                    const currentIndex = inputs.indexOf(input);
+                    if (currentIndex < inputs.length - 1) {
+                        inputs[currentIndex + 1].focus();
+                        inputs[currentIndex + 1].select();
+                    } else {
+                        // Last field - save and exit
+                        this.saveRowEdit(songId, row);
+                        this.editingRowId = null;
+                        const editBtn = row.querySelector('.edit-btn');
+                        if (editBtn) {
+                            editBtn.textContent = '✏️';
+                            editBtn.title = 'Bewerken';
+                        }
+                    }
+                } else if (e.key === 'Escape') {
+                    // Cancel editing
+                    this.cancelRowEdit(songId, row, song);
+                }
+            });
+
+            cell.textContent = '';
+            cell.appendChild(input);
+        });
+
+        // Focus first input
+        if (inputs.length > 0) {
+            inputs[0].focus();
+            inputs[0].select();
+        }
+
+        // Update edit button
+        const editBtn = row.querySelector('.edit-btn');
+        if (editBtn) {
+            editBtn.textContent = '💾';
+            editBtn.title = 'Opslaan';
+        }
+    }
+
+    cancelRowEdit(songId, row, song) {
+        const inputs = row.querySelectorAll('.row-edit-input');
+        const fieldOrder = ['artist', 'title', 'favorite', 'verse', 'chorus', 'preChorus', 'bridge'];
+        let fieldIndex = 0;
+
+        inputs.forEach(input => {
+            const field = fieldOrder[fieldIndex++];
+            if (field && field !== 'favorite') {
+                const originalValue = song[field] || '';
+                const cell = input.parentElement;
+                cell.textContent = originalValue;
+                input.remove();
+            }
+        });
+
+        this.editingRowId = null;
+
+        // Update edit button
+        const editBtn = row.querySelector('.edit-btn');
+        if (editBtn) {
+            editBtn.textContent = '✏️';
+            editBtn.title = 'Bewerken';
+        }
+    }
+
+    saveRowEdit(songId, row) {
+        const inputs = row.querySelectorAll('.row-edit-input');
+        const updates = {};
+
+        inputs.forEach(input => {
+            const field = input.dataset.field;
+            const value = input.value.trim();
+            updates[field] = value;
+            
+            // Restore cell content
+            const cell = input.parentElement;
+            cell.textContent = value;
+            input.remove();
+        });
+
+        // Save all updates
+        if (this.onCellEdit) {
+            Object.keys(updates).forEach(field => {
+                this.onCellEdit(songId, field, updates[field]);
+            });
+        }
+
+        // Update edit button
+        const editBtn = row.querySelector('.edit-btn');
+        if (editBtn) {
+            editBtn.textContent = '✏️';
+            editBtn.title = 'Bewerken';
+        }
     }
 
     createEditableCell(value, field, songId) {
@@ -479,22 +738,128 @@ class TableRenderer {
     selectRow(songId) {
         this.selectedRowId = songId;
         this.updateSelection();
+        if (songId) {
+            this.updateSelectedSongHeader(songId);
+            // Scroll selected row into view
+            setTimeout(() => {
+                const selectedRow = this.tbody.querySelector(`tr.selected`);
+                if (selectedRow) {
+                    selectedRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            }, 100);
+        } else {
+            // Deselect - hide header
+            const header = document.getElementById('selectedSongHeader');
+            if (header) {
+                header.classList.add('hidden');
+            }
+        }
         if (this.onRowSelect) {
             this.onRowSelect(songId);
         }
     }
 
+    updateSelectedSongHeader(songId) {
+        const header = document.getElementById('selectedSongHeader');
+        const artistSpan = document.getElementById('selectedArtist');
+        const titleSpan = document.getElementById('selectedTitle');
+        
+        if (songId && this.songManager) {
+            const song = this.songManager.getSongById(songId);
+            if (song) {
+                artistSpan.textContent = song.artist || '';
+                titleSpan.textContent = song.title || '';
+                header.classList.remove('hidden');
+                
+                // Scroll header into view
+                setTimeout(() => {
+                    header.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }, 100);
+            } else {
+                header.classList.add('hidden');
+            }
+        } else {
+            header.classList.add('hidden');
+        }
+    }
+
     updateSelection() {
+        // Remove any existing selected row header
+        const existingHeader = this.tbody.querySelector('tr.selected-row-header');
+        if (existingHeader) {
+            existingHeader.remove();
+        }
+        
         const rows = this.tbody.querySelectorAll('tr');
         rows.forEach(row => {
             const rowId = parseInt(row.dataset.id);
             const selectedId = this.selectedRowId ? parseInt(this.selectedRowId) : null;
             if (rowId === selectedId) {
                 row.classList.add('selected');
+                // Add header row above selected row
+                this.addSelectedRowHeader(row);
             } else {
                 row.classList.remove('selected');
             }
         });
+        
+        // Update header if no row is selected
+        if (!this.selectedRowId) {
+            const header = document.getElementById('selectedSongHeader');
+            if (header) {
+                header.classList.add('hidden');
+            }
+        }
+    }
+
+    addSelectedRowHeader(selectedRow) {
+        const headerRow = document.createElement('tr');
+        headerRow.className = 'selected-row-header';
+        
+        // Empty cells for artist, title, favorite (hidden columns)
+        const emptyCell1 = document.createElement('td');
+        emptyCell1.style.display = 'none';
+        headerRow.appendChild(emptyCell1);
+        
+        const emptyCell2 = document.createElement('td');
+        emptyCell2.style.display = 'none';
+        headerRow.appendChild(emptyCell2);
+        
+        const emptyCell3 = document.createElement('td');
+        emptyCell3.style.display = 'none';
+        headerRow.appendChild(emptyCell3);
+        
+        // Verse header
+        const verseHeader = document.createElement('td');
+        verseHeader.className = 'chord-header-cell';
+        verseHeader.textContent = 'Verse';
+        headerRow.appendChild(verseHeader);
+        
+        // Chorus header
+        const chorusHeader = document.createElement('td');
+        chorusHeader.className = 'chord-header-cell chorus-header-cell';
+        chorusHeader.textContent = 'Chorus';
+        headerRow.appendChild(chorusHeader);
+        
+        // Pre-Chorus header
+        const preChorusHeader = document.createElement('td');
+        preChorusHeader.className = 'chord-header-cell';
+        preChorusHeader.textContent = 'Pre-Chorus';
+        headerRow.appendChild(preChorusHeader);
+        
+        // Bridge header
+        const bridgeHeader = document.createElement('td');
+        bridgeHeader.className = 'chord-header-cell';
+        bridgeHeader.textContent = 'Bridge';
+        headerRow.appendChild(bridgeHeader);
+        
+        // Empty cell for actions
+        const emptyCell4 = document.createElement('td');
+        emptyCell4.style.display = 'none';
+        headerRow.appendChild(emptyCell4);
+        
+        // Insert header row before selected row
+        selectedRow.parentNode.insertBefore(headerRow, selectedRow);
     }
 
     getSelectedRowId() {
@@ -633,6 +998,7 @@ class App {
         this.setupSorting();
         this.setupAddSongButton();
         this.setupFilters();
+        this.setupDeselect();
         this.loadAndRender();
         this.addExampleSongIfEmpty();
     }
@@ -664,6 +1030,30 @@ class App {
     handleToggleFavorite(songId) {
         this.songManager.toggleFavorite(songId);
         this.loadAndRender();
+    }
+
+    setupDeselect() {
+        const deselectBtn = document.getElementById('deselectBtn');
+        if (deselectBtn) {
+            deselectBtn.addEventListener('click', () => {
+                this.deselectRow();
+            });
+        }
+        
+        // Escape key to deselect
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && this.tableRenderer.getSelectedRowId()) {
+                this.deselectRow();
+            }
+        });
+    }
+
+    deselectRow() {
+        this.tableRenderer.selectRow(null);
+        const header = document.getElementById('selectedSongHeader');
+        if (header) {
+            header.classList.add('hidden');
+        }
     }
 
     addExampleSongIfEmpty() {

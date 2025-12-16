@@ -22,6 +22,15 @@
             </div>
         </header>
         
+        <div id="selectedSongHeader" class="selected-song-header hidden">
+            <div class="selected-song-info">
+                <span id="selectedArtist" class="selected-artist"></span>
+                <span class="separator">-</span>
+                <span id="selectedTitle" class="selected-title"></span>
+            </div>
+            <button id="deselectBtn" class="deselect-btn" title="Sluiten (Escape)">×</button>
+        </div>
+        
         <div class="table-wrapper">
             <table id="songsTable">
                 <thead>
@@ -91,13 +100,19 @@
                         <h4>Mineur</h4>
                         <div class="chord-buttons" id="minorChords"></div>
                     </div>
-                    <div class="chord-category">
-                        <h4>Sus & Add</h4>
-                        <div class="chord-buttons" id="susAddChords"></div>
+                    <div class="chord-category toggleable" id="susAddCategory">
+                        <div class="chord-category-header">
+                            <h4>Sus & Add</h4>
+                            <button class="toggle-category-btn" id="toggleSusAdd">Toon</button>
+                        </div>
+                        <div class="chord-buttons hidden" id="susAddChords"></div>
                     </div>
-                    <div class="chord-category">
-                        <h4>Speciale</h4>
-                        <div class="chord-buttons" id="specialChords"></div>
+                    <div class="chord-category toggleable" id="specialCategory">
+                        <div class="chord-category-header">
+                            <h4>Speciale</h4>
+                            <button class="toggle-category-btn" id="toggleSpecial">Toon</button>
+                        </div>
+                        <div class="chord-buttons hidden" id="specialChords"></div>
                     </div>
                 </div>
                 <div class="chord-input-section">
