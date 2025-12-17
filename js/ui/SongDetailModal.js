@@ -21,13 +21,13 @@ class SongDetailModal {
                 section: document.getElementById('verseSection'),
                 content: document.getElementById('verseContent')
             },
-            preChorus: {
-                section: document.getElementById('preChorusSection'),
-                content: document.getElementById('preChorusContent')
-            },
             chorus: {
                 section: document.getElementById('chorusSection'),
                 content: document.getElementById('chorusContent')
+            },
+            preChorus: {
+                section: document.getElementById('preChorusSection'),
+                content: document.getElementById('preChorusContent')
             },
             bridge: {
                 section: document.getElementById('bridgeSection'),
@@ -492,16 +492,6 @@ class SongDetailModal {
             }
         }
 
-        // Pre-Chorus (always show)
-        if (this.sections.preChorus && this.sections.preChorus.content) {
-            this.sections.preChorus.content.textContent = song.preChorus || '';
-            this.sections.preChorus.content.setAttribute('contenteditable', 'false');
-            this.sections.preChorus.content.classList.remove('editing');
-            if (this.sections.preChorus.section) {
-                this.sections.preChorus.section.classList.remove('hidden');
-            }
-        }
-
         // Chorus (always show)
         if (this.sections.chorus && this.sections.chorus.content) {
             this.sections.chorus.content.textContent = song.chorus || '';
@@ -509,6 +499,16 @@ class SongDetailModal {
             this.sections.chorus.content.classList.remove('editing');
             if (this.sections.chorus.section) {
                 this.sections.chorus.section.classList.remove('hidden');
+            }
+        }
+
+        // Pre-Chorus (always show)
+        if (this.sections.preChorus && this.sections.preChorus.content) {
+            this.sections.preChorus.content.textContent = song.preChorus || '';
+            this.sections.preChorus.content.setAttribute('contenteditable', 'false');
+            this.sections.preChorus.content.classList.remove('editing');
+            if (this.sections.preChorus.section) {
+                this.sections.preChorus.section.classList.remove('hidden');
             }
         }
 
