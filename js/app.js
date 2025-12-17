@@ -37,6 +37,7 @@ class App {
         this.setupSetlists();
         this.setupAddSongsToSetlistModal();
         this.setupImportExport();
+        this.setupPrintButton();
         this.setupDeselect();
         this.setupHeaderBarToggle();
         await this.addExampleSongIfEmpty();
@@ -707,6 +708,15 @@ class App {
         }
     }
 
+    setupPrintButton() {
+        const printBtn = document.getElementById('printTableBtn');
+        if (!printBtn) return;
+
+        printBtn.addEventListener('click', () => {
+            this.printTable();
+        });
+    }
+
     deleteAllSongs() {
         const songCount = this.songManager.getAllSongs().length;
         
@@ -774,6 +784,12 @@ class App {
         setTimeout(() => {
             exportBtn.textContent = originalText;
         }, 2000);
+    }
+
+    printTable() {
+        // Ensure the latest data is shown before printing
+        this.loadAndRender();
+        window.print();
     }
 
     async importSongs(file) {

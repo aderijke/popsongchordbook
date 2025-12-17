@@ -333,6 +333,18 @@ header h1 {
     color: #b91c1c;
 }
 
+.print-btn {
+    background: rgba(37, 99, 235, 0.08);
+    color: var(--secondary-color);
+    border-color: rgba(99, 102, 241, 0.4);
+}
+
+.print-btn:hover {
+    background: rgba(37, 99, 235, 0.12);
+    border-color: var(--secondary-color);
+    color: #4338ca;
+}
+
 .setlist-controls {
     display: flex;
     gap: 8px;
@@ -2911,5 +2923,91 @@ td:has(.row-edit-input.input-focused) {
         width: 50px;
         height: 50px;
         font-size: 20px;
+    }
+}
+
+@media print {
+    @page {
+        margin: 12mm;
+    }
+
+    * {
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+
+    body, html {
+        background: white;
+        margin: 0;
+        padding: 0;
+    }
+
+    .container {
+        padding: 0;
+        max-width: 100%;
+    }
+
+    .header-bar,
+    .toggle-header-bar-btn,
+    .selected-song-header,
+    .selection-overlay,
+    .focused-view,
+    .chord-modal,
+    .modal,
+    .song-detail-modal,
+    .chord-detector-overlay {
+        display: none !important;
+    }
+
+    .table-wrapper {
+        box-shadow: none;
+        border: none;
+        padding: 0;
+        margin: 0;
+        background: white;
+    }
+
+    #songsTable {
+        width: 100%;
+        border-collapse: collapse;
+        box-shadow: none;
+    }
+
+    #songsTable th,
+    #songsTable td {
+        border: 1px solid #cbd5e1;
+        padding: 8px 10px;
+        color: #0f172a;
+    }
+
+    #songsTable thead th {
+        background: #e2e8f0;
+        color: #0f172a;
+    }
+
+    #songsTable tbody tr:nth-child(even) {
+        background: #f8fafc;
+    }
+
+    #songsTable .actions-column,
+    #songsTable .actions-cell,
+    .delete-btn {
+        display: none !important;
+    }
+
+    #songsTable .favorite-btn {
+        display: inline;
+        border: none;
+        background: none;
+        padding: 0;
+        color: #0f172a;
+        font-size: 1em;
+        box-shadow: none;
+    }
+
+    #songsTable .chorus-cell {
+        background: #fff8e1;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
     }
 }
