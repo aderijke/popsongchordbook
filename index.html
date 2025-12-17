@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PopSong Chord Book</title>
+    <title>Interactive Chord Book</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -12,16 +12,44 @@
 <body>
     <div class="container">
         <header>
-            <h1>PopSong Chord Book</h1>
+            <div class="header-top">
+                <h1>Interactive Chord Book</h1>
+                <div class="search-section">
+                    <input type="text" id="searchInput" class="search-input" placeholder="🔍 Zoek op artiest of titel..." autocomplete="off">
+                </div>
+            </div>
             <div class="header-controls">
-                <button id="addSongBtn" class="add-song-btn">+ Nieuwe Song Toevoegen</button>
-                <div class="filter-controls">
-                    <button id="filterAll" class="filter-btn active">Alle</button>
-                    <button id="filterFavorites" class="filter-btn">⭐ Favorieten</button>
+                <!-- Filters and Setlist controls -->
+                <div class="controls-row">
+                    <div class="filter-controls">
+                        <span class="filter-label">Getoonde songs:</span>
+                        <button id="filterAll" class="filter-btn active">Alle</button>
+                        <button id="filterFavorites" class="filter-btn">⭐ Favorieten</button>
+                    </div>
+                    
+                    <div class="setlist-controls">
+                        <select id="setlistSelect" class="setlist-select">
+                            <option value="">Alle Songs</option>
+                        </select>
+                        <button id="createSetlistBtn" class="setlist-btn" title="Nieuwe Setlist">+ Setlist</button>
+                        <button id="deleteSetlistBtn" class="setlist-btn hidden" title="Verwijder geselecteerde setlist">Verwijder setlist</button>
+                    </div>
+                </div>
+                
+                <!-- Action buttons -->
+                <div class="actions-row">
+                    <button id="addSongBtn" class="add-song-btn" title="Nieuwe Song Toevoegen">➕</button>
+                    <div class="import-export-controls">
+                        <button id="exportBtn" class="import-export-btn" title="Exporteer">📥</button>
+                        <label for="importFile" class="import-export-btn" title="Importeer">📤</label>
+                        <input type="file" id="importFile" accept=".json" style="display: none;">
+                        <button id="deleteAllSongsBtn" class="import-export-btn delete-all-btn" title="Verwijder alle songs">🗑️</button>
+                    </div>
                 </div>
             </div>
         </header>
         
+        <!-- Selected song header - appears when a row is selected -->
         <div id="selectedSongHeader" class="selected-song-header hidden">
             <div class="selected-song-info">
                 <span id="selectedArtist" class="selected-artist"></span>
@@ -29,6 +57,16 @@
                 <span id="selectedTitle" class="selected-title"></span>
             </div>
             <button id="deselectBtn" class="deselect-btn" title="Sluiten (Escape)">×</button>
+        </div>
+        
+        <!-- Black overlay when row is selected -->
+        <div id="selectionOverlay" class="selection-overlay hidden"></div>
+        
+        <!-- Focused view container for selected row -->
+        <div id="focusedView" class="focused-view hidden">
+            <div id="focusedTableWrapper" class="focused-table-wrapper">
+                <!-- Selected row will be moved here -->
+            </div>
         </div>
         
         <div class="table-wrapper">
@@ -60,27 +98,6 @@
             </table>
         </div>
         
-        <div id="chordDisplay" class="chord-display hidden">
-            <h2 id="chordDisplayTitle"></h2>
-            <div class="chord-blocks">
-                <div class="chord-block" id="verseBlock">
-                    <h3>Verse</h3>
-                    <div class="chord-content" id="verseContent"></div>
-                </div>
-                <div class="chord-block" id="preChorusBlock">
-                    <h3>Pre-Chorus</h3>
-                    <div class="chord-content" id="preChorusContent"></div>
-                </div>
-                <div class="chord-block chorus-block" id="chorusBlock">
-                    <h3>Chorus</h3>
-                    <div class="chord-content" id="chorusContent"></div>
-                </div>
-                <div class="chord-block" id="bridgeBlock">
-                    <h3>Bridge</h3>
-                    <div class="chord-content" id="bridgeContent"></div>
-                </div>
-            </div>
-        </div>
     </div>
     
     <!-- Chord Selection Modal -->
@@ -119,6 +136,82 @@
                     <label>Of typ zelf akkoorden:</label>
                     <input type="text" id="chordCustomInput" placeholder="Bijv: C G Am F" />
                     <button id="chordAddCustom" class="chord-add-btn">Toevoegen</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Setlist Modal -->
+    <div id="setlistModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Nieuwe Setlist</h3>
+                <button class="modal-close" id="setlistModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="text" id="setlistNameInput" placeholder="Setlist naam..." />
+                <button id="setlistCreateBtn" class="modal-submit-btn">Aanmaken</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Add Songs to Setlist Modal -->
+    <div id="addSongsToSetlistModal" class="modal hidden">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3 id="addSongsModalTitle">Songs toevoegen aan setlist</h3>
+                <button class="modal-close" id="addSongsModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="songs-selection-container">
+                    <div class="selection-controls">
+                        <button id="selectAllSongs" class="selection-btn">Alles selecteren</button>
+                        <button id="deselectAllSongs" class="selection-btn">Alles deselecteren</button>
+                        <span id="selectedCount" class="selected-count">0 geselecteerd</span>
+                    </div>
+                    <div class="songs-list" id="songsListContainer">
+                        <!-- Songs will be dynamically inserted here -->
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button id="addSelectedSongsBtn" class="modal-submit-btn">Geselecteerde songs toevoegen</button>
+                    <button id="cancelAddSongsBtn" class="modal-cancel-btn">Annuleren</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Song Detail Modal -->
+    <div id="songDetailModal" class="song-detail-modal hidden">
+        <div class="song-detail-modal-content">
+            <div class="song-detail-header">
+                <button class="song-detail-nav-btn song-detail-prev" id="songDetailPrev" title="Vorige song">‹</button>
+                <div class="song-detail-title-section">
+                    <h2 id="songDetailArtist" class="song-detail-artist"></h2>
+                    <span class="song-detail-separator">-</span>
+                    <h1 id="songDetailTitle" class="song-detail-title"></h1>
+                </div>
+                <div class="song-detail-header-right">
+                    <button class="song-detail-nav-btn song-detail-next" id="songDetailNext" title="Volgende song">›</button>
+                    <button class="song-detail-close" id="songDetailModalClose">&times;</button>
+                </div>
+            </div>
+            <div class="song-detail-body">
+                <div class="song-chord-section" id="verseSection">
+                    <h3 class="chord-section-title">Verse</h3>
+                    <div class="chord-section-content" id="verseContent"></div>
+                </div>
+                <div class="song-chord-section" id="preChorusSection">
+                    <h3 class="chord-section-title">Pre-Chorus</h3>
+                    <div class="chord-section-content" id="preChorusContent"></div>
+                </div>
+                <div class="song-chord-section chorus-section" id="chorusSection">
+                    <h3 class="chord-section-title">Chorus</h3>
+                    <div class="chord-section-content" id="chorusContent"></div>
+                </div>
+                <div class="song-chord-section" id="bridgeSection">
+                    <h3 class="chord-section-title">Bridge</h3>
+                    <div class="chord-section-content" id="bridgeContent"></div>
                 </div>
             </div>
         </div>
