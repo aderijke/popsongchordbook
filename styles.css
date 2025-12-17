@@ -2928,7 +2928,7 @@ td:has(.row-edit-input.input-focused) {
 
 @media print {
     @page {
-        size: A4 portrait;
+        size: A4 landscape;
         margin: 10mm;
     }
 
@@ -2967,6 +2967,9 @@ td:has(.row-edit-input.input-focused) {
         padding: 0;
         margin: 0;
         background: white;
+        max-height: none;
+        height: auto;
+        overflow: visible;
     }
 
     #songsTable {
@@ -2974,6 +2977,7 @@ td:has(.row-edit-input.input-focused) {
         border-collapse: collapse;
         box-shadow: none;
         table-layout: fixed;
+        min-width: 0;
     }
 
     #songsTable th,
@@ -3004,7 +3008,7 @@ td:has(.row-edit-input.input-focused) {
         display: none !important;
     }
 
-    /* Fixed column widths so the core song data fits on portrait A4 */
+    /* Fixed column widths so the core song data fits on landscape A4 */
     #songsTable th:nth-child(1),
     #songsTable td:nth-child(1) {
         width: 18%;
