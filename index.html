@@ -18,26 +18,30 @@
                     <input type="text" id="searchInput" class="search-input" placeholder="🔍 Zoek op artiest of titel..." autocomplete="off">
                 </div>
             </div>
-            <div class="header-controls">
-                <!-- Filters and Setlist controls -->
-                <div class="controls-row">
-                    <div class="filter-controls">
-                        <span class="filter-label">Getoonde songs:</span>
+            <div class="header-bar">
+                <!-- Filters Section -->
+                <div class="header-section filters-section">
+                    <span class="section-label">Filter:</span>
+                    <div class="filter-buttons">
                         <button id="filterAll" class="filter-btn active">Alle</button>
                         <button id="filterFavorites" class="filter-btn">⭐ Favorieten</button>
                     </div>
-                    
+                </div>
+                
+                <!-- Setlist Management Section -->
+                <div class="header-section setlist-section">
+                    <span class="section-label">Setlist:</span>
                     <div class="setlist-controls">
                         <select id="setlistSelect" class="setlist-select">
                             <option value="">Alle Songs</option>
                         </select>
                         <button id="createSetlistBtn" class="setlist-btn" title="Nieuwe Setlist">+ Setlist</button>
-                        <button id="deleteSetlistBtn" class="setlist-btn hidden" title="Verwijder geselecteerde setlist">Verwijder setlist</button>
+                        <button id="deleteSetlistBtn" class="setlist-btn delete-setlist-btn hidden" title="Verwijder geselecteerde setlist">Verwijder</button>
                     </div>
                 </div>
                 
-                <!-- Action buttons -->
-                <div class="actions-row">
+                <!-- Actions Section -->
+                <div class="header-section actions-section">
                     <button id="addSongBtn" class="add-song-btn" title="Nieuwe Song Toevoegen">➕</button>
                     <div class="import-export-controls">
                         <button id="exportBtn" class="import-export-btn" title="Exporteer">📥</button>

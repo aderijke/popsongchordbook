@@ -108,13 +108,77 @@ header h1 {
     min-width: 200px;
 }
 
-.header-controls {
+/* Header Bar - Main container for all controls */
+.header-bar {
     display: flex;
-    flex-direction: column;
-    gap: 15px;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
     width: 100%;
     max-width: 1400px;
     margin: 0 auto;
+    background: white;
+    padding: 20px 25px;
+    border-radius: 16px;
+    box-shadow: var(--card-shadow);
+    border: 1px solid var(--border-color);
+}
+
+/* Header Section - Individual sections within header bar */
+.header-section {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.header-section:not(:last-child)::after {
+    content: '';
+    width: 1px;
+    height: 40px;
+    background: var(--border-color);
+    margin-left: 10px;
+    opacity: 0.5;
+}
+
+@media (max-width: 768px) {
+    .header-section:not(:last-child)::after {
+        display: none;
+    }
+}
+
+.section-label {
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 0.9em;
+    white-space: nowrap;
+    opacity: 0.8;
+}
+
+/* Filters Section */
+.filters-section {
+    flex: 0 0 auto;
+}
+
+.filter-buttons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+/* Setlist Section */
+.setlist-section {
+    flex: 1 1 auto;
+    min-width: 200px;
+    justify-content: flex-start;
+}
+
+/* Actions Section */
+.actions-section {
+    flex: 0 0 auto;
+    justify-content: flex-end;
+    margin-left: auto;
 }
 
 /* Search section - positioned in header top */
@@ -122,26 +186,6 @@ header h1 {
     flex: 1;
     max-width: 400px;
     min-width: 200px;
-}
-
-/* Controls row - filters and setlists */
-.controls-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 15px;
-    align-items: center;
-    justify-content: center;
-    order: 2;
-}
-
-/* Actions row - add song and import/export */
-.actions-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    align-items: center;
-    justify-content: center;
-    order: 3;
 }
 
 .import-export-controls {
@@ -248,6 +292,18 @@ header h1 {
     display: none;
 }
 
+.delete-setlist-btn {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+    border-color: rgba(239, 68, 68, 0.3);
+}
+
+.delete-setlist-btn:hover {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: #dc2626;
+    color: #b91c1c;
+}
+
 .search-input {
     width: 100%;
     padding: 12px 20px;
@@ -271,18 +327,12 @@ header h1 {
     opacity: 0.7;
 }
 
+/* Filter controls - now part of filters-section */
 .filter-controls {
     display: flex;
     gap: 8px;
     align-items: center;
     flex-shrink: 0;
-}
-
-.filter-label {
-    font-weight: 600;
-    color: var(--text-color);
-    margin-right: 4px;
-    white-space: nowrap;
 }
 
 .filter-btn {
@@ -1026,24 +1076,44 @@ td:has(.row-edit-input.input-focused) {
         max-width: 100%;
     }
     
-    .header-controls {
-        gap: 12px;
+    .header-bar {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 15px;
+        padding: 15px 20px;
     }
     
-    .controls-row {
+    .header-section {
+        width: 100%;
+        justify-content: flex-start;
+    }
+    
+    .header-section:not(:last-child)::after {
+        display: none;
+    }
+    
+    .header-section:not(:last-child) {
+        border-bottom: 1px solid var(--border-color);
+        padding-bottom: 15px;
+    }
+    
+    .filters-section,
+    .setlist-section,
+    .actions-section {
+        flex-direction: column;
+        align-items: stretch;
         gap: 10px;
-        justify-content: stretch;
     }
     
-    .actions-row {
-        gap: 8px;
-        justify-content: stretch;
+    .section-label {
+        width: 100%;
+        margin-bottom: 5px;
     }
     
-    .filter-controls,
+    .filter-buttons,
     .setlist-controls {
-        flex: 1;
-        min-width: 0;
+        width: 100%;
+        flex-wrap: wrap;
     }
     
     .setlist-select {
@@ -1052,15 +1122,19 @@ td:has(.row-edit-input.input-focused) {
         max-width: none;
     }
     
+    .actions-section {
+        flex-direction: row;
+        justify-content: stretch;
+    }
+    
     .add-song-btn {
-        padding: 12px 24px;
-        font-size: 1em;
         flex: 1;
         min-width: 0;
     }
     
     .import-export-controls {
         flex: 0 0 auto;
+        flex-wrap: wrap;
     }
     
     table {
@@ -1117,24 +1191,21 @@ td:has(.row-edit-input.input-focused) {
         text-align: center;
     }
     
-    .header-controls {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 15px;
-    }
-    
-    .controls-row {
-        display: grid;
-        grid-template-columns: auto 1fr;
-        gap: 15px;
+    .header-bar {
+        flex-direction: row;
         align-items: center;
     }
     
-    .setlist-controls {
-        justify-self: end;
+    .header-section:not(:last-child)::after {
+        display: block;
     }
     
-    .actions-row {
+    .setlist-section {
+        flex: 1;
+        justify-content: center;
+    }
+    
+    .actions-section {
         justify-content: flex-end;
     }
 }
