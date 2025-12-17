@@ -2240,3 +2240,331 @@ td:has(.row-edit-input.input-focused) {
         font-size: 1.5em;
     }
 }
+
+/* Chord Detector Overlay */
+.chord-detector-overlay {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 1000;
+    background: white;
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    min-width: 250px;
+    max-width: 300px;
+    transition: left 0s, top 0s;
+    font-family: 'Inter', sans-serif;
+    overflow: visible;
+    /* Ensure body is visible by default */
+}
+
+.chord-detector-overlay.minimized .chord-detector-body {
+    max-height: 0 !important;
+    padding: 0 !important;
+    opacity: 0 !important;
+    overflow: hidden !important;
+    margin: 0 !important;
+    border: none !important;
+    min-height: 0 !important;
+    height: 0 !important;
+}
+
+.chord-detector-content {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.chord-detector-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 2px solid var(--border-color);
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px 12px 0 0;
+}
+
+.chord-detector-header h3 {
+    margin: 0;
+    color: white;
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+.chord-detector-header-buttons {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.microphone-select {
+    background: white;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 0.85em;
+    cursor: pointer;
+    width: 100%;
+    max-width: 200px;
+    margin-top: 10px;
+    font-family: 'Inter', sans-serif;
+}
+
+.microphone-select:hover {
+    border-color: var(--secondary-color);
+    background: var(--hover-color);
+}
+
+.microphone-select:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.microphone-select option {
+    background: white;
+    color: var(--text-color);
+    padding: 8px;
+}
+
+.chord-detector-minimize-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s ease;
+}
+
+.chord-detector-minimize-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.chord-detector-body {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    visibility: visible;
+    opacity: 1;
+    min-height: 200px;
+    position: relative;
+    z-index: 1;
+    max-height: 500px;
+    overflow: hidden;
+    transition: max-height 0.3s ease, opacity 0.3s ease, padding 0.3s ease, min-height 0.3s ease;
+}
+
+.chord-detector-body .chord-display {
+    width: 100%;
+    display: flex !important;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.detected-chord-display {
+    font-size: 3em;
+    font-weight: 700;
+    color: var(--secondary-color);
+    min-height: 70px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.detected-chord-display.no-chord {
+    color: var(--text-light);
+    font-size: 2em;
+    opacity: 0.5;
+}
+
+.detected-chord-display.detected-chord {
+    animation: pulse 0.5s ease;
+}
+
+@keyframes pulse {
+    0%, 100% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.1);
+    }
+}
+
+.chord-detector-status {
+    font-size: 0.9em;
+    color: var(--text-light);
+    text-align: center;
+    padding: 5px 10px;
+    border-radius: 6px;
+    transition: all 0.3s ease;
+}
+
+.chord-detector-status.status-listening {
+    color: var(--secondary-color);
+    background: rgba(99, 102, 241, 0.1);
+    font-weight: 500;
+}
+
+.chord-detector-status.status-error {
+    color: #ef4444;
+    background: rgba(239, 68, 68, 0.1);
+    font-weight: 500;
+}
+
+.chord-detector-status.status-inactive {
+    color: var(--text-light);
+}
+
+.audio-level-container {
+    width: 100%;
+    margin-top: 15px;
+    display: flex !important;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+.audio-level-label {
+    font-size: 0.85em;
+    color: var(--text-color);
+    font-weight: 500;
+    min-width: 60px;
+}
+
+.audio-level-bar {
+    flex: 1;
+    height: 12px;
+    background: #e2e8f0 !important;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    overflow: hidden;
+    position: relative;
+    min-width: 100px;
+    visibility: visible !important;
+    display: block !important;
+}
+
+.audio-level-indicator {
+    height: 100%;
+    width: 0%;
+    background: var(--secondary-color);
+    border-radius: 5px;
+    transition: width 0.1s ease, background-color 0.2s ease;
+    min-width: 2px;
+}
+
+.audio-level-indicator.level-low {
+    background: #94a3b8;
+}
+
+.audio-level-indicator.level-medium {
+    background: #f59e0b;
+}
+
+.audio-level-indicator.level-high {
+    background: #10b981;
+}
+
+.chord-detector-toggle-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border: none;
+    color: white;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    font-size: 24px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+    transition: all 0.3s ease;
+}
+
+.chord-detector-toggle-btn:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.5);
+}
+
+.chord-detector-toggle-btn:active {
+    transform: scale(0.95);
+}
+
+.chord-detector-toggle-btn.active {
+    background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+    box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+    animation: pulse-button 2s infinite;
+}
+
+@keyframes pulse-button {
+    0%, 100% {
+        box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+    }
+    50% {
+        box-shadow: 0 4px 20px rgba(239, 68, 68, 0.6);
+    }
+}
+
+/* Responsive design for chord detector */
+@media (max-width: 768px) {
+    .chord-detector-overlay {
+        top: 10px;
+        right: 10px;
+        left: 10px;
+        max-width: none;
+        min-width: auto;
+    }
+    
+    .detected-chord-display {
+        font-size: 2.5em;
+        min-height: 60px;
+    }
+    
+    .chord-detector-body {
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .chord-detector-overlay {
+        top: 5px;
+        right: 5px;
+        left: 5px;
+    }
+    
+    .chord-detector-header {
+        padding: 12px 15px;
+    }
+    
+    .chord-detector-header h3 {
+        font-size: 1em;
+    }
+    
+    .detected-chord-display {
+        font-size: 2em;
+        min-height: 50px;
+    }
+    
+    .chord-detector-toggle-btn {
+        width: 50px;
+        height: 50px;
+        font-size: 20px;
+    }
+}

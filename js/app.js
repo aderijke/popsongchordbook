@@ -9,6 +9,7 @@ class App {
             this.songManager,
             (songId, skipTableSelection) => this.navigateToSong(songId, skipTableSelection)
         );
+        this.chordDetectorOverlay = new ChordDetectorOverlay();
         this.currentFilter = 'all';
         this.currentSetlistId = null;
         this.searchTerm = '';

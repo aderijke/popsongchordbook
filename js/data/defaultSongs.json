@@ -1,6 +1,6 @@
 {
   "version": "1.0",
-  "exportDate": "2025-12-17T10:23:28.814Z",
+  "exportDate": "2025-12-17T14:45:09.150Z",
   "songs": [
     {
       "id": 1,
@@ -194,6 +194,16 @@
     },
     {
       "id": 20,
+      "artist": "Gerry Rafferty",
+      "title": "Baker Street",
+      "verse": "A F G (3)",
+      "chorus": "D F D F C A G F",
+      "preChorus": "A Em G D",
+      "bridge": "Dm Am C G D | C G A F",
+      "favorite": false
+    },
+    {
+      "id": 21,
       "artist": "Taylor Swift",
       "title": "Betty",
       "verse": "C G/B Am G F",
@@ -203,7 +213,7 @@
       "favorite": false
     },
     {
-      "id": 21,
+      "id": 22,
       "artist": "Michael Jackson",
       "title": "Billie Jean",
       "verse": "F#3 G#3 A/C#",
@@ -213,7 +223,7 @@
       "favorite": false
     },
     {
-      "id": 22,
+      "id": 23,
       "artist": "Weekend",
       "title": "Blinding Lights",
       "verse": "Fm Cm3 Eb Bb3",
@@ -223,7 +233,7 @@
       "favorite": false
     },
     {
-      "id": 23,
+      "id": 24,
       "artist": "Blue",
       "title": "Blue/I'm Good",
       "verse": "Gm2 F D# Cm",
@@ -233,7 +243,7 @@
       "favorite": false
     },
     {
-      "id": 24,
+      "id": 25,
       "artist": "Don Henley",
       "title": "Boys of Summer",
       "verse": "Dm A# C",
@@ -243,7 +253,7 @@
       "favorite": false
     },
     {
-      "id": 25,
+      "id": 26,
       "artist": "Taylor Swift",
       "title": "Breathe",
       "verse": "C# G# F#",
@@ -253,7 +263,7 @@
       "favorite": false
     },
     {
-      "id": 26,
+      "id": 27,
       "artist": "Shinedown",
       "title": "Call Me",
       "verse": "C# E F#m A",
@@ -263,7 +273,17 @@
       "favorite": false
     },
     {
-      "id": 27,
+      "id": 28,
+      "artist": "Paul Simon",
+      "title": "Call Me Al",
+      "verse": "F2 C Bb",
+      "chorus": "",
+      "preChorus": "",
+      "bridge": "",
+      "favorite": false
+    },
+    {
+      "id": 29,
       "artist": "Enya",
       "title": "Caribbean Blue",
       "verse": "A C#m2 B2 F#m A B C#m2 E",
@@ -273,7 +293,7 @@
       "favorite": false
     },
     {
-      "id": 28,
+      "id": 30,
       "artist": "Europe",
       "title": "Carrie",
       "verse": "Em G C2 Am G C2 D Am G C2 D2 G",
@@ -283,7 +303,7 @@
       "favorite": false
     },
     {
-      "id": 29,
+      "id": 31,
       "artist": "Kool & The Gang",
       "title": "Celebration",
       "verse": "Db2 Gb3 Ab (C#/ F# G#)",
@@ -293,7 +313,17 @@
       "favorite": false
     },
     {
-      "id": 30,
+      "id": 32,
+      "artist": "Toto",
+      "title": "Child's Anthem",
+      "verse": "C#m2 G#m | C#m2 B E2 F#m2",
+      "chorus": "E A3 E2 B",
+      "preChorus": "C# F#m E A2 Bm2 A Bm2 A2 E",
+      "bridge": "F# Bm2 G Em D3 A2 C#m3 G#2",
+      "favorite": false
+    },
+    {
+      "id": 33,
       "artist": "Coldplay",
       "title": "Clocks",
       "verse": "Eb Bbm Fm",
@@ -303,7 +333,7 @@
       "favorite": false
     },
     {
-      "id": 31,
+      "id": 34,
       "artist": "Mr. President",
       "title": "Coco Jambo",
       "verse": "C#m2 A B",
@@ -313,7 +343,7 @@
       "favorite": false
     },
     {
-      "id": 32,
+      "id": 35,
       "artist": "Foreigner",
       "title": "Cold As Ice",
       "verse": "Ebm2 B",
@@ -323,7 +353,7 @@
       "favorite": false
     },
     {
-      "id": 33,
+      "id": 36,
       "artist": "Vangelis",
       "title": "Conquest of Paradise",
       "verse": "Dm A/C# Dm C F C Bb A",
@@ -333,7 +363,7 @@
       "favorite": false
     },
     {
-      "id": 34,
+      "id": 37,
       "artist": "Queen",
       "title": "Crazy Little Thing Called Love",
       "verse": "D G C",
@@ -343,7 +373,7 @@
       "favorite": false
     },
     {
-      "id": 35,
+      "id": 38,
       "artist": "Jan Hammer",
       "title": "Crockets Theme",
       "verse": "Dm3 F3 C Eb Cm2 Gm",
@@ -353,17 +383,17 @@
       "favorite": false
     },
     {
-      "id": 36,
+      "id": 39,
       "artist": "Taylor Swift",
       "title": "Cruel Summer",
-      "verse": "A | D E C#m F#m",
+      "verse": "A | D2 E2 C#m2 F#m",
       "chorus": "A C#m F#m D",
       "preChorus": "",
       "bridge": "",
       "favorite": false
     },
     {
-      "id": 37,
+      "id": 40,
       "artist": "John Barry",
       "title": "Dances with Wolves",
       "verse": "Eb Cm3 Ab3 Bb2 Ab2 Eb3 Fm Bb",
@@ -373,7 +403,7 @@
       "favorite": false
     },
     {
-      "id": 38,
+      "id": 41,
       "artist": "Pet Shop Boys",
       "title": "Domino Dancing",
       "verse": "Am F G (melody A E D)",
@@ -383,7 +413,7 @@
       "favorite": false
     },
     {
-      "id": 39,
+      "id": 42,
       "artist": "Guns N Roses",
       "title": "Don't Cry",
       "verse": "G#m C#m F#m B",
@@ -393,7 +423,7 @@
       "favorite": false
     },
     {
-      "id": 40,
+      "id": 43,
       "artist": "Elton John",
       "title": "Don't Let The Sun Go Down on Me",
       "verse": "C2 Bb Am F D..G GFC",
@@ -403,7 +433,7 @@
       "favorite": false
     },
     {
-      "id": 41,
+      "id": 44,
       "artist": "Journey",
       "title": "Don't Stop Believing",
       "verse": "B (ef#d#) A (c#)",
@@ -413,7 +443,7 @@
       "favorite": false
     },
     {
-      "id": 42,
+      "id": 45,
       "artist": "Madcon",
       "title": "Don't Worry Bout A Thing",
       "verse": "Am C G D",
@@ -423,7 +453,7 @@
       "favorite": false
     },
     {
-      "id": 43,
+      "id": 46,
       "artist": "Madonna",
       "title": "Dress You Up",
       "verse": "Ab Bb Fm Ab G",
@@ -433,7 +463,7 @@
       "favorite": false
     },
     {
-      "id": 44,
+      "id": 47,
       "artist": "Train",
       "title": "Drops of Jupiter",
       "verse": "D A Em G",
@@ -443,7 +473,7 @@
       "favorite": false
     },
     {
-      "id": 45,
+      "id": 48,
       "artist": "Commodores",
       "title": "Easy",
       "verse": "G# Cm A#m D#",
@@ -453,7 +483,7 @@
       "favorite": false
     },
     {
-      "id": 46,
+      "id": 49,
       "artist": "Taylor Swift",
       "title": "Enchanted",
       "verse": "Ab Cm Db Ab l3xl",
@@ -463,7 +493,7 @@
       "favorite": false
     },
     {
-      "id": 47,
+      "id": 50,
       "artist": "Roxette",
       "title": "Fading like a Flower",
       "verse": "F A# Dm C",
@@ -473,7 +503,7 @@
       "favorite": false
     },
     {
-      "id": 48,
+      "id": 51,
       "artist": "George Michael",
       "title": "Father Figure",
       "verse": "A#sus2 G#",
@@ -483,7 +513,7 @@
       "favorite": false
     },
     {
-      "id": 49,
+      "id": 52,
       "artist": "Taylor Swift",
       "title": "Fearless",
       "verse": "F C Gm7 A#",
@@ -493,7 +523,17 @@
       "favorite": false
     },
     {
-      "id": 50,
+      "id": 53,
+      "artist": "Robbie Williams",
+      "title": "Feel",
+      "verse": "Dm A F G2",
+      "chorus": "Dm C A Gm F A",
+      "preChorus": "Bb F C",
+      "bridge": "",
+      "favorite": false
+    },
+    {
+      "id": 54,
       "artist": "Sting",
       "title": "Fields of Gold",
       "verse": "Bm G3 D2",
@@ -503,7 +543,7 @@
       "favorite": false
     },
     {
-      "id": 51,
+      "id": 55,
       "artist": "Taylor Swift",
       "title": "Fifteen",
       "verse": "G C Em D",
@@ -513,7 +553,7 @@
       "favorite": false
     },
     {
-      "id": 52,
+      "id": 56,
       "artist": "Europe",
       "title": "Final Countdown",
       "verse": "F#m D/F# Bm/F# E",
@@ -523,7 +563,7 @@
       "favorite": false
     },
     {
-      "id": 53,
+      "id": 57,
       "artist": "Owl City",
       "title": "Fireflies",
       "verse": "Bb Ab Bb Eb3 Ab",
@@ -533,7 +573,7 @@
       "favorite": false
     },
     {
-      "id": 54,
+      "id": 58,
       "artist": "The Script",
       "title": "For the First Time",
       "verse": "A E F#m D",
@@ -543,7 +583,7 @@
       "favorite": false
     },
     {
-      "id": 55,
+      "id": 59,
       "artist": "Alphaville",
       "title": "Forever Young",
       "verse": "C G Am F Dm Am F G",
@@ -553,7 +593,7 @@
       "favorite": false
     },
     {
-      "id": 56,
+      "id": 60,
       "artist": "George Michael",
       "title": "Freedom",
       "verse": "C Bb F",
@@ -563,7 +603,17 @@
       "favorite": false
     },
     {
-      "id": 57,
+      "id": 61,
+      "artist": "Christina Aguilera",
+      "title": "Genie In A Bottle",
+      "verse": "Fm2 Eb2 Db2 C2",
+      "chorus": "",
+      "preChorus": "",
+      "bridge": "",
+      "favorite": false
+    },
+    {
+      "id": 62,
       "artist": "Billie Ocean",
       "title": "Get Outta my dreams",
       "verse": "B/F# E3 A/E B E3",
@@ -573,7 +623,7 @@
       "favorite": false
     },
     {
-      "id": 58,
+      "id": 63,
       "artist": "Shinedown",
       "title": "Get Up",
       "verse": "C Dm Am G",
@@ -583,17 +633,17 @@
       "favorite": false
     },
     {
-      "id": 59,
+      "id": 64,
       "artist": "Taylor Swift",
       "title": "Girl At Home",
-      "verse": "A# F C (Dm)",
-      "chorus": "",
+      "verse": "Bb F C (Dm)",
+      "chorus": "Bb F Dm C",
       "preChorus": "",
       "bridge": "",
       "favorite": false
     },
     {
-      "id": 60,
+      "id": 65,
       "artist": "Toto",
       "title": "Going Home",
       "verse": "Bm2 Em3 Bm2 A",
@@ -603,7 +653,7 @@
       "favorite": false
     },
     {
-      "id": 61,
+      "id": 66,
       "artist": "Booker T. & the MG's",
       "title": "Green Onions",
       "verse": "F Ab Bb",
@@ -613,7 +663,7 @@
       "favorite": false
     },
     {
-      "id": 62,
+      "id": 67,
       "artist": "Bruno Mars",
       "title": "Grenade",
       "verse": "Dm2 Am",
@@ -623,7 +673,7 @@
       "favorite": false
     },
     {
-      "id": 63,
+      "id": 68,
       "artist": "Phil Collins",
       "title": "Groovy Kind of Love",
       "verse": "G/D D",
@@ -633,7 +683,7 @@
       "favorite": false
     },
     {
-      "id": 64,
+      "id": 69,
       "artist": "The Script",
       "title": "Hall of Fame",
       "verse": "Gm Eb3 Bb F",
@@ -643,7 +693,7 @@
       "favorite": false
     },
     {
-      "id": 65,
+      "id": 70,
       "artist": "Ed Sheeran",
       "title": "Happier",
       "verse": "Am F C2",
@@ -653,7 +703,7 @@
       "favorite": false
     },
     {
-      "id": 66,
+      "id": 71,
       "artist": "Camila Cabello",
       "title": "Havana",
       "verse": "Gm Eb D",
@@ -663,7 +713,7 @@
       "favorite": false
     },
     {
-      "id": 67,
+      "id": 72,
       "artist": "Richard Marx",
       "title": "Hazard",
       "verse": "Gm3 F3 Bb Cm2",
@@ -673,7 +723,7 @@
       "favorite": false
     },
     {
-      "id": 68,
+      "id": 73,
       "artist": "Bryan Adams",
       "title": "Heaven",
       "verse": "C Am G Dm Am Bb Am Bb G",
@@ -683,7 +733,17 @@
       "favorite": false
     },
     {
-      "id": 69,
+      "id": 74,
+      "artist": "G F C D",
+      "title": "Heaven in My Hands",
+      "verse": "Dm C F G Eb",
+      "chorus": "G Dm C F",
+      "preChorus": "",
+      "bridge": "",
+      "favorite": false
+    },
+    {
+      "id": 75,
       "artist": "Adele",
       "title": "Hello",
       "verse": "Fm Ab2 Eb Db",
@@ -693,7 +753,7 @@
       "favorite": false
     },
     {
-      "id": 70,
+      "id": 76,
       "artist": "Toto",
       "title": "Hold the Line",
       "verse": "F#m/C# D E",
@@ -703,7 +763,7 @@
       "favorite": false
     },
     {
-      "id": 71,
+      "id": 77,
       "artist": "Madonna",
       "title": "Holiday",
       "verse": "G A Bm | F# G",
@@ -713,7 +773,17 @@
       "favorite": false
     },
     {
-      "id": 72,
+      "id": 78,
+      "artist": "Toto",
+      "title": "Home Of The Brave",
+      "verse": "E3 |E C#2 B2A C# B2 G# A G# B",
+      "chorus": "B2 G# F# (2x) {C A B E ? }",
+      "preChorus": "E G#m F# G#m F# Gm E A2",
+      "bridge": "A2 C3 (D#) E F#m E B A",
+      "favorite": false
+    },
+    {
+      "id": 79,
       "artist": "Eagles",
       "title": "Hotel California",
       "verse": "Bm F# A E G D Em F#",
@@ -723,7 +793,7 @@
       "favorite": false
     },
     {
-      "id": 73,
+      "id": 80,
       "artist": "Michael Jackson",
       "title": "Human Nature",
       "verse": "G A | F#m Em",
@@ -733,7 +803,67 @@
       "favorite": false
     },
     {
-      "id": 74,
+      "id": 81,
+      "artist": "Real 2 Real",
+      "title": "I Like To Move It",
+      "verse": "C# G# E D# F#",
+      "chorus": "",
+      "preChorus": "",
+      "bridge": "",
+      "favorite": false
+    },
+    {
+      "id": 82,
+      "artist": "Phil Collins",
+      "title": "I Wish It Would Rain Down",
+      "verse": "Ab Eb Fm",
+      "chorus": "Db Eb",
+      "preChorus": "",
+      "bridge": "",
+      "favorite": false
+    },
+    {
+      "id": 83,
+      "artist": "Toto",
+      "title": "I Won't Hold You Back",
+      "verse": "D# F A# D#3 | Cm2",
+      "chorus": "F D# D#m A# F",
+      "preChorus": "A# F D# F Gm F D# F",
+      "bridge": "A#3 F2 D#2 A# | Cm A# F D# A#",
+      "favorite": false
+    },
+    {
+      "id": 84,
+      "artist": "Phil Collins",
+      "title": "In The Air Tonight",
+      "verse": "Dm C Bb C",
+      "chorus": "",
+      "preChorus": "",
+      "bridge": "",
+      "favorite": false
+    },
+    {
+      "id": 85,
+      "artist": "Pet Shop Boys",
+      "title": "It's A Sin",
+      "verse": "Cm2 G# Bb Eb3 G# Fm G",
+      "chorus": "",
+      "preChorus": "",
+      "bridge": "",
+      "favorite": false
+    },
+    {
+      "id": 86,
+      "artist": "Bon Jovi",
+      "title": "It's My Life",
+      "verse": "Cm2 G# D#3 A#2",
+      "chorus": "Ab Eb Bb",
+      "preChorus": "",
+      "bridge": "",
+      "favorite": false
+    },
+    {
+      "id": 87,
       "artist": "Dr. Alban",
       "title": "It's My Life",
       "verse": "Am F3 G Em3",
@@ -743,7 +873,7 @@
       "favorite": false
     },
     {
-      "id": 75,
+      "id": 88,
       "artist": "Van Halen",
       "title": "Jump",
       "verse": "G C2 F | F2 C G3",
@@ -753,7 +883,7 @@
       "favorite": false
     },
     {
-      "id": 76,
+      "id": 89,
       "artist": "Bruno Mars",
       "title": "Just the Way You Are",
       "verse": "F Dm Bb",
@@ -763,7 +893,7 @@
       "favorite": false
     },
     {
-      "id": 77,
+      "id": 90,
       "artist": "Marillion",
       "title": "Kayleigh",
       "verse": "Bm A F#m G",
@@ -773,7 +903,7 @@
       "favorite": false
     },
     {
-      "id": 78,
+      "id": 91,
       "artist": "George Michael",
       "title": "Last Christmas",
       "verse": "A/D A/B Em/E Ab/A",
@@ -783,7 +913,7 @@
       "favorite": false
     },
     {
-      "id": 79,
+      "id": 92,
       "artist": "John Mayer",
       "title": "Last Train Home",
       "verse": "A/c# E/B",
@@ -793,7 +923,7 @@
       "favorite": false
     },
     {
-      "id": 80,
+      "id": 93,
       "artist": "Bruno Mars",
       "title": "Lazy Song",
       "verse": "B F# E",
@@ -803,7 +933,7 @@
       "favorite": false
     },
     {
-      "id": 81,
+      "id": 94,
       "artist": "Beatles",
       "title": "Let it Be",
       "verse": "C G Am F",
@@ -813,7 +943,7 @@
       "favorite": false
     },
     {
-      "id": 82,
+      "id": 95,
       "artist": "Robbie Williams",
       "title": "Let Me Entertain You",
       "verse": "F G# A#",
@@ -823,7 +953,7 @@
       "favorite": false
     },
     {
-      "id": 83,
+      "id": 96,
       "artist": "Roxette",
       "title": "Listen to Your Heart",
       "verse": "Bm G A Bm",
@@ -833,7 +963,7 @@
       "favorite": false
     },
     {
-      "id": 84,
+      "id": 97,
       "artist": "Ronde",
       "title": "Love Myself",
       "verse": "Dm/A G C/G F",
@@ -843,7 +973,7 @@
       "favorite": false
     },
     {
-      "id": 85,
+      "id": 98,
       "artist": "Taylor Swift",
       "title": "Love Story",
       "verse": "D A Bm G",
@@ -853,7 +983,7 @@
       "favorite": false
     },
     {
-      "id": 86,
+      "id": 99,
       "artist": "Taylor Swift",
       "title": "Mean",
       "verse": "C#m B A",
@@ -863,7 +993,7 @@
       "favorite": false
     },
     {
-      "id": 87,
+      "id": 100,
       "artist": "Dire Straits",
       "title": "On Every Street",
       "verse": "F3 C2 G C2 | Am G C2",
@@ -873,7 +1003,7 @@
       "favorite": false
     },
     {
-      "id": 88,
+      "id": 101,
       "artist": "Paul Mc Cartney",
       "title": "Once Upon a long Ago",
       "verse": "F/A (Bb) C/G Cm Gm G Cm Ab",
@@ -883,7 +1013,7 @@
       "favorite": false
     },
     {
-      "id": 89,
+      "id": 102,
       "artist": "George Michael",
       "title": "One More Try",
       "verse": "F2 C Dm2 F3 Bb F3 Gm3 C",
@@ -893,7 +1023,7 @@
       "favorite": false
     },
     {
-      "id": 90,
+      "id": 103,
       "artist": "Duran Duran",
       "title": "Ordinary World",
       "verse": "B F#m A E",
@@ -903,7 +1033,7 @@
       "favorite": false
     },
     {
-      "id": 91,
+      "id": 104,
       "artist": "Enya",
       "title": "Orinoco Flow",
       "verse": "G F C l Cm Bb F",
@@ -913,7 +1043,7 @@
       "favorite": false
     },
     {
-      "id": 92,
+      "id": 105,
       "artist": "Taylor Swift",
       "title": "Our Song",
       "verse": "D Em G A",
@@ -923,7 +1053,7 @@
       "favorite": false
     },
     {
-      "id": 93,
+      "id": 106,
       "artist": "Taylor Swift",
       "title": "Ours",
       "verse": "C, Am7, Fadd9",
@@ -933,7 +1063,17 @@
       "favorite": false
     },
     {
-      "id": 94,
+      "id": 107,
+      "artist": "C#2 D#2 F#m2 G#",
+      "title": "Papa Don't Preach",
+      "verse": "",
+      "chorus": "",
+      "preChorus": "",
+      "bridge": "",
+      "favorite": false
+    },
+    {
+      "id": 108,
       "artist": "Lady Gaga",
       "title": "Papparazzi",
       "verse": "Cm Ab Fm",
@@ -943,7 +1083,7 @@
       "favorite": false
     },
     {
-      "id": 95,
+      "id": 109,
       "artist": "Ed Sheeran",
       "title": "Perfect",
       "verse": "G# Fm C# D#",
@@ -953,7 +1093,7 @@
       "favorite": false
     },
     {
-      "id": 96,
+      "id": 110,
       "artist": "Billy Joel",
       "title": "Piano Man",
       "verse": "C G F C F C D7 G",
@@ -963,7 +1103,7 @@
       "favorite": false
     },
     {
-      "id": 97,
+      "id": 111,
       "artist": "Taylor Swift",
       "title": "Red",
       "verse": "A C#m B",
@@ -973,7 +1113,7 @@
       "favorite": false
     },
     {
-      "id": 98,
+      "id": 112,
       "artist": "Snap",
       "title": "Rhythm is a dancer",
       "verse": "Am F G Am",
@@ -983,7 +1123,7 @@
       "favorite": false
     },
     {
-      "id": 99,
+      "id": 113,
       "artist": "Toto",
       "title": "Rosanna",
       "verse": "G F Em G | C F |",
@@ -993,7 +1133,7 @@
       "favorite": false
     },
     {
-      "id": 100,
+      "id": 114,
       "artist": "Level 42",
       "title": "Running in the Family",
       "verse": "Em/B Bm A",
@@ -1003,7 +1143,17 @@
       "favorite": false
     },
     {
-      "id": 101,
+      "id": 115,
+      "artist": "Elton John",
+      "title": "Sacrifice",
+      "verse": "C#2 Fm2 F#",
+      "chorus": "C# F# D#m3 G# | A#m",
+      "preChorus": "",
+      "bridge": "",
+      "favorite": false
+    },
+    {
+      "id": 116,
       "artist": "Capital Cities",
       "title": "Safe and Sound",
       "verse": "F3 C2 Am G",
@@ -1013,7 +1163,7 @@
       "favorite": false
     },
     {
-      "id": 102,
+      "id": 117,
       "artist": "Shawn Mendes",
       "title": "Seniorita",
       "verse": "Am C F Em G",
@@ -1023,7 +1173,17 @@
       "favorite": false
     },
     {
-      "id": 103,
+      "id": 118,
+      "artist": "Queen",
+      "title": "Show Must Go On",
+      "verse": "Bm2 G Em F# Em",
+      "chorus": "C#m2 A F#m G# F#2",
+      "preChorus": "F G Em Am",
+      "bridge": "",
+      "favorite": false
+    },
+    {
+      "id": 119,
       "artist": "Dire Straits",
       "title": "So Far Away",
       "verse": "B A E | A C#m B E",
@@ -1033,7 +1193,7 @@
       "favorite": false
     },
     {
-      "id": 104,
+      "id": 120,
       "artist": "Taylor Swift",
       "title": "So High School",
       "verse": "C G D",
@@ -1043,7 +1203,17 @@
       "favorite": false
     },
     {
-      "id": 105,
+      "id": 121,
+      "artist": "Dire Straits",
+      "title": "Solid Rock",
+      "verse": "D G C",
+      "chorus": "A Bm G",
+      "preChorus": "",
+      "bridge": "",
+      "favorite": false
+    },
+    {
+      "id": 122,
       "artist": "Simply Red",
       "title": "Something Got me Started",
       "verse": "Am/D Bb C",
@@ -1053,7 +1223,7 @@
       "favorite": false
     },
     {
-      "id": 106,
+      "id": 123,
       "artist": "Simon & Garfunkel",
       "title": "Sound of Silence",
       "verse": "F#m E (A) D A",
@@ -1063,7 +1233,7 @@
       "favorite": false
     },
     {
-      "id": 107,
+      "id": 124,
       "artist": "Taylor Swift",
       "title": "Sparks Fly",
       "verse": "Dm Bb F C",
@@ -1073,7 +1243,7 @@
       "favorite": false
     },
     {
-      "id": 108,
+      "id": 125,
       "artist": "Taylor Swift",
       "title": "Speak Now",
       "verse": "G D Am C",
@@ -1083,17 +1253,17 @@
       "favorite": false
     },
     {
-      "id": 109,
+      "id": 126,
       "artist": "Toto",
       "title": "Spiritual Man",
-      "verse": "F/C C G",
+      "verse": "F3 C2 Gm",
       "chorus": "",
       "preChorus": "",
       "bridge": "",
       "favorite": false
     },
     {
-      "id": 110,
+      "id": 127,
       "artist": "Toto",
       "title": "St George & Dragon",
       "verse": "Am3 G3 C2",
@@ -1103,7 +1273,7 @@
       "favorite": false
     },
     {
-      "id": 111,
+      "id": 128,
       "artist": "Taylor Swift",
       "title": "Stay",
       "verse": "C F Am G",
@@ -1113,7 +1283,7 @@
       "favorite": false
     },
     {
-      "id": 112,
+      "id": 129,
       "artist": "Toto",
       "title": "Stop Loving You",
       "verse": "F Bb Dm C",
@@ -1123,17 +1293,17 @@
       "favorite": false
     },
     {
-      "id": 113,
+      "id": 130,
       "artist": "Pet Shop Boys",
       "title": "Suburbia",
       "verse": "C2 Am Dm2 F G",
-      "chorus": "Cm Ab Bb Eb2 (G)",
+      "chorus": "Cm2 Ab Bb Eb3 (G)",
       "preChorus": "",
       "bridge": "",
       "favorite": false
     },
     {
-      "id": 114,
+      "id": 131,
       "artist": "Bryan Adams",
       "title": "Summer of 69",
       "verse": "D A Bm A D G",
@@ -1143,17 +1313,17 @@
       "favorite": false
     },
     {
-      "id": 115,
+      "id": 132,
       "artist": "Post Malone",
       "title": "Sunflower",
-      "verse": "D G | Em",
+      "verse": "D G Em G",
       "chorus": "",
       "preChorus": "",
       "bridge": "",
       "favorite": false
     },
     {
-      "id": 116,
+      "id": 133,
       "artist": "The Script",
       "title": "Superheroes",
       "verse": "Ab2 Eb Cm3 Bb3",
@@ -1163,17 +1333,17 @@
       "favorite": false
     },
     {
-      "id": 117,
+      "id": 134,
       "artist": "Aha",
       "title": "Take on Me",
-      "verse": "Bm E/B A D/A",
+      "verse": "Bm E2 A D2",
       "chorus": "A E F#m D",
-      "preChorus": "",
+      "preChorus": "C#m G | Bm E",
       "bridge": "",
       "favorite": false
     },
     {
-      "id": 118,
+      "id": 135,
       "artist": "Taylor Swift",
       "title": "Teardrops on My Guitar",
       "verse": "Bb Gm7 Eb F",
@@ -1183,7 +1353,7 @@
       "favorite": false
     },
     {
-      "id": 119,
+      "id": 136,
       "artist": "Bruce Hornsby",
       "title": "Thats Just The Way it is",
       "verse": "Am Em D C G D C",
@@ -1193,7 +1363,7 @@
       "favorite": false
     },
     {
-      "id": 120,
+      "id": 137,
       "artist": "Taylor Swift",
       "title": "The Best Day",
       "verse": "C# A#m F# G#",
@@ -1203,7 +1373,7 @@
       "favorite": false
     },
     {
-      "id": 121,
+      "id": 138,
       "artist": "Coldplay",
       "title": "The Scientist",
       "verse": "Dm Bb3 F2 C",
@@ -1213,7 +1383,7 @@
       "favorite": false
     },
     {
-      "id": 122,
+      "id": 139,
       "artist": "Bon Jovi",
       "title": "These Days",
       "verse": "C D Em",
@@ -1223,7 +1393,7 @@
       "favorite": false
     },
     {
-      "id": 123,
+      "id": 140,
       "artist": "Michael Jackson",
       "title": "Thriller",
       "verse": "C#m/E+9 E F#/C# C#m",
@@ -1233,7 +1403,7 @@
       "favorite": false
     },
     {
-      "id": 124,
+      "id": 141,
       "artist": "Taylor Swift",
       "title": "Today was a Fairytale",
       "verse": "G C Em D",
@@ -1243,7 +1413,7 @@
       "favorite": false
     },
     {
-      "id": 125,
+      "id": 142,
       "artist": "Harold Faltermeyer",
       "title": "Top Gun",
       "verse": "C F G",
@@ -1253,17 +1423,17 @@
       "favorite": false
     },
     {
-      "id": 126,
+      "id": 143,
       "artist": "Coldplay",
       "title": "Trouble",
-      "verse": "G Em Bm",
-      "chorus": "A Em",
-      "preChorus": "",
+      "verse": "Bm/G | F Am G",
+      "chorus": "G Em Bm",
+      "preChorus": "A Em",
       "bridge": "",
       "favorite": false
     },
     {
-      "id": 127,
+      "id": 144,
       "artist": "Coldplay",
       "title": "Viva la Vida",
       "verse": "C#/F D#/G G# Fm",
@@ -1273,7 +1443,7 @@
       "favorite": false
     },
     {
-      "id": 128,
+      "id": 145,
       "artist": "Foreigner",
       "title": "Waiting for a Girl Like You",
       "verse": "Bbm Ab | Fm Eb |",
@@ -1283,7 +1453,7 @@
       "favorite": false
     },
     {
-      "id": 129,
+      "id": 146,
       "artist": "Dire Straits",
       "title": "Walk of Life",
       "verse": "E A B A B",
@@ -1293,7 +1463,7 @@
       "favorite": false
     },
     {
-      "id": 130,
+      "id": 147,
       "artist": "Spice Girls",
       "title": "Wannabe",
       "verse": "F# G#m E B",
@@ -1303,7 +1473,17 @@
       "favorite": false
     },
     {
-      "id": 131,
+      "id": 148,
+      "artist": "Madeline Merlo",
+      "title": "War Paint",
+      "verse": "C#3 | Bb F# C# G#",
+      "chorus": "F# C# G#",
+      "preChorus": "",
+      "bridge": "",
+      "favorite": false
+    },
+    {
+      "id": 149,
       "artist": "Taylor Swift",
       "title": "We Are Never Getting Back Together",
       "verse": "C G D Em",
@@ -1313,7 +1493,7 @@
       "favorite": false
     },
     {
-      "id": 132,
+      "id": 150,
       "artist": "Queen",
       "title": "We Are The Champions",
       "verse": "Cm Gm | Eb3 Bb",
@@ -1323,7 +1503,7 @@
       "favorite": false
     },
     {
-      "id": 133,
+      "id": 151,
       "artist": "4 Non Blonds",
       "title": "What's Up",
       "verse": "A Bm D",
@@ -1333,7 +1513,7 @@
       "favorite": false
     },
     {
-      "id": 134,
+      "id": 152,
       "artist": "Taylor Swift",
       "title": "When Emma falls in love -",
       "verse": "D A Em",
@@ -1343,7 +1523,7 @@
       "favorite": false
     },
     {
-      "id": 135,
+      "id": 153,
       "artist": "Van Halen",
       "title": "When It's Love",
       "verse": "D2 A F#m3 G3",
@@ -1353,7 +1533,7 @@
       "favorite": false
     },
     {
-      "id": 136,
+      "id": 154,
       "artist": "Taylor Swift",
       "title": "Wildest Dreams",
       "verse": "Db Eb",
@@ -1363,7 +1543,7 @@
       "favorite": false
     },
     {
-      "id": 137,
+      "id": 155,
       "artist": "U2",
       "title": "With Or Without You",
       "verse": "D2 A Bm G",
@@ -1373,7 +1553,7 @@
       "favorite": false
     },
     {
-      "id": 138,
+      "id": 156,
       "artist": "Oasis",
       "title": "Wonderwall",
       "verse": "F#m A E B7sus4",
@@ -1383,7 +1563,17 @@
       "favorite": false
     },
     {
-      "id": 139,
+      "id": 157,
+      "artist": "Coldplay",
+      "title": "Yellow",
+      "verse": "B F# E",
+      "chorus": "E G#m F#",
+      "preChorus": "",
+      "bridge": "",
+      "favorite": false
+    },
+    {
+      "id": 158,
       "artist": "Taylor Swift",
       "title": "You Belong With Me",
       "verse": "F# C# G#m B",
@@ -1393,11 +1583,21 @@
       "favorite": false
     },
     {
-      "id": 140,
+      "id": 159,
       "artist": "Kim Wilde",
       "title": "You Came",
       "verse": "A B E2 B A A2 B E3",
       "chorus": "Dbm Gbm2 E2 Bm Gbm E Ab",
+      "preChorus": "",
+      "bridge": "",
+      "favorite": false
+    },
+    {
+      "id": 160,
+      "artist": "Bon Jovi",
+      "title": "You Give Love A Bad Name",
+      "verse": "Cm2 G# A#",
+      "chorus": "F | F G |",
       "preChorus": "",
       "bridge": "",
       "favorite": false
