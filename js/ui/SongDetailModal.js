@@ -133,15 +133,26 @@ class SongDetailModal {
                     e.stopPropagation();
                     this.enterEditMode(section.content);
                 });
-                section.content.addEventListener('blur', () => {
-                    section.content.setAttribute('contenteditable', 'false');
-                    section.content.classList.remove('editing');
-                    this.checkForChanges();
-                    // Remove chord button
-                    const chordBtn = section.section?.querySelector('.chord-modal-btn-detail');
-                    if (chordBtn) {
-                        chordBtn.remove();
-                    }
+                section.content.addEventListener('blur', (e) => {
+                    // Use setTimeout to allow click event on button to fire first
+                    setTimeout(() => {
+                        // Check if button still exists and if we're still in edit mode
+                        const chordBtn = section.section?.querySelector('.chord-modal-btn-detail');
+                        const isStillEditing = section.content.getAttribute('contenteditable') === 'true';
+                        
+                        // Only exit edit mode if we're not clicking on the button
+                        // Check if the active element is the button
+                        const activeElement = document.activeElement;
+                        if (!chordBtn || (activeElement !== chordBtn && !chordBtn.contains(activeElement))) {
+                            section.content.setAttribute('contenteditable', 'false');
+                            section.content.classList.remove('editing');
+                            this.checkForChanges();
+                            // Remove chord button
+                            if (chordBtn) {
+                                chordBtn.remove();
+                            }
+                        }
+                    }, 100);
                 });
                 section.content.addEventListener('input', () => this.checkForChanges());
             }
@@ -219,11 +230,14 @@ class SongDetailModal {
     }
     
     addChordButton(element, fieldName) {
+        console.log('addChordButton called for field:', fieldName);
         // Remove existing button if any
         const section = element.closest('.song-chord-section');
+        console.log('Section found:', !!section);
         if (section) {
             const existingBtn = section.querySelector('.chord-modal-btn-detail');
             if (existingBtn) {
+                console.log('Removing existing button');
                 existingBtn.remove();
             }
         }
@@ -234,23 +248,41 @@ class SongDetailModal {
         chordBtn.className = 'chord-modal-btn-detail';
         chordBtn.innerHTML = '🎵';
         chordBtn.title = 'Akkoorden toevoegen';
-        chordBtn.addEventListener('click', (e) => {
+        chordBtn.style.cursor = 'pointer';
+        chordBtn.style.pointerEvents = 'auto';
+        chordBtn.addEventListener('mousedown', (e) => {
+            // Use mousedown instead of click, and prevent default to avoid blur
             e.stopPropagation();
             e.preventDefault();
-            if (this.chordModal) {
-                // Ensure element is in edit mode and focused
-                if (element.getAttribute('contenteditable') !== 'true') {
-                    element.setAttribute('contenteditable', 'true');
-                    element.classList.add('editing');
-                }
-                element.focus();
-                this.chordModal.show(element, fieldName);
+        });
+        
+        chordBtn.addEventListener('click', (e) => {
+            console.log('Chord button clicked, fieldName:', fieldName);
+            e.stopPropagation();
+            e.preventDefault();
+            // Prevent blur by keeping focus
+            if (element.getAttribute('contenteditable') !== 'true') {
+                element.setAttribute('contenteditable', 'true');
+                element.classList.add('editing');
             }
+            // Use setTimeout to ensure click completes before any blur
+            setTimeout(() => {
+                if (this.chordModal) {
+                    console.log('ChordModal exists, calling show()');
+                    this.chordModal.show(element, fieldName, () => {
+                    // Callback when chords are added - check for changes
+                    this.checkForChanges();
+                });
+                } else {
+                    console.error('ChordModal is null!');
+                }
+            }, 0);
         });
         
         // Insert button in the section header next to title
         if (section) {
             const sectionHeader = section.querySelector('.chord-section-title');
+            console.log('Section header found:', !!sectionHeader);
             if (sectionHeader) {
                 // Wrap title text in a span if not already wrapped
                 if (!sectionHeader.querySelector('.chord-section-title-text')) {
@@ -263,7 +295,13 @@ class SongDetailModal {
                 }
                 
                 sectionHeader.appendChild(chordBtn);
+                console.log('Button appended to section header');
+                console.log('Button in DOM:', document.body.contains(chordBtn));
+            } else {
+                console.error('Section header not found!');
             }
+        } else {
+            console.error('Section not found!');
         }
     }
     

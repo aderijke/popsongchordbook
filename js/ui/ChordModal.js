@@ -7,6 +7,7 @@ class ChordModal {
         this.addCustomBtn = document.getElementById('chordAddCustom');
         this.currentInput = null;
         this.currentField = null;
+        this.onChangeCallback = null; // Callback to notify parent when content changes
         
         this.setupChords();
         this.setupEventListeners();
@@ -86,11 +87,13 @@ class ChordModal {
         });
     }
 
-    show(inputElement, field) {
+    show(inputElement, field, onChangeCallback = null) {
+        console.log('ChordModal.show() called with field:', field);
         // Check if this is a chord field first
         const chordFields = ['verse', 'chorus', 'preChorus', 'bridge'];
         if (!chordFields.includes(field)) {
             // Don't show modal for non-chord fields
+            console.log('ChordModal: field is not a chord field, returning');
             return;
         }
         
@@ -101,7 +104,22 @@ class ChordModal {
         
         this.currentInput = inputElement;
         this.currentField = field;
+        this.onChangeCallback = onChangeCallback; // Store callback
+        
+        // Move modal to body to ensure it's above everything
+        if (this.modal.parentElement !== document.body) {
+            document.body.appendChild(this.modal);
+        }
+        
+        // Force remove hidden class and ensure display is set
         this.modal.classList.remove('hidden');
+        // Ensure modal is visible (override any inline styles)
+        this.modal.style.display = 'flex';
+        this.modal.style.zIndex = '3000';
+        
+        console.log('ChordModal: modal classes:', this.modal.className);
+        console.log('ChordModal: modal style.display:', this.modal.style.display);
+        console.log('ChordModal: modal computed display:', window.getComputedStyle(this.modal).display);
         
         // Reset toggle states - hide Sus & Add and Special buttons by default, but keep category visible
         const susAddButtons = document.getElementById('susAddChords');
@@ -128,8 +146,10 @@ class ChordModal {
 
     hide() {
         this.modal.classList.add('hidden');
+        this.modal.style.display = '';
         this.currentInput = null;
         this.currentField = null;
+        this.onChangeCallback = null;
         this.customInput.value = '';
     }
 
@@ -173,7 +193,18 @@ class ChordModal {
             selection.addRange(range);
             
             // Keep focus on contenteditable element
-            this.currentInput.focus();
+            setTimeout(() => {
+                this.currentInput.focus();
+                
+                // Trigger input event to notify SongDetailModal of changes
+                const inputEvent = new Event('input', { bubbles: true, cancelable: true });
+                this.currentInput.dispatchEvent(inputEvent);
+                
+                // Also call callback if provided
+                if (this.onChangeCallback) {
+                    this.onChangeCallback();
+                }
+            }, 0);
         } else {
             // Add chord to custom input field instead of directly to table input
             const currentCustomValue = this.customInput.value.trim();
@@ -186,19 +217,33 @@ class ChordModal {
             const len = this.customInput.value.length;
             this.customInput.setSelectionRange(len, len);
         }
+        
+        // Note: Don't close modal when clicking individual chords - user might want to add more
+        // Modal will close when clicking "Toevoegen" button or closing manually
     }
 
     addCustomChords() {
-        if (!this.currentInput) return;
+        if (!this.currentInput) {
+            console.log('addCustomChords: currentInput is null');
+            return;
+        }
         
         const customChords = this.customInput.value.trim();
+        console.log('addCustomChords: customChords =', customChords);
         if (customChords) {
-            // Check if this is a contenteditable element or an input element
+            // Check if this is a contenteditable element
             const isContentEditable = this.currentInput.hasAttribute && 
-                this.currentInput.hasAttribute('contenteditable') &&
-                (this.currentInput.getAttribute('contenteditable') === 'true' || this.currentInput.contentEditable === 'true');
+                this.currentInput.hasAttribute('contenteditable');
+            
+            console.log('addCustomChords: isContentEditable =', isContentEditable);
+            console.log('addCustomChords: currentInput =', this.currentInput);
             
             if (isContentEditable) {
+                // Ensure element is in edit mode
+                if (this.currentInput.getAttribute('contenteditable') !== 'true') {
+                    this.currentInput.setAttribute('contenteditable', 'true');
+                }
+                
                 // Handle contenteditable element
                 const selection = window.getSelection();
                 let range = selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
@@ -216,8 +261,13 @@ class ChordModal {
                     range.collapse(false);
                 }
                 
+                // Get current text content to determine if we need a space
+                const textBefore = range.startContainer.textContent ? range.startContainer.textContent.substring(0, range.startOffset) : '';
+                const needsSpace = textBefore.length > 0 && !textBefore.endsWith(' ') && !textBefore.endsWith('\n');
+                const textToInsert = (needsSpace ? ' ' : '') + customChords;
+                
                 // Insert chords at cursor position
-                const textNode = document.createTextNode(customChords);
+                const textNode = document.createTextNode(textToInsert);
                 range.insertNode(textNode);
                 
                 // Move cursor after inserted text
@@ -226,14 +276,29 @@ class ChordModal {
                 selection.removeAllRanges();
                 selection.addRange(range);
                 
-                // Focus the contenteditable element
-                this.currentInput.focus();
+                // Focus the contenteditable element and trigger change detection
+                setTimeout(() => {
+                    this.currentInput.focus();
+                    
+                    // Trigger input event to notify SongDetailModal of changes
+                    const inputEvent = new Event('input', { bubbles: true, cancelable: true });
+                    this.currentInput.dispatchEvent(inputEvent);
+                    
+                    // Also call callback if provided
+                    if (this.onChangeCallback) {
+                        this.onChangeCallback();
+                    }
+                }, 0);
             } else {
                 // Handle regular input element
                 const currentValue = this.currentInput.value.trim();
                 // Add new chords after existing chords with a space
                 const separator = currentValue ? ' ' : '';
                 this.currentInput.value = currentValue + separator + customChords;
+                
+                // Trigger input event
+                const inputEvent = new Event('input', { bubbles: true });
+                this.currentInput.dispatchEvent(inputEvent);
                 
                 // Keep table input focused
                 setTimeout(() => {
@@ -248,6 +313,7 @@ class ChordModal {
             this.customInput.value = '';
             
             // Close modal after adding chords
+            console.log('addCustomChords: closing modal');
             this.hide();
         }
     }
