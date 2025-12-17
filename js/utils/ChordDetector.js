@@ -406,14 +406,24 @@ class ChordDetector {
         return this.currentAudioLevel;
     }
     
-    async getAvailableDevices() {
+    async getAvailableDevices(requirePermission = false) {
         try {
-            // Request permission first
-            await navigator.mediaDevices.getUserMedia({ audio: true });
+            // Only request permission if explicitly required
+            if (requirePermission) {
+                await navigator.mediaDevices.getUserMedia({ audio: true });
+            }
             
             // Get devices
             const devices = await navigator.mediaDevices.enumerateDevices();
-            return devices.filter(device => device.kind === 'audioinput');
+            const audioInputs = devices.filter(device => device.kind === 'audioinput');
+            
+            // If devices don't have labels and permission wasn't requested, return empty
+            // (devices without permission don't have labels)
+            if (!requirePermission && audioInputs.length > 0 && !audioInputs[0].label) {
+                return [];
+            }
+            
+            return audioInputs;
         } catch (error) {
             console.error('Error getting audio devices:', error);
             return [];

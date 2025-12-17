@@ -115,13 +115,37 @@ class App {
 
     setupSearch() {
         const searchInput = document.getElementById('searchInput');
+        const clearSearchBtn = document.getElementById('clearSearchBtn');
         if (!searchInput) return;
+        
+        // Toggle clear button visibility
+        const toggleClearButton = () => {
+            if (clearSearchBtn) {
+                if (searchInput.value.trim() !== '') {
+                    clearSearchBtn.classList.remove('hidden');
+                } else {
+                    clearSearchBtn.classList.add('hidden');
+                }
+            }
+        };
         
         // Search on input (real-time)
         searchInput.addEventListener('input', (e) => {
             this.searchTerm = e.target.value;
             this.loadAndRender();
+            toggleClearButton();
         });
+        
+        // Clear search button click
+        if (clearSearchBtn) {
+            clearSearchBtn.addEventListener('click', () => {
+                searchInput.value = '';
+                this.searchTerm = '';
+                this.loadAndRender();
+                searchInput.focus();
+                toggleClearButton();
+            });
+        }
         
         // Clear search on Escape key
         searchInput.addEventListener('keydown', (e) => {
@@ -130,8 +154,12 @@ class App {
                 this.searchTerm = '';
                 this.loadAndRender();
                 searchInput.blur();
+                toggleClearButton();
             }
         });
+        
+        // Initial state
+        toggleClearButton();
     }
 
     handleToggleFavorite(songId) {

@@ -197,6 +197,12 @@ class ChordDetectorOverlay {
                 this.toggleMinimize();
             }
             
+            // Request permission and update microphone list when starting
+            if (!this.hasMicrophonePermission) {
+                await this.updateMicrophoneList(true);
+                this.hasMicrophonePermission = true;
+            }
+            
             const selectedDeviceId = this.microphoneSelect?.value || null;
             await this.chordDetector.startListening(selectedDeviceId);
             this.isActive = true;
@@ -361,12 +367,18 @@ class ChordDetectorOverlay {
     async setupMicrophoneSelection() {
         if (!this.microphoneSelect) return;
         
-        // Populate microphone list
-        await this.updateMicrophoneList();
+        // Initially show placeholder - don't request permission yet
+        this.microphoneSelect.innerHTML = '';
+        const placeholder = document.createElement('option');
+        placeholder.value = '';
+        placeholder.textContent = 'Kies microfoon...';
+        this.microphoneSelect.appendChild(placeholder);
         
-        // Reload list when devices change
+        // Reload list when devices change (but only if we already have permission)
         navigator.mediaDevices.addEventListener('devicechange', () => {
-            this.updateMicrophoneList();
+            if (this.hasMicrophonePermission) {
+                this.updateMicrophoneList(true);
+            }
         });
         
         // Stop listening if device changes while active
@@ -379,12 +391,15 @@ class ChordDetectorOverlay {
                 }, 100);
             }
         });
+        
+        // Track permission state
+        this.hasMicrophonePermission = false;
     }
     
-    async updateMicrophoneList() {
+    async updateMicrophoneList(requirePermission = false) {
         if (!this.microphoneSelect) return;
         
-        const devices = await this.chordDetector.getAvailableDevices();
+        const devices = await this.chordDetector.getAvailableDevices(requirePermission);
         const currentValue = this.microphoneSelect.value;
         
         this.microphoneSelect.innerHTML = '';
@@ -392,7 +407,7 @@ class ChordDetectorOverlay {
         if (devices.length === 0) {
             const option = document.createElement('option');
             option.value = '';
-            option.textContent = 'Geen microfoons gevonden';
+            option.textContent = requirePermission ? 'Geen microfoons gevonden' : 'Kies microfoon...';
             this.microphoneSelect.appendChild(option);
             return;
         }
