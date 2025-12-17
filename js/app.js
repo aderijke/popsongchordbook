@@ -25,7 +25,7 @@ class App {
         this.init();
     }
 
-    init() {
+    async init() {
         this.setupSorting();
         this.setupAddSongButton();
         this.setupFilters();
@@ -34,7 +34,7 @@ class App {
         this.setupAddSongsToSetlistModal();
         this.setupImportExport();
         this.setupDeselect();
-        this.addExampleSongIfEmpty();
+        await this.addExampleSongIfEmpty();
         this.loadAndRender();
     }
 
@@ -432,15 +432,41 @@ class App {
         this.tableRenderer.selectRow(null);
     }
 
-    addExampleSongIfEmpty() {
+    async addExampleSongIfEmpty() {
         if (this.songManager.getAllSongs().length === 0) {
-            // Add all default songs
-            if (typeof DEFAULT_SONGS !== 'undefined' && DEFAULT_SONGS.length > 0) {
-                DEFAULT_SONGS.forEach(song => {
-                    this.songManager.addSong(song);
-                });
-            } else {
-                // Fallback to single example if DEFAULT_SONGS is not available
+            try {
+                // Load default songs from JSON file
+                const response = await fetch('js/data/defaultSongs.json');
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                // Check if data has the expected structure
+                if (data && data.songs && Array.isArray(data.songs) && data.songs.length > 0) {
+                    // Add all default songs
+                    data.songs.forEach(song => {
+                        this.songManager.addSong(song);
+                    });
+                    
+                    // Import setlists if present
+                    if (data.setlists && Array.isArray(data.setlists) && data.setlists.length > 0) {
+                        this.setlistManager.importSetlists(data.setlists);
+                    }
+                } else {
+                    // Fallback to single example if JSON structure is invalid
+                    this.songManager.addSong({
+                        artist: 'Bryan Adams',
+                        title: 'Summer of 69',
+                        verse: 'D A (3x)',
+                        chorus: 'Bm A D G (2x)',
+                        preChorus: 'D A (2x)',
+                        bridge: 'F B C B (2x)'
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading default songs from JSON:', error);
+                // Fallback to single example if JSON file cannot be loaded
                 this.songManager.addSong({
                     artist: 'Bryan Adams',
                     title: 'Summer of 69',
