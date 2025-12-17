@@ -7,7 +7,10 @@ class App {
         this.chordModal = new ChordModal();
         this.songDetailModal = new SongDetailModal(
             this.songManager,
-            (songId, skipTableSelection) => this.navigateToSong(songId, skipTableSelection)
+            (songId, skipTableSelection) => this.navigateToSong(songId, skipTableSelection),
+            () => this.loadAndRender(), // Refresh table when song is updated
+            this.chordModal, // Pass chordModal for chord button
+            (songId) => this.handleToggleFavorite(songId) // Pass favorite toggle handler
         );
         this.chordDetectorOverlay = new ChordDetectorOverlay();
         this.currentFilter = 'all';
@@ -35,8 +38,47 @@ class App {
         this.setupAddSongsToSetlistModal();
         this.setupImportExport();
         this.setupDeselect();
+        this.setupHeaderBarToggle();
         await this.addExampleSongIfEmpty();
         this.loadAndRender();
+    }
+    
+    setupHeaderBarToggle() {
+        const toggleBtn = document.getElementById('toggleHeaderBar');
+        const toggleBtnCollapsed = document.getElementById('toggleHeaderBarCollapsed');
+        const headerBar = document.getElementById('headerBar');
+        
+        if (!toggleBtn || !toggleBtnCollapsed || !headerBar) return;
+        
+        // Load saved state from localStorage
+        const isCollapsed = localStorage.getItem('headerBarCollapsed') === 'true';
+        if (isCollapsed) {
+            headerBar.classList.add('collapsed');
+            toggleBtn.style.display = 'none';
+            toggleBtnCollapsed.style.display = 'flex';
+        } else {
+            toggleBtn.style.display = 'flex';
+            toggleBtnCollapsed.style.display = 'none';
+        }
+        
+        const toggleCollapse = () => {
+            const isCurrentlyCollapsed = headerBar.classList.contains('collapsed');
+            
+            if (isCurrentlyCollapsed) {
+                headerBar.classList.remove('collapsed');
+                toggleBtn.style.display = 'flex';
+                toggleBtnCollapsed.style.display = 'none';
+                localStorage.setItem('headerBarCollapsed', 'false');
+            } else {
+                headerBar.classList.add('collapsed');
+                toggleBtn.style.display = 'none';
+                toggleBtnCollapsed.style.display = 'flex';
+                localStorage.setItem('headerBarCollapsed', 'true');
+            }
+        };
+        
+        toggleBtn.addEventListener('click', toggleCollapse);
+        toggleBtnCollapsed.addEventListener('click', toggleCollapse);
     }
 
     loadAndRender() {
@@ -618,16 +660,13 @@ class App {
         // Re-render table
         this.loadAndRender();
 
-        // Select the new row and scroll to it (but don't open modal)
+        // Open the detail modal with the new empty song
         setTimeout(() => {
-            this.tableRenderer.selectRow(newSong.id, true); // Skip callback to prevent modal opening
-            
-            // Enter edit mode for the entire row (so chord modal buttons are shown)
-            const row = document.querySelector(`tr[data-id="${newSong.id}"]`);
-            if (row) {
-                this.tableRenderer.toggleEditMode(newSong.id);
+            const song = this.songManager.getSongById(newSong.id);
+            if (song) {
+                this.songDetailModal.show(song);
             }
-        }, 100);
+        }, 50);
     }
 
     handleDelete(songId) {

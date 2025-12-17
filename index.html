@@ -15,43 +15,49 @@
         <header>
             <div class="header-top">
                 <h1>Interactive Chord Book</h1>
-                <div class="search-section">
-                    <div class="search-input-wrapper">
-                        <input type="text" id="searchInput" class="search-input" placeholder="🔍 Zoek op artiest of titel..." autocomplete="off">
-                        <button id="clearSearchBtn" class="clear-search-btn hidden" title="Zoekveld legen">×</button>
-                    </div>
-                </div>
+                <button id="toggleHeaderBarCollapsed" class="toggle-header-bar-btn collapsed-position" title="Toon knoppenbalk">▲</button>
             </div>
-            <div class="header-bar">
-                <!-- Filters Section -->
+            <div class="header-bar" id="headerBar">
+                <button id="toggleHeaderBar" class="toggle-header-bar-btn normal-position" title="Verberg knoppenbalk">▼</button>
+                
+                <!-- Filters & Search Section -->
                 <div class="header-section filters-section">
                     <span class="section-label">Filter:</span>
                     <div class="filter-buttons">
                         <button id="filterAll" class="filter-btn active">Alle</button>
                         <button id="filterFavorites" class="filter-btn">⭐ Favorieten</button>
                     </div>
-                </div>
-                
-                <!-- Setlist Management Section -->
-                <div class="header-section setlist-section">
-                    <span class="section-label">Setlist:</span>
-                    <div class="setlist-controls">
-                        <select id="setlistSelect" class="setlist-select">
-                            <option value="">Alle Songs</option>
-                        </select>
-                        <button id="createSetlistBtn" class="setlist-btn" title="Nieuwe Setlist">+ Setlist</button>
-                        <button id="deleteSetlistBtn" class="setlist-btn delete-setlist-btn hidden" title="Verwijder geselecteerde setlist">Verwijder</button>
+                    <div class="search-section-container">
+                        <div class="search-input-wrapper">
+                            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Zoek op artiest of titel..." autocomplete="off">
+                            <button id="clearSearchBtn" class="clear-search-btn hidden" title="Zoekveld legen">×</button>
+                        </div>
                     </div>
                 </div>
                 
-                <!-- Actions Section -->
-                <div class="header-section actions-section">
-                    <button id="addSongBtn" class="add-song-btn" title="Nieuwe Song Toevoegen">➕</button>
-                    <div class="import-export-controls">
-                        <button id="exportBtn" class="import-export-btn" title="Exporteer">📥</button>
-                        <label for="importFile" class="import-export-btn" title="Importeer">📤</label>
-                        <input type="file" id="importFile" accept=".json" style="display: none;">
-                        <button id="deleteAllSongsBtn" class="import-export-btn delete-all-btn" title="Verwijder alle songs">🗑️</button>
+                <!-- Right Section: Setlist & Actions -->
+                <div class="header-section right-section">
+                    <!-- Setlist Management -->
+                    <div class="setlist-group">
+                        <span class="section-label">Setlist:</span>
+                        <div class="setlist-controls">
+                            <select id="setlistSelect" class="setlist-select">
+                                <option value="">Alle Songs</option>
+                            </select>
+                            <button id="createSetlistBtn" class="setlist-btn" title="Nieuwe Setlist">+</button>
+                            <button id="deleteSetlistBtn" class="setlist-btn delete-setlist-btn hidden" title="Verwijder setlist">🗑️</button>
+                        </div>
+                    </div>
+                    
+                    <!-- Actions -->
+                    <div class="actions-group">
+                        <button id="addSongBtn" class="add-song-btn" title="Nieuwe Song Toevoegen">➕</button>
+                        <div class="import-export-controls">
+                            <button id="exportBtn" class="import-export-btn" title="Exporteer">📥</button>
+                            <label for="importFile" class="import-export-btn" title="Importeer">📤</label>
+                            <input type="file" id="importFile" accept=".json" style="display: none;">
+                            <button id="deleteAllSongsBtn" class="import-export-btn delete-all-btn" title="Verwijder alle songs">🗑️</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -195,9 +201,10 @@
             <div class="song-detail-header">
                 <button class="song-detail-nav-btn song-detail-prev" id="songDetailPrev" title="Vorige song">‹</button>
                 <div class="song-detail-title-section">
-                    <h2 id="songDetailArtist" class="song-detail-artist"></h2>
+                    <h2 id="songDetailArtist" class="song-detail-artist editable-field" data-field="artist" contenteditable="false"></h2>
                     <span class="song-detail-separator">-</span>
-                    <h1 id="songDetailTitle" class="song-detail-title"></h1>
+                    <h1 id="songDetailTitle" class="song-detail-title editable-field" data-field="title" contenteditable="false"></h1>
+                    <button id="songDetailFavoriteBtn" class="song-detail-favorite-btn" title="Voeg toe aan favorieten">☆</button>
                 </div>
                 <div class="song-detail-header-right">
                     <button class="song-detail-nav-btn song-detail-next" id="songDetailNext" title="Volgende song">›</button>
@@ -207,19 +214,22 @@
             <div class="song-detail-body">
                 <div class="song-chord-section" id="verseSection">
                     <h3 class="chord-section-title">Verse</h3>
-                    <div class="chord-section-content" id="verseContent"></div>
+                    <div class="chord-section-content editable-field" data-field="verse" id="verseContent" contenteditable="false"></div>
                 </div>
                 <div class="song-chord-section" id="preChorusSection">
                     <h3 class="chord-section-title">Pre-Chorus</h3>
-                    <div class="chord-section-content" id="preChorusContent"></div>
+                    <div class="chord-section-content editable-field" data-field="preChorus" id="preChorusContent" contenteditable="false"></div>
                 </div>
                 <div class="song-chord-section chorus-section" id="chorusSection">
                     <h3 class="chord-section-title">Chorus</h3>
-                    <div class="chord-section-content" id="chorusContent"></div>
+                    <div class="chord-section-content editable-field" data-field="chorus" id="chorusContent" contenteditable="false"></div>
                 </div>
                 <div class="song-chord-section" id="bridgeSection">
                     <h3 class="chord-section-title">Bridge</h3>
-                    <div class="chord-section-content" id="bridgeContent"></div>
+                    <div class="chord-section-content editable-field" data-field="bridge" id="bridgeContent" contenteditable="false"></div>
+                </div>
+                <div class="song-detail-actions">
+                    <button id="songDetailSaveBtn" class="song-detail-save-btn hidden">💾 Opslaan</button>
                 </div>
             </div>
         </div>

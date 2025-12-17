@@ -62,8 +62,6 @@ class TableRenderer {
         row.addEventListener('click', (e) => {
             // Don't select if clicking on buttons or input fields
             if (e.target.classList.contains('delete-btn') || 
-                e.target.classList.contains('edit-btn') ||
-                e.target.classList.contains('cancel-btn') ||
                 e.target.classList.contains('favorite-btn') ||
                 e.target.closest('.favorite-btn') ||
                 e.target.tagName === 'INPUT') {
@@ -84,18 +82,12 @@ class TableRenderer {
         const artistCell = this.createEditableCell(song.artist, 'artist', song.id);
         row.appendChild(artistCell);
 
-        // Songtitel (clickable for selection, editable via double-click)
+        // Songtitel (clickable for selection)
         const titleCell = document.createElement('td');
         titleCell.className = 'title-cell editable';
         titleCell.textContent = song.title || '';
         titleCell.dataset.field = 'title';
         titleCell.dataset.songId = song.id;
-        
-        // Double click edits the title
-        titleCell.addEventListener('dblclick', (e) => {
-            e.stopPropagation();
-            this.startEditing(titleCell, 'title', song.id);
-        });
         
         row.appendChild(titleCell);
 
@@ -140,34 +132,9 @@ class TableRenderer {
         bridgeCell.className += ' chord-cell';
         row.appendChild(bridgeCell);
 
-        // Actions cell with Edit, Cancel, Save and Delete buttons
+        // Actions cell with Delete button only
         const actionsCell = document.createElement('td');
         actionsCell.className = 'actions-cell';
-        
-        const editBtn = document.createElement('button');
-        editBtn.className = 'edit-btn';
-        editBtn.textContent = '✏️';
-        editBtn.title = 'Bewerken';
-        editBtn.dataset.songId = song.id;
-        editBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            this.toggleEditMode(song.id);
-        });
-        actionsCell.appendChild(editBtn);
-        
-        const cancelBtn = document.createElement('button');
-        cancelBtn.className = 'cancel-btn hidden';
-        cancelBtn.textContent = '❌';
-        cancelBtn.title = 'Annuleren';
-        cancelBtn.dataset.songId = song.id;
-        cancelBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            const row = this.tbody.querySelector(`tr[data-id="${song.id}"]`);
-            if (row) {
-                this.cancelRowEdit(song.id, row, song);
-            }
-        });
-        actionsCell.appendChild(cancelBtn);
         
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-btn';
@@ -406,19 +373,6 @@ class TableRenderer {
             inputs[0].focus();
             inputs[0].select();
         }
-
-        // Update edit button to save button
-        const editBtn = row.querySelector('.edit-btn');
-        if (editBtn) {
-            editBtn.textContent = '💾';
-            editBtn.title = 'Opslaan';
-        }
-        
-        // Show cancel button
-        const cancelBtn = row.querySelector('.cancel-btn');
-        if (cancelBtn) {
-            cancelBtn.classList.remove('hidden');
-        }
     }
 
     cancelRowEdit(songId, row, song) {
@@ -488,19 +442,6 @@ class TableRenderer {
         });
 
         this.editingRowId = null;
-
-        // Update edit button
-        const editBtn = row.querySelector('.edit-btn');
-        if (editBtn) {
-            editBtn.textContent = '✏️';
-            editBtn.title = 'Bewerken';
-        }
-        
-        // Hide cancel button
-        const cancelBtn = row.querySelector('.cancel-btn');
-        if (cancelBtn) {
-            cancelBtn.classList.add('hidden');
-        }
     }
 
     saveRowEdit(songId, row) {
@@ -536,18 +477,6 @@ class TableRenderer {
             });
         }
 
-        // Update edit button
-        const editBtn = row.querySelector('.edit-btn');
-        if (editBtn) {
-            editBtn.textContent = '✏️';
-            editBtn.title = 'Bewerken';
-        }
-        
-        // Hide cancel button
-        const cancelBtn = row.querySelector('.cancel-btn');
-        if (cancelBtn) {
-            cancelBtn.classList.add('hidden');
-        }
     }
 
     createEditableCell(value, field, songId) {
@@ -556,11 +485,6 @@ class TableRenderer {
         cell.textContent = value || '';
         cell.dataset.field = field;
         cell.dataset.songId = songId;
-
-
-        cell.addEventListener('dblclick', () => {
-            this.startEditing(cell, field, songId);
-        });
 
         return cell;
     }

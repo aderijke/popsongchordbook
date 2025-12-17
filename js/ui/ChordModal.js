@@ -87,16 +87,21 @@ class ChordModal {
     }
 
     show(inputElement, field) {
-        this.currentInput = inputElement;
-        this.currentField = field;
-        this.modal.classList.remove('hidden');
-        
-        // Check if this is a chord field
+        // Check if this is a chord field first
         const chordFields = ['verse', 'chorus', 'preChorus', 'bridge'];
         if (!chordFields.includes(field)) {
             // Don't show modal for non-chord fields
             return;
         }
+        
+        if (!this.modal) {
+            console.error('ChordModal: modal element not found');
+            return;
+        }
+        
+        this.currentInput = inputElement;
+        this.currentField = field;
+        this.modal.classList.remove('hidden');
         
         // Reset toggle states - hide Sus & Add and Special buttons by default, but keep category visible
         const susAddButtons = document.getElementById('susAddChords');
@@ -129,16 +134,58 @@ class ChordModal {
     }
 
     addChord(chord) {
-        // Add chord to custom input field instead of directly to table input
-        const currentCustomValue = this.customInput.value.trim();
-        const separator = currentCustomValue ? ' ' : '';
-        this.customInput.value = currentCustomValue + separator + chord;
+        // Check if we should insert directly into contenteditable element
+        const isContentEditable = this.currentInput && 
+            this.currentInput.hasAttribute && 
+            this.currentInput.hasAttribute('contenteditable') && 
+            (this.currentInput.getAttribute('contenteditable') === 'true' || this.currentInput.contentEditable === 'true');
         
-        // Focus on custom input
-        this.customInput.focus();
-        // Move cursor to end
-        const len = this.customInput.value.length;
-        this.customInput.setSelectionRange(len, len);
+        if (isContentEditable && this.currentInput) {
+            // Insert chord directly into contenteditable at cursor position
+            const selection = window.getSelection();
+            let range = selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
+            
+            // Check if range is inside the currentInput element
+            const rangeInElement = range && (
+                range.commonAncestorContainer === this.currentInput || 
+                this.currentInput.contains(range.commonAncestorContainer)
+            );
+            
+            if (!range || !rangeInElement) {
+                // No valid selection in this element, insert at end
+                range = document.createRange();
+                range.selectNodeContents(this.currentInput);
+                range.collapse(false);
+            }
+            
+            // Insert chord with space before if needed
+            const textBefore = range.startContainer.textContent ? range.startContainer.textContent.substring(0, range.startOffset) : '';
+            const needsSpace = textBefore.length > 0 && !textBefore.endsWith(' ') && !textBefore.endsWith('\n');
+            const textToInsert = (needsSpace ? ' ' : '') + chord;
+            
+            const textNode = document.createTextNode(textToInsert);
+            range.insertNode(textNode);
+            
+            // Move cursor after inserted text
+            range.setStartAfter(textNode);
+            range.collapse(true);
+            selection.removeAllRanges();
+            selection.addRange(range);
+            
+            // Keep focus on contenteditable element
+            this.currentInput.focus();
+        } else {
+            // Add chord to custom input field instead of directly to table input
+            const currentCustomValue = this.customInput.value.trim();
+            const separator = currentCustomValue ? ' ' : '';
+            this.customInput.value = currentCustomValue + separator + chord;
+            
+            // Focus on custom input
+            this.customInput.focus();
+            // Move cursor to end
+            const len = this.customInput.value.length;
+            this.customInput.setSelectionRange(len, len);
+        }
     }
 
     addCustomChords() {
@@ -146,22 +193,59 @@ class ChordModal {
         
         const customChords = this.customInput.value.trim();
         if (customChords) {
-            // Get current value from table input
-            const currentValue = this.currentInput.value.trim();
-            // Add new chords after existing chords with a space
-            const separator = currentValue ? ' ' : '';
-            this.currentInput.value = currentValue + separator + customChords;
+            // Check if this is a contenteditable element or an input element
+            const isContentEditable = this.currentInput.hasAttribute && 
+                this.currentInput.hasAttribute('contenteditable') &&
+                (this.currentInput.getAttribute('contenteditable') === 'true' || this.currentInput.contentEditable === 'true');
+            
+            if (isContentEditable) {
+                // Handle contenteditable element
+                const selection = window.getSelection();
+                let range = selection.rangeCount > 0 ? selection.getRangeAt(0) : null;
+                
+                // Check if range is inside the currentInput element
+                const rangeInElement = range && (
+                    range.commonAncestorContainer === this.currentInput || 
+                    this.currentInput.contains(range.commonAncestorContainer)
+                );
+                
+                if (!range || !rangeInElement) {
+                    // No valid selection, insert at end
+                    range = document.createRange();
+                    range.selectNodeContents(this.currentInput);
+                    range.collapse(false);
+                }
+                
+                // Insert chords at cursor position
+                const textNode = document.createTextNode(customChords);
+                range.insertNode(textNode);
+                
+                // Move cursor after inserted text
+                range.setStartAfter(textNode);
+                range.collapse(true);
+                selection.removeAllRanges();
+                selection.addRange(range);
+                
+                // Focus the contenteditable element
+                this.currentInput.focus();
+            } else {
+                // Handle regular input element
+                const currentValue = this.currentInput.value.trim();
+                // Add new chords after existing chords with a space
+                const separator = currentValue ? ' ' : '';
+                this.currentInput.value = currentValue + separator + customChords;
+                
+                // Keep table input focused
+                setTimeout(() => {
+                    this.currentInput.focus();
+                    // Move cursor to end
+                    const len = this.currentInput.value.length;
+                    this.currentInput.setSelectionRange(len, len);
+                }, 10);
+            }
             
             // Clear custom input
             this.customInput.value = '';
-            
-            // Keep table input focused
-            setTimeout(() => {
-                this.currentInput.focus();
-                // Move cursor to end
-                const len = this.currentInput.value.length;
-                this.currentInput.setSelectionRange(len, len);
-            }, 10);
             
             // Close modal after adding chords
             this.hide();

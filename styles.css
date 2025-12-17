@@ -78,11 +78,65 @@ header::before {
     justify-content: center;
     align-items: center;
     position: relative;
-    margin-bottom: 25px;
+    margin-bottom: 15px;
     width: 100%;
     max-width: 1400px;
     margin-left: auto;
     margin-right: auto;
+}
+
+.toggle-header-bar-btn {
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid var(--border-color);
+    color: var(--text-color);
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    padding: 0;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    z-index: 10;
+    flex-shrink: 0;
+}
+
+.toggle-header-bar-btn.normal-position {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+}
+
+.toggle-header-bar-btn.collapsed-position {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.toggle-header-bar-btn.normal-position:hover {
+    background: white;
+    border-color: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.toggle-header-bar-btn.normal-position:active {
+    transform: translateY(0);
+}
+
+.toggle-header-bar-btn.collapsed-position:hover {
+    background: white;
+    border-color: var(--secondary-color);
+    transform: translateY(calc(-50% - 2px));
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.toggle-header-bar-btn.collapsed-position:active {
+    transform: translateY(-50%);
 }
 
 header h1 {
@@ -90,7 +144,7 @@ header h1 {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
-    font-size: 3.5em;
+    font-size: 2em;
     font-weight: 800;
     letter-spacing: -0.02em;
     text-shadow: 0 2px 10px rgba(102, 126, 234, 0.1);
@@ -99,13 +153,10 @@ header h1 {
 }
 
 .search-section {
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
     flex: 0 0 auto;
-    max-width: 400px;
+    max-width: 300px;
     min-width: 200px;
+    margin-left: auto;
 }
 
 /* Header Bar - Main container for all controls */
@@ -114,22 +165,48 @@ header h1 {
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
-    gap: 20px;
+    gap: 15px;
     width: 100%;
     max-width: 1400px;
     margin: 0 auto;
     background: white;
-    padding: 20px 25px;
+    padding: 12px 50px 12px 25px;
     border-radius: 16px;
     box-shadow: var(--card-shadow);
     border: 1px solid var(--border-color);
+    transition: max-height 0.3s ease, padding 0.3s ease, margin 0.3s ease, opacity 0.3s ease;
+    overflow: hidden;
+    max-height: 1000px;
+    position: relative;
+}
+
+.header-bar.collapsed {
+    max-height: 0;
+    padding: 0 25px;
+    margin: 0 auto;
+    opacity: 0;
+    border: none;
+    box-shadow: none;
+    overflow: hidden;
+}
+
+.header-bar.collapsed .header-section {
+    display: none !important;
+    visibility: hidden;
+    opacity: 0;
+    height: 0;
+    overflow: hidden;
+}
+
+.header-bar.collapsed .toggle-header-bar-btn.normal-position {
+    display: none !important;
 }
 
 /* Header Section - Individual sections within header bar */
 .header-section {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     flex-wrap: wrap;
 }
 
@@ -140,6 +217,11 @@ header h1 {
     background: var(--border-color);
     margin-left: 10px;
     opacity: 0.5;
+}
+
+/* Remove separator for search section */
+.search-section-container::after {
+    display: none;
 }
 
 @media (max-width: 768px) {
@@ -158,34 +240,54 @@ header h1 {
 
 /* Filters Section */
 .filters-section {
-    flex: 0 0 auto;
+    flex: 1 1 auto;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
 }
 
 .filter-buttons {
     display: flex;
     gap: 8px;
     align-items: center;
+    flex-shrink: 0;
 }
 
-/* Setlist Section */
-.setlist-section {
+/* Search Section Container - now part of filters section */
+.search-section-container {
     flex: 1 1 auto;
     min-width: 200px;
-    justify-content: flex-start;
-}
-
-/* Actions Section */
-.actions-section {
-    flex: 0 0 auto;
-    justify-content: flex-end;
-    margin-left: auto;
-}
-
-/* Search section - positioned in header top */
-.search-section {
-    flex: 1;
     max-width: 400px;
-    min-width: 200px;
+}
+
+.search-section-container .search-input-wrapper {
+    width: 100%;
+    max-width: 100%;
+}
+
+/* Right Section: Setlist & Actions */
+.right-section {
+    flex: 0 0 auto;
+    align-items: center;
+    gap: 20px;
+}
+
+.setlist-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.setlist-controls {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.actions-group {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .import-export-controls {
@@ -198,9 +300,9 @@ header h1 {
     background: rgba(255, 255, 255, 0.9);
     color: var(--primary-color);
     border: 2px solid var(--border-color);
-    padding: 10px 16px;
-    font-size: 1.1em;
-    border-radius: 10px;
+    padding: 8px 12px;
+    font-size: 1em;
+    border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
     transition: all 0.2s ease;
@@ -208,8 +310,8 @@ header h1 {
     display: flex;
     align-items: center;
     justify-content: center;
-    min-width: 44px;
-    height: 44px;
+    min-width: 38px;
+    height: 38px;
     font-family: inherit;
 }
 
@@ -242,15 +344,17 @@ header h1 {
     background: rgba(255, 255, 255, 0.9);
     color: var(--primary-color);
     border: 2px solid var(--border-color);
-    padding: 10px 16px;
+    padding: 8px 14px;
     font-size: 0.9em;
-    border-radius: 10px;
+    border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
     transition: all 0.2s ease;
     font-family: inherit;
     min-width: 140px;
     max-width: 200px;
+    height: 38px;
+    box-sizing: border-box;
 }
 
 .setlist-select:hover {
@@ -268,14 +372,19 @@ header h1 {
     background: rgba(255, 255, 255, 0.9);
     color: var(--primary-color);
     border: 2px solid var(--border-color);
-    padding: 10px 16px;
+    padding: 8px 12px;
     font-size: 0.9em;
-    border-radius: 10px;
+    border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
     transition: all 0.2s ease;
     white-space: nowrap;
     flex-shrink: 0;
+    min-width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
 .setlist-btn:hover {
@@ -313,10 +422,10 @@ header h1 {
 
 .search-input {
     width: 100%;
-    padding: 12px 40px 12px 20px;
+    padding: 10px 40px 10px 16px;
     border: 2px solid var(--border-color);
-    border-radius: 10px;
-    font-size: 1em;
+    border-radius: 8px;
+    font-size: 0.95em;
     font-family: inherit;
     background: white;
     transition: all 0.2s ease;
@@ -407,9 +516,9 @@ header h1 {
     background: var(--bg-gradient);
     color: white;
     border: none;
-    padding: 12px 24px;
+    padding: 10px 20px;
     font-size: 0.95em;
-    border-radius: 10px;
+    border-radius: 8px;
     cursor: pointer;
     font-weight: 600;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -418,8 +527,8 @@ header h1 {
     overflow: hidden;
     white-space: nowrap;
     flex-shrink: 0;
-    min-width: 44px;
-    height: 44px;
+    min-width: 38px;
+    height: 38px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -991,6 +1100,34 @@ td:has(.row-edit-input.input-focused) {
     transform: scale(0.95);
 }
 
+.chord-modal-btn-detail {
+    background: var(--secondary-color);
+    border: 2px solid var(--secondary-color);
+    border-radius: 6px;
+    color: white;
+    font-size: 1em;
+    padding: 4px 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    line-height: 1;
+    min-width: 32px;
+    height: 28px;
+}
+
+.chord-modal-btn-detail:hover {
+    background: var(--accent-color);
+    border-color: var(--accent-color);
+    transform: scale(1.05);
+}
+
+.chord-modal-btn-detail:active {
+    transform: scale(0.95);
+}
+
 .delete-btn {
     background: rgba(239, 68, 68, 0.1);
     color: #ef4444;
@@ -1103,18 +1240,14 @@ td:has(.row-edit-input.input-focused) {
     }
     
     header h1 {
-        font-size: 2.5em;
+        font-size: 1.75em;
         text-align: center;
     }
     
     .search-section {
-        position: static;
-        transform: none;
         max-width: 100%;
-    }
-    
-    .search-section {
-        max-width: 100%;
+        margin-left: 0;
+        width: 100%;
     }
     
     .header-bar {
@@ -1139,8 +1272,9 @@ td:has(.row-edit-input.input-focused) {
     }
     
     .filters-section,
-    .setlist-section,
-    .actions-section {
+    .search-section-container,
+    .right-section {
+        width: 100%;
         flex-direction: column;
         align-items: stretch;
         gap: 10px;
@@ -1157,13 +1291,25 @@ td:has(.row-edit-input.input-focused) {
         flex-wrap: wrap;
     }
     
+    .search-section-container {
+        max-width: 100%;
+    }
+    
+    .setlist-group,
+    .actions-group {
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 10px;
+    }
+    
     .setlist-select {
         flex: 1;
         min-width: 0;
         max-width: none;
     }
     
-    .actions-section {
+    .actions-group {
         flex-direction: row;
         justify-content: stretch;
     }
@@ -1257,7 +1403,7 @@ td:has(.row-edit-input.input-focused) {
     }
     
     header h1 {
-        font-size: 2em;
+        font-size: 1.5em;
     }
     
     .add-song-btn {
@@ -1959,6 +2105,35 @@ td:has(.row-edit-input.input-focused) {
     min-width: 0;
 }
 
+.song-detail-favorite-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.5em;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.song-detail-favorite-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.9);
+    transform: scale(1.1);
+}
+
+.song-detail-favorite-btn.favorite-active {
+    color: #fbbf24;
+    text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
+}
+
+.song-detail-favorite-btn.favorite-active:hover {
+    color: #f59e0b;
+    text-shadow: 0 0 15px rgba(251, 191, 36, 0.7);
+}
+
 .song-detail-separator {
     color: rgba(255, 255, 255, 0.7);
     font-size: 1.2em;
@@ -1974,6 +2149,19 @@ td:has(.row-edit-input.input-focused) {
     margin: 0;
     letter-spacing: 0.5px;
     white-space: nowrap;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    min-height: 1.5em;
+}
+
+.song-detail-artist:hover {
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .song-detail-title {
@@ -1985,6 +2173,19 @@ td:has(.row-edit-input.input-focused) {
     letter-spacing: -0.02em;
     flex: 1;
     min-width: 0;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: background 0.2s ease;
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    min-height: 1.5em;
+}
+
+.song-detail-title:hover {
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .song-detail-header-right {
@@ -2094,6 +2295,14 @@ td:has(.row-edit-input.input-focused) {
     margin: 0 0 12px 0;
     text-transform: uppercase;
     letter-spacing: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.chord-section-title-text {
+    flex: 1;
 }
 
 .song-chord-section.chorus-section .chord-section-title {
@@ -2117,7 +2326,78 @@ td:has(.row-edit-input.input-focused) {
     color: #92400e;
 }
 
+.chord-section-content.editable-field {
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background 0.2s ease, border 0.2s ease;
+    border: 2px solid transparent;
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+}
+
+.chord-section-content.editable-field:hover {
+    background: var(--hover-color);
+    border-color: var(--border-color);
+}
+
+.chord-section-content.editable-field.editing {
+    background: white;
+    border-color: var(--secondary-color);
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+}
+
 .song-chord-section.hidden {
+    display: none;
+}
+
+.song-detail-artist.editable-field.editing,
+.song-detail-title.editable-field.editing {
+    background: rgba(255, 255, 255, 0.2);
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+}
+
+.song-detail-actions {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    border-top: 2px solid var(--border-color);
+    margin-top: 20px;
+}
+
+.song-detail-save-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    font-size: 1.1em;
+    font-weight: 600;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: 'Inter', sans-serif;
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+}
+
+.song-detail-save-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(102, 126, 234, 0.4);
+}
+
+.song-detail-save-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+}
+
+.song-detail-save-btn.hidden {
     display: none;
 }
 
@@ -2293,10 +2573,16 @@ td:has(.row-edit-input.input-focused) {
     box-shadow: var(--card-shadow);
     min-width: 250px;
     max-width: 300px;
-    transition: left 0s, top 0s;
+    transition: left 0s, top 0s, min-width 0.3s ease, border-radius 0.3s ease;
     font-family: 'Inter', sans-serif;
     overflow: visible;
     /* Ensure body is visible by default */
+}
+
+.chord-detector-overlay.minimized {
+    min-width: 180px;
+    max-width: 200px;
+    border-radius: 8px;
 }
 
 .chord-detector-overlay.minimized .chord-detector-body {
@@ -2324,6 +2610,13 @@ td:has(.row-edit-input.input-focused) {
     border-bottom: 2px solid var(--border-color);
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 12px 12px 0 0;
+    transition: padding 0.3s ease, border-radius 0.3s ease;
+}
+
+.chord-detector-overlay.minimized .chord-detector-header {
+    padding: 8px 12px;
+    border-radius: 8px;
+    border-bottom: none;
 }
 
 .chord-detector-header h3 {
@@ -2331,6 +2624,11 @@ td:has(.row-edit-input.input-focused) {
     color: white;
     font-size: 1.1em;
     font-weight: 600;
+    transition: font-size 0.3s ease;
+}
+
+.chord-detector-overlay.minimized .chord-detector-header h3 {
+    font-size: 0.9em;
 }
 
 .chord-detector-header-buttons {
@@ -2382,11 +2680,17 @@ td:has(.row-edit-input.input-focused) {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.2s ease;
+    transition: background 0.2s ease, width 0.3s ease, height 0.3s ease, font-size 0.3s ease;
 }
 
 .chord-detector-minimize-btn:hover {
     background: rgba(255, 255, 255, 0.3);
+}
+
+.chord-detector-overlay.minimized .chord-detector-minimize-btn {
+    width: 22px;
+    height: 22px;
+    font-size: 12px;
 }
 
 .chord-detector-body {

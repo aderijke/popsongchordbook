@@ -18,21 +18,14 @@ class ChordDetectorOverlay {
         this.isDragging = false;
         this.dragOffset = { x: 0, y: 0 };
         
-        // Ensure overlay is not minimized by default
+        // Start minimized by default
         if (this.overlay) {
-            this.overlay.classList.remove('minimized');
-            this.isMinimized = false;
-            // Force body to be visible
-            const body = this.overlay.querySelector('.chord-detector-body');
-            if (body) {
-                body.style.display = 'flex';
-                body.style.visibility = 'visible';
-                body.style.opacity = '1';
-            }
-            // Update button to show minimize icon (not maximize)
+            this.overlay.classList.add('minimized');
+            this.isMinimized = true;
+            // Update button to show maximize icon (not minimize)
             if (this.minimizeButton) {
-                this.minimizeButton.textContent = '🔻';
-                this.minimizeButton.title = 'Minimaliseer';
+                this.minimizeButton.textContent = '🔺';
+                this.minimizeButton.title = 'Maximaliseer';
             }
             // Load saved position
             this.loadPosition();
