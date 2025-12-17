@@ -680,6 +680,39 @@ class TableRenderer {
                 input.dataset.songId = songId;
                 inputs.push(input);
                 
+                // Make input wider on focus to show all content
+                input.addEventListener('focus', () => {
+                    input.classList.add('input-focused');
+                    
+                    // Calculate width based on actual content width
+                    const minWidth = 200;
+                    const maxWidth = Math.min(1000, window.innerWidth * 0.95);
+                    
+                    // Create a temporary span to measure text width
+                    const measureSpan = document.createElement('span');
+                    measureSpan.style.position = 'absolute';
+                    measureSpan.style.visibility = 'hidden';
+                    measureSpan.style.whiteSpace = 'pre';
+                    measureSpan.style.font = window.getComputedStyle(input).font;
+                    measureSpan.textContent = input.value || input.placeholder || 'M';
+                    document.body.appendChild(measureSpan);
+                    
+                    const textWidth = measureSpan.offsetWidth;
+                    document.body.removeChild(measureSpan);
+                    
+                    // Add padding (36px = 18px left + 18px right)
+                    const contentWidth = textWidth + 36;
+                    const finalWidth = Math.max(minWidth, Math.min(maxWidth, contentWidth));
+                    input.style.width = `${finalWidth}px`;
+                    input.style.minWidth = `${finalWidth}px`;
+                });
+
+                input.addEventListener('blur', () => {
+                    input.classList.remove('input-focused');
+                    input.style.width = '';
+                    input.style.minWidth = '';
+                });
+                
                 // Create chord modal button
                 const chordBtn = document.createElement('button');
                 chordBtn.type = 'button';
@@ -692,7 +725,7 @@ class TableRenderer {
                         this.chordModal.show(input, field);
                     }
                 });
-                
+
                 inputWrapper.appendChild(input);
                 inputWrapper.appendChild(chordBtn);
                 
@@ -735,6 +768,39 @@ class TableRenderer {
                 input.dataset.field = field;
                 input.dataset.songId = songId;
                 inputs.push(input);
+
+                // Make input wider on focus to show all content
+                input.addEventListener('focus', () => {
+                    input.classList.add('input-focused');
+                    
+                    // Calculate width based on actual content width
+                    const minWidth = 200;
+                    const maxWidth = Math.min(1000, window.innerWidth * 0.95);
+                    
+                    // Create a temporary span to measure text width
+                    const measureSpan = document.createElement('span');
+                    measureSpan.style.position = 'absolute';
+                    measureSpan.style.visibility = 'hidden';
+                    measureSpan.style.whiteSpace = 'pre';
+                    measureSpan.style.font = window.getComputedStyle(input).font;
+                    measureSpan.textContent = input.value || input.placeholder || 'M';
+                    document.body.appendChild(measureSpan);
+                    
+                    const textWidth = measureSpan.offsetWidth;
+                    document.body.removeChild(measureSpan);
+                    
+                    // Add padding (36px = 18px left + 18px right)
+                    const contentWidth = textWidth + 36;
+                    const finalWidth = Math.max(minWidth, Math.min(maxWidth, contentWidth));
+                    input.style.width = `${finalWidth}px`;
+                    input.style.minWidth = `${finalWidth}px`;
+                });
+
+                input.addEventListener('blur', () => {
+                    input.classList.remove('input-focused');
+                    input.style.width = '';
+                    input.style.minWidth = '';
+                });
 
                 // Tab navigation between inputs
                 input.addEventListener('keydown', (e) => {

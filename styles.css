@@ -820,13 +820,46 @@ td input:focus {
     font-size: inherit;
     font-family: inherit;
     background: white;
-    transition: all 0.2s ease;
+    transition: all 0.3s ease;
+    min-height: 36px;
 }
 
 .row-edit-input:focus {
     outline: none;
     border-color: var(--accent-color);
     box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+/* Make input wider when focused to show all content */
+.row-edit-input.input-focused {
+    z-index: 1000;
+    padding: 12px 16px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-width: 3px;
+    /* Width will be set by JavaScript based on content */
+}
+
+/* Ensure parent cell allows input to expand */
+td:has(.row-edit-input.input-focused) {
+    overflow: visible !important;
+    position: relative;
+    z-index: 100;
+}
+
+.chord-input-wrapper:has(.row-edit-input.input-focused) {
+    overflow: visible;
+    position: relative;
+    z-index: 100;
+}
+
+/* For chord input wrapper, make sure input can expand */
+.chord-input-wrapper .row-edit-input.input-focused {
+    flex: 0 0 auto;
+}
+
+/* Allow table to expand when input is focused */
+.table-wrapper:has(.row-edit-input.input-focused) {
+    overflow: visible;
 }
 
 /* Chord input wrapper for edit mode */
