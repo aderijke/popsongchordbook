@@ -2928,7 +2928,8 @@ td:has(.row-edit-input.input-focused) {
 
 @media print {
     @page {
-        margin: 12mm;
+        size: A4 portrait;
+        margin: 10mm;
     }
 
     * {
@@ -2940,6 +2941,7 @@ td:has(.row-edit-input.input-focused) {
         background: white;
         margin: 0;
         padding: 0;
+        font-size: 11px;
     }
 
     .container {
@@ -2971,13 +2973,16 @@ td:has(.row-edit-input.input-focused) {
         width: 100%;
         border-collapse: collapse;
         box-shadow: none;
+        table-layout: fixed;
     }
 
     #songsTable th,
     #songsTable td {
         border: 1px solid #cbd5e1;
-        padding: 8px 10px;
+        padding: 6px 8px;
         color: #0f172a;
+        word-break: break-word;
+        white-space: normal;
     }
 
     #songsTable thead th {
@@ -2991,18 +2996,38 @@ td:has(.row-edit-input.input-focused) {
 
     #songsTable .actions-column,
     #songsTable .actions-cell,
+    #songsTable .favorite-column,
+    #songsTable td.favorite-cell,
+    #songsTable th:nth-child(4),
+    #songsTable td:nth-child(4),
     .delete-btn {
         display: none !important;
     }
 
-    #songsTable .favorite-btn {
-        display: inline;
-        border: none;
-        background: none;
-        padding: 0;
-        color: #0f172a;
-        font-size: 1em;
-        box-shadow: none;
+    /* Fixed column widths so the core song data fits on portrait A4 */
+    #songsTable th:nth-child(1),
+    #songsTable td:nth-child(1) {
+        width: 18%;
+    }
+
+    #songsTable th:nth-child(2),
+    #songsTable td:nth-child(2) {
+        width: 20%;
+    }
+
+    #songsTable th:nth-child(5),
+    #songsTable td:nth-child(5) {
+        width: 20%;
+    }
+
+    #songsTable th:nth-child(6),
+    #songsTable td:nth-child(6) {
+        width: 21%;
+    }
+
+    #songsTable th:nth-child(7),
+    #songsTable td:nth-child(7) {
+        width: 21%;
     }
 
     #songsTable .chorus-cell {
