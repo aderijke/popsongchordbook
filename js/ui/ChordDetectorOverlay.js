@@ -10,9 +10,21 @@ class ChordDetectorOverlay {
         this.microphoneSelect = document.getElementById('microphoneSelect');
         this.header = this.overlay ? this.overlay.querySelector('.chord-detector-header') : null;
         
+        // Chord history elements
+        this.chordHistoryList = document.getElementById('chordHistory');
+        this.clearHistoryButton = document.getElementById('clearChordHistory');
+        this.copyHistoryButton = document.getElementById('copyChordHistory');
+        
+        // Drag state for chord history
+        this.draggedChordIndex = null;
+        
         this.chordDetector = new ChordDetector();
         this.isMinimized = false;
         this.isActive = false;
+        
+        // Chord history state
+        this.chordHistory = [];
+        this.maxHistoryLength = 50; // Maximum number of chords to keep
         
         // Dragging state
         this.isDragging = false;
@@ -35,6 +47,7 @@ class ChordDetectorOverlay {
         this.setupChordDetector();
         this.setupDragging();
         this.setupMicrophoneSelection();
+        this.loadChordHistory();
     }
     
     setupEventListeners() {
@@ -54,6 +67,20 @@ class ChordDetectorOverlay {
             this.minimizeButton.addEventListener('click', (e) => {
                 e.stopPropagation(); // Prevent dragging when clicking minimize
                 this.toggleMinimize();
+            });
+        }
+        
+        // Clear history button
+        if (this.clearHistoryButton) {
+            this.clearHistoryButton.addEventListener('click', () => {
+                this.clearChordHistory();
+            });
+        }
+        
+        // Copy history button
+        if (this.copyHistoryButton) {
+            this.copyHistoryButton.addEventListener('click', () => {
+                this.copyChordHistoryToClipboard();
             });
         }
     }
@@ -170,7 +197,12 @@ class ChordDetectorOverlay {
     setupChordDetector() {
         // Set up chord detection callbacks
         this.chordDetector.setOnChordDetected((chord, confidence) => {
-            this.updateChordDisplay(chord, confidence);
+            // Only update display when a chord is actually detected
+            // Keep the last chord visible when nothing is detected
+            if (chord) {
+                this.updateChordDisplay(chord, confidence);
+                this.addToChordHistory(chord);
+            }
         });
         
         this.chordDetector.setOnStatusChange((status, message) => {
@@ -217,28 +249,27 @@ class ChordDetectorOverlay {
         this.chordDetector.stopListening();
         this.isActive = false;
         this.updateToggleButton(false);
-        this.updateChordDisplay(null, 0);
+        // Don't clear the chord display - keep the last detected chord visible
+        // this.updateChordDisplay(null, 0);
         this.updateAudioLevel(0);
     }
     
     updateChordDisplay(chord, confidence) {
         if (this.chordDisplay) {
+            // Only update if we have an actual chord - NEVER clear the display
             if (chord) {
                 this.chordDisplay.textContent = chord;
                 this.chordDisplay.classList.remove('no-chord');
                 this.chordDisplay.classList.add('detected-chord');
+                this.lastDetectedChord = chord; // Store last chord
                 
                 // Add confidence indicator (optional visual feedback)
                 if (confidence) {
                     const opacity = Math.min(1, 0.6 + (confidence * 0.4));
                     this.chordDisplay.style.opacity = opacity;
                 }
-            } else {
-                this.chordDisplay.textContent = '--';
-                this.chordDisplay.classList.remove('detected-chord');
-                this.chordDisplay.classList.add('no-chord');
-                this.chordDisplay.style.opacity = '0.5';
             }
+            // If chord is null/undefined, do nothing - keep the last chord visible
         }
     }
     
@@ -432,6 +463,242 @@ class ChordDetectorOverlay {
     // Public method to get current detected chord (if needed by other components)
     getCurrentChord() {
         return this.chordDetector.getDetectedChord();
+    }
+    
+    // Chord History Methods
+    addToChordHistory(chord) {
+        if (!chord) return;
+        
+        // Don't add if it's the same as the last chord
+        if (this.chordHistory.length > 0 && this.chordHistory[this.chordHistory.length - 1] === chord) {
+            return;
+        }
+        
+        this.chordHistory.push(chord);
+        
+        // Limit history length
+        if (this.chordHistory.length > this.maxHistoryLength) {
+            this.chordHistory.shift();
+        }
+        
+        this.renderChordHistory();
+        this.saveChordHistory();
+    }
+    
+    removeFromChordHistory(index) {
+        if (index >= 0 && index < this.chordHistory.length) {
+            this.chordHistory.splice(index, 1);
+            this.renderChordHistory();
+            this.saveChordHistory();
+        }
+    }
+    
+    moveChordInHistory(fromIndex, toIndex) {
+        if (fromIndex === toIndex) return;
+        if (fromIndex < 0 || fromIndex >= this.chordHistory.length) return;
+        if (toIndex < 0 || toIndex > this.chordHistory.length) return;
+        
+        const chord = this.chordHistory.splice(fromIndex, 1)[0];
+        
+        // Adjust toIndex if needed after removal
+        if (fromIndex < toIndex) {
+            toIndex--;
+        }
+        
+        this.chordHistory.splice(toIndex, 0, chord);
+        this.renderChordHistory();
+        this.saveChordHistory();
+    }
+    
+    clearChordHistory() {
+        this.chordHistory = [];
+        this.renderChordHistory();
+        this.saveChordHistory();
+    }
+    
+    renderChordHistory() {
+        if (!this.chordHistoryList) return;
+        
+        this.chordHistoryList.innerHTML = '';
+        
+        if (this.chordHistory.length === 0) {
+            this.chordHistoryList.innerHTML = '<div style="color: #999; font-size: 0.8em; padding: 8px 0;">Nog geen akkoorden gedetecteerd</div>';
+            return;
+        }
+        
+        this.chordHistory.forEach((chord, index) => {
+            const item = document.createElement('div');
+            item.className = 'chord-history-item';
+            item.draggable = true;
+            item.dataset.index = index;
+            
+            const chordName = document.createElement('span');
+            chordName.className = 'chord-name';
+            chordName.textContent = chord;
+            
+            const removeBtn = document.createElement('button');
+            removeBtn.className = 'remove-chord';
+            removeBtn.textContent = '×';
+            removeBtn.title = 'Verwijder akkoord';
+            removeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.removeFromChordHistory(index);
+            });
+            
+            // Drag & drop events
+            item.addEventListener('dragstart', (e) => {
+                this.draggedChordIndex = index;
+                item.classList.add('dragging');
+                e.dataTransfer.effectAllowed = 'move';
+                e.dataTransfer.setData('text/plain', index.toString());
+            });
+            
+            item.addEventListener('dragend', () => {
+                item.classList.remove('dragging');
+                this.draggedChordIndex = null;
+                // Remove all drag-over classes
+                this.chordHistoryList.querySelectorAll('.chord-history-item').forEach(el => {
+                    el.classList.remove('drag-over', 'drag-over-left', 'drag-over-right');
+                });
+            });
+            
+            item.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+                
+                if (this.draggedChordIndex === null || this.draggedChordIndex === index) return;
+                
+                // Determine if dropping before or after this item
+                const rect = item.getBoundingClientRect();
+                const midpoint = rect.left + rect.width / 2;
+                
+                item.classList.remove('drag-over-left', 'drag-over-right');
+                if (e.clientX < midpoint) {
+                    item.classList.add('drag-over-left');
+                } else {
+                    item.classList.add('drag-over-right');
+                }
+                item.classList.add('drag-over');
+            });
+            
+            item.addEventListener('dragleave', () => {
+                item.classList.remove('drag-over', 'drag-over-left', 'drag-over-right');
+            });
+            
+            item.addEventListener('drop', (e) => {
+                e.preventDefault();
+                item.classList.remove('drag-over', 'drag-over-left', 'drag-over-right');
+                
+                if (this.draggedChordIndex === null || this.draggedChordIndex === index) return;
+                
+                // Determine drop position
+                const rect = item.getBoundingClientRect();
+                const midpoint = rect.left + rect.width / 2;
+                let targetIndex = index;
+                
+                if (e.clientX >= midpoint && this.draggedChordIndex < index) {
+                    targetIndex = index;
+                } else if (e.clientX < midpoint && this.draggedChordIndex > index) {
+                    targetIndex = index;
+                } else if (e.clientX >= midpoint) {
+                    targetIndex = index + 1;
+                }
+                
+                this.moveChordInHistory(this.draggedChordIndex, targetIndex);
+            });
+            
+            item.appendChild(chordName);
+            item.appendChild(removeBtn);
+            this.chordHistoryList.appendChild(item);
+        });
+        
+        // Scroll to the end to show latest chord
+        this.chordHistoryList.scrollTop = this.chordHistoryList.scrollHeight;
+    }
+    
+    saveChordHistory() {
+        try {
+            localStorage.setItem('chordHistory', JSON.stringify(this.chordHistory));
+        } catch (e) {
+            console.warn('Failed to save chord history:', e);
+        }
+    }
+    
+    loadChordHistory() {
+        try {
+            const saved = localStorage.getItem('chordHistory');
+            if (saved) {
+                this.chordHistory = JSON.parse(saved);
+                this.renderChordHistory();
+            } else {
+                this.renderChordHistory(); // Show empty state
+            }
+        } catch (e) {
+            console.warn('Failed to load chord history:', e);
+            this.chordHistory = [];
+            this.renderChordHistory();
+        }
+    }
+    
+    // Get the chord history (for external use)
+    getChordHistory() {
+        return [...this.chordHistory];
+    }
+    
+    // Copy chord history to clipboard
+    async copyChordHistoryToClipboard() {
+        if (this.chordHistory.length === 0) {
+            return;
+        }
+        
+        const chordText = this.chordHistory.join(' ');
+        
+        try {
+            await navigator.clipboard.writeText(chordText);
+            
+            // Visual feedback
+            if (this.copyHistoryButton) {
+                const originalText = this.copyHistoryButton.textContent;
+                this.copyHistoryButton.textContent = '✓';
+                this.copyHistoryButton.classList.add('copied');
+                
+                setTimeout(() => {
+                    this.copyHistoryButton.textContent = originalText;
+                    this.copyHistoryButton.classList.remove('copied');
+                }, 1500);
+            }
+        } catch (error) {
+            console.error('Failed to copy to clipboard:', error);
+            // Fallback for older browsers
+            this.fallbackCopyToClipboard(chordText);
+        }
+    }
+    
+    fallbackCopyToClipboard(text) {
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        textArea.style.position = 'fixed';
+        textArea.style.left = '-9999px';
+        document.body.appendChild(textArea);
+        textArea.select();
+        
+        try {
+            document.execCommand('copy');
+            if (this.copyHistoryButton) {
+                const originalText = this.copyHistoryButton.textContent;
+                this.copyHistoryButton.textContent = '✓';
+                this.copyHistoryButton.classList.add('copied');
+                
+                setTimeout(() => {
+                    this.copyHistoryButton.textContent = originalText;
+                    this.copyHistoryButton.classList.remove('copied');
+                }, 1500);
+            }
+        } catch (err) {
+            console.error('Fallback copy failed:', err);
+        }
+        
+        document.body.removeChild(textArea);
     }
 }
 

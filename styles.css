@@ -3005,6 +3005,177 @@ td:has(.row-edit-input.input-focused) {
     }
 }
 
+/* Chord History */
+.chord-history-section {
+    width: 100%;
+    margin-top: 15px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    padding-top: 12px;
+}
+
+.chord-history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 10px;
+    font-size: 0.85em;
+    color: #666;
+    font-weight: 500;
+}
+
+.chord-history-actions {
+    display: flex;
+    gap: 4px;
+}
+
+.clear-history-btn,
+.copy-history-btn {
+    background: transparent;
+    border: none;
+    color: #999;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 4px 8px;
+    border-radius: 4px;
+    transition: all 0.2s ease;
+}
+
+.clear-history-btn:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
+.copy-history-btn:hover {
+    background: rgba(102, 126, 234, 0.1);
+    color: #667eea;
+}
+
+.copy-history-btn.copied {
+    background: rgba(34, 197, 94, 0.1);
+    color: #22c55e;
+}
+
+.chord-history-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    max-height: 120px;
+    overflow-y: auto;
+    padding: 4px 0;
+}
+
+.chord-history-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.9em;
+    font-weight: 600;
+    color: white;
+    animation: fadeInChord 0.2s ease;
+    box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+    cursor: grab;
+    user-select: none;
+    transition: transform 0.15s ease, opacity 0.15s ease, box-shadow 0.15s ease;
+}
+
+.chord-history-item:active {
+    cursor: grabbing;
+}
+
+.chord-history-item.dragging {
+    opacity: 0.5;
+    transform: scale(0.95);
+}
+
+.chord-history-item.drag-over {
+    transform: scale(1.05);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.5);
+}
+
+.chord-history-item.drag-over-left::before {
+    content: '';
+    position: absolute;
+    left: -4px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: #22c55e;
+    border-radius: 2px;
+}
+
+.chord-history-item.drag-over-right::after {
+    content: '';
+    position: absolute;
+    right: -4px;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: #22c55e;
+    border-radius: 2px;
+}
+
+.chord-history-item {
+    position: relative;
+}
+
+@keyframes fadeInChord {
+    from {
+        opacity: 0;
+        transform: scale(0.8);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.chord-history-item .chord-name {
+    font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+}
+
+.chord-history-item .remove-chord {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 2px;
+    line-height: 1;
+    border-radius: 50%;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+}
+
+.chord-history-item .remove-chord:hover {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+}
+
+.chord-history-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.chord-history-list::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+    border-radius: 2px;
+}
+
+.chord-history-list::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 2px;
+}
+
+.chord-history-list::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.3);
+}
+
 /* Responsive design for chord detector */
 @media (max-width: 768px) {
     .chord-detector-overlay {

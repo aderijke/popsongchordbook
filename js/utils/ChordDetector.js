@@ -20,8 +20,16 @@ class ChordDetector {
         
         // Audio analysis parameters
         this.bufferSize = 2048; // Smaller buffer for faster processing
-        this.smoothingTimeConstant = 0.3; // Less smoothing for more responsive detection
-        this.confidenceThreshold = 0.5; // Lower threshold for easier detection
+        this.smoothingTimeConstant = 0.2; // Less smoothing for faster response
+        this.confidenceThreshold = 0.45; // Lower threshold for more sensitive detection
+        
+        // Chord stabilization parameters (reduced for faster response)
+        this.candidateChord = null;
+        this.candidateStartTime = 0;
+        this.stabilizationTime = 50; // ms - chord must be detected consistently (very short for quick response)
+        this.lastDisplayedChord = null;
+        this.chordHoldTime = 100; // ms - minimum time to hold a chord before it can change
+        this.lastChordChangeTime = null;
         
         // Musical note frequencies (A4 = 440Hz, equal temperament)
         this.noteFrequencies = this.calculateNoteFrequencies();
@@ -144,6 +152,13 @@ class ChordDetector {
         this.dataArray = null;
         this.detectedChord = null;
         this.confidence = 0;
+        
+        // Reset stabilization state
+        this.candidateChord = null;
+        this.candidateStartTime = 0;
+        this.lastDisplayedChord = null;
+        this.lastChordChangeTime = null;
+        
         this.updateStatus('stopped');
     }
     
@@ -172,39 +187,19 @@ class ChordDetector {
                 this.onAudioLevel(normalizedLevel);
             }
             
-            // Only detect chord if there's sufficient audio input
-            if (normalizedLevel > 0.1) {
+            // Only detect chord if there's sufficient audio input (very low threshold)
+            if (normalizedLevel > 0.01) {
                 // Detect chord from frequency data
                 const chord = this.detectChord(this.dataArray);
+                const now = performance.now();
                 
                 if (chord && chord.confidence >= this.confidenceThreshold) {
-                    if (chord.chord !== this.detectedChord) {
-                        this.detectedChord = chord.chord;
-                        this.confidence = chord.confidence;
-                        
-                        if (this.onChordDetected) {
-                            this.onChordDetected(chord.chord, chord.confidence);
-                        }
-                    }
-                } else if (this.detectedChord && normalizedLevel < 0.15) {
-                    // Clear detection if audio level drops too low
-                    this.detectedChord = null;
-                    this.confidence = 0;
-                    
-                    if (this.onChordDetected) {
-                        this.onChordDetected(null, 0);
-                    }
+                    // Use stabilization to prevent rapid chord changes
+                    this.updateStabilizedChord(chord.chord, chord.confidence, now);
                 }
-            } else {
-                // No audio input, clear chord
-                if (this.detectedChord) {
-                    this.detectedChord = null;
-                    this.confidence = 0;
-                    if (this.onChordDetected) {
-                        this.onChordDetected(null, 0);
-                    }
-                }
+                // Don't clear the chord - keep the last detected chord displayed
             }
+            // When audio is quiet, just clear the candidate but keep the last chord displayed
             
             this.animationFrame = requestAnimationFrame(analyze);
         };
@@ -244,10 +239,10 @@ class ChordDetector {
     
     findPeaks(frequencyData) {
         const peaks = [];
-        // Dynamic threshold based on average amplitude
+        // Dynamic threshold based on average amplitude (very low for maximum sensitivity)
         const sum = frequencyData.reduce((acc, val) => acc + val, 0);
         const average = sum / frequencyData.length;
-        const threshold = Math.max(30, average * 1.5); // Adaptive threshold
+        const threshold = Math.max(10, average * 1.0); // Very low threshold for maximum sensitivity
         const minDistance = 3; // Minimum distance between peaks
         
         // Focus on lower frequencies where chord fundamentals are (80-1000 Hz)
@@ -289,8 +284,8 @@ class ChordDetector {
         for (const noteData of this.noteFrequencies) {
             if (noteData.frequency >= 80 && noteData.frequency <= 1000) {
                 const diff = Math.abs(noteData.frequency - frequency);
-                // Allow larger tolerance for harmonics
-                const tolerance = noteData.frequency * 0.05; // 5% tolerance
+                // Allow larger tolerance for better matching
+                const tolerance = noteData.frequency * 0.08; // 8% tolerance for more forgiving detection
                 if (diff < minDiff && diff <= tolerance) {
                     minDiff = diff;
                     closest = noteData;
@@ -375,6 +370,38 @@ class ChordDetector {
         }
         
         return bestMatch;
+    }
+    
+    updateStabilizedChord(chord, confidence, now) {
+        // If this is the same as the current candidate, check if stabilization time has passed
+        if (chord === this.candidateChord) {
+            const elapsed = now - this.candidateStartTime;
+            
+            // Chord has been stable long enough - display it
+            if (elapsed >= this.stabilizationTime) {
+                // Only update if different from currently displayed chord
+                // AND enough time has passed since last chord change
+                if (chord !== this.detectedChord) {
+                    const timeSinceLastChange = this.lastChordChangeTime ? 
+                        now - this.lastChordChangeTime : Infinity;
+                    
+                    if (timeSinceLastChange >= this.chordHoldTime || !this.detectedChord) {
+                        this.detectedChord = chord;
+                        this.confidence = confidence;
+                        this.lastDisplayedChord = chord;
+                        this.lastChordChangeTime = now;
+                        
+                        if (this.onChordDetected) {
+                            this.onChordDetected(chord, confidence);
+                        }
+                    }
+                }
+            }
+        } else {
+            // New candidate chord - start stabilization timer
+            this.candidateChord = chord;
+            this.candidateStartTime = now;
+        }
     }
     
     updateStatus(status, message = null) {
