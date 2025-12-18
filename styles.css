@@ -3119,6 +3119,23 @@ td:has(.row-edit-input.input-focused) {
 
 .chord-history-item {
     position: relative;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: pan-y;
+}
+
+/* Touch drag clone styles */
+.touch-drag-clone {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%) !important;
+    border-radius: 6px;
+    padding: 4px 10px;
+    color: white;
+    font-weight: 600;
+}
+
+.touch-drag-clone .remove-chord {
+    display: none;
 }
 
 @keyframes fadeInChord {

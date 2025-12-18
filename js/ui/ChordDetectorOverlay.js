@@ -18,6 +18,14 @@ class ChordDetectorOverlay {
         // Drag state for chord history
         this.draggedChordIndex = null;
         
+        // Touch drag state
+        this.touchDragElement = null;
+        this.touchDragClone = null;
+        this.touchStartX = 0;
+        this.touchStartY = 0;
+        this.isTouchDragging = false;
+        this.touchDragTimeout = null;
+        
         this.chordDetector = new ChordDetector();
         this.isMinimized = false;
         this.isActive = false;
@@ -510,6 +518,172 @@ class ChordDetectorOverlay {
         this.saveChordHistory();
     }
     
+    // Touch drag handlers for mobile/tablet
+    handleTouchStart(e, item, index) {
+        // Clear any existing timeout
+        if (this.touchDragTimeout) {
+            clearTimeout(this.touchDragTimeout);
+        }
+        
+        const touch = e.touches[0];
+        this.touchStartX = touch.clientX;
+        this.touchStartY = touch.clientY;
+        this.touchDragElement = item;
+        this.draggedChordIndex = index;
+        
+        // Start drag after a short hold to differentiate from scroll
+        this.touchDragTimeout = setTimeout(() => {
+            this.startTouchDrag(item, touch);
+        }, 150);
+    }
+    
+    startTouchDrag(item, touch) {
+        this.isTouchDragging = true;
+        item.classList.add('dragging');
+        
+        // Create a clone that follows the finger
+        this.touchDragClone = item.cloneNode(true);
+        this.touchDragClone.classList.add('touch-drag-clone');
+        this.touchDragClone.style.position = 'fixed';
+        this.touchDragClone.style.zIndex = '10000';
+        this.touchDragClone.style.pointerEvents = 'none';
+        this.touchDragClone.style.opacity = '0.9';
+        this.touchDragClone.style.transform = 'scale(1.1)';
+        this.touchDragClone.style.boxShadow = '0 4px 20px rgba(0,0,0,0.3)';
+        
+        const rect = item.getBoundingClientRect();
+        this.touchDragClone.style.width = rect.width + 'px';
+        this.touchDragClone.style.left = (touch.clientX - rect.width / 2) + 'px';
+        this.touchDragClone.style.top = (touch.clientY - rect.height / 2) + 'px';
+        
+        document.body.appendChild(this.touchDragClone);
+        
+        // Haptic feedback if available
+        if (navigator.vibrate) {
+            navigator.vibrate(10);
+        }
+    }
+    
+    handleTouchMove(e) {
+        const touch = e.touches[0];
+        
+        // Check if we've moved enough to cancel the drag start
+        if (!this.isTouchDragging && this.touchDragTimeout) {
+            const dx = Math.abs(touch.clientX - this.touchStartX);
+            const dy = Math.abs(touch.clientY - this.touchStartY);
+            
+            // If moving mostly vertically, cancel drag (allow scroll)
+            if (dy > 10 && dy > dx) {
+                clearTimeout(this.touchDragTimeout);
+                this.touchDragTimeout = null;
+                this.touchDragElement = null;
+                this.draggedChordIndex = null;
+                return;
+            }
+        }
+        
+        if (!this.isTouchDragging) return;
+        
+        e.preventDefault(); // Prevent scrolling while dragging
+        
+        // Move the clone
+        if (this.touchDragClone) {
+            const rect = this.touchDragClone.getBoundingClientRect();
+            this.touchDragClone.style.left = (touch.clientX - rect.width / 2) + 'px';
+            this.touchDragClone.style.top = (touch.clientY - rect.height / 2) + 'px';
+        }
+        
+        // Find element under touch point
+        this.updateTouchDragTarget(touch.clientX, touch.clientY);
+    }
+    
+    updateTouchDragTarget(x, y) {
+        // Clear all drag-over classes
+        this.chordHistoryList.querySelectorAll('.chord-history-item').forEach(el => {
+            el.classList.remove('drag-over', 'drag-over-left', 'drag-over-right');
+        });
+        
+        // Find which element is under the touch
+        const elements = document.elementsFromPoint(x, y);
+        const targetItem = elements.find(el => 
+            el.classList.contains('chord-history-item') && 
+            el !== this.touchDragElement
+        );
+        
+        if (targetItem) {
+            const rect = targetItem.getBoundingClientRect();
+            const midpoint = rect.left + rect.width / 2;
+            
+            targetItem.classList.add('drag-over');
+            if (x < midpoint) {
+                targetItem.classList.add('drag-over-left');
+            } else {
+                targetItem.classList.add('drag-over-right');
+            }
+        }
+    }
+    
+    handleTouchEnd(e) {
+        // Clear the timeout if drag didn't start
+        if (this.touchDragTimeout) {
+            clearTimeout(this.touchDragTimeout);
+            this.touchDragTimeout = null;
+        }
+        
+        if (!this.isTouchDragging) {
+            this.touchDragElement = null;
+            this.draggedChordIndex = null;
+            return;
+        }
+        
+        // Find drop target
+        const touch = e.changedTouches[0];
+        const elements = document.elementsFromPoint(touch.clientX, touch.clientY);
+        const targetItem = elements.find(el => 
+            el.classList.contains('chord-history-item') && 
+            el !== this.touchDragElement
+        );
+        
+        if (targetItem && this.draggedChordIndex !== null) {
+            const targetIndex = parseInt(targetItem.dataset.index);
+            const rect = targetItem.getBoundingClientRect();
+            const midpoint = rect.left + rect.width / 2;
+            
+            let newIndex = targetIndex;
+            if (touch.clientX >= midpoint && this.draggedChordIndex < targetIndex) {
+                newIndex = targetIndex;
+            } else if (touch.clientX < midpoint && this.draggedChordIndex > targetIndex) {
+                newIndex = targetIndex;
+            } else if (touch.clientX >= midpoint) {
+                newIndex = targetIndex + 1;
+            }
+            
+            this.moveChordInHistory(this.draggedChordIndex, newIndex);
+        }
+        
+        // Cleanup
+        this.cleanupTouchDrag();
+    }
+    
+    cleanupTouchDrag() {
+        if (this.touchDragClone && this.touchDragClone.parentNode) {
+            this.touchDragClone.parentNode.removeChild(this.touchDragClone);
+        }
+        
+        if (this.touchDragElement) {
+            this.touchDragElement.classList.remove('dragging');
+        }
+        
+        this.chordHistoryList.querySelectorAll('.chord-history-item').forEach(el => {
+            el.classList.remove('drag-over', 'drag-over-left', 'drag-over-right');
+        });
+        
+        this.touchDragClone = null;
+        this.touchDragElement = null;
+        this.draggedChordIndex = null;
+        this.isTouchDragging = false;
+    }
+    
     clearChordHistory() {
         this.chordHistory = [];
         this.renderChordHistory();
@@ -605,6 +779,19 @@ class ChordDetectorOverlay {
                 }
                 
                 this.moveChordInHistory(this.draggedChordIndex, targetIndex);
+            });
+            
+            // Touch events for mobile/tablet
+            item.addEventListener('touchstart', (e) => {
+                this.handleTouchStart(e, item, index);
+            }, { passive: false });
+            
+            item.addEventListener('touchmove', (e) => {
+                this.handleTouchMove(e);
+            }, { passive: false });
+            
+            item.addEventListener('touchend', (e) => {
+                this.handleTouchEnd(e);
             });
             
             item.appendChild(chordName);
