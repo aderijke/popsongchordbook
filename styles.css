@@ -841,19 +841,25 @@ table.simple-view tbody tr td:nth-child(8) {
     display: none !important;
 }
 
-/* Larger font size in simple view */
+/* Smaller font size and padding in simple view to show more songs on screen */
 table.simple-view tbody tr td {
-    font-size: 1.3em;
-    padding: 25px 20px;
+    font-size: 0.85em;
+    padding: 8px 12px;
 }
 
 table.simple-view thead tr th {
-    font-size: 1.1em;
-    padding: 25px 20px;
+    font-size: 0.8em;
+    padding: 10px 12px;
 }
 
 table.simple-view tbody tr td.title-cell {
-    font-size: 1.4em;
+    font-size: 0.9em;
+}
+
+/* Make rows more compact in simple view */
+table.simple-view tbody tr {
+    min-height: auto;
+    height: auto;
 }
 
 
