@@ -311,31 +311,44 @@ class SongDetailModal {
         const song = this.songManager.getSongById(this.currentSongId);
         if (!song) return;
         
-        // Store original data if not stored yet (when user first starts editing)
+        // Ensure originalSongData is set (should be set in show(), but fallback for safety)
         if (!this.originalSongData) {
-            // Get current displayed values, not from song (in case we're reloading)
             this.originalSongData = {
-                artist: this.artistElement ? this.artistElement.textContent.trim() : (song.artist || ''),
-                title: this.titleElement ? this.titleElement.textContent.trim() : (song.title || ''),
-                verse: this.sections.verse?.content ? this.sections.verse.content.textContent.trim() : (song.verse || ''),
-                preChorus: this.sections.preChorus?.content ? this.sections.preChorus.content.textContent.trim() : (song.preChorus || ''),
-                chorus: this.sections.chorus?.content ? this.sections.chorus.content.textContent.trim() : (song.chorus || ''),
-                bridge: this.sections.bridge?.content ? this.sections.bridge.content.textContent.trim() : (song.bridge || '')
+                artist: song.artist || '',
+                title: song.title || '',
+                verse: song.verse || '',
+                preChorus: song.preChorus || '',
+                chorus: song.chorus || '',
+                bridge: song.bridge || ''
             };
         }
         
-        // Check current values
+        // Check current values - use textContent directly (not trimmed) to detect all changes including spaces
         const currentData = {
-            artist: this.artistElement ? this.artistElement.textContent.trim() : '',
-            title: this.titleElement ? this.titleElement.textContent.trim() : '',
-            verse: this.sections.verse?.content ? this.sections.verse.content.textContent.trim() : '',
-            preChorus: this.sections.preChorus?.content ? this.sections.preChorus.content.textContent.trim() : '',
-            chorus: this.sections.chorus?.content ? this.sections.chorus.content.textContent.trim() : '',
-            bridge: this.sections.bridge?.content ? this.sections.bridge.content.textContent.trim() : ''
+            artist: this.artistElement ? this.artistElement.textContent : '',
+            title: this.titleElement ? this.titleElement.textContent : '',
+            verse: this.sections.verse?.content ? this.sections.verse.content.textContent : '',
+            preChorus: this.sections.preChorus?.content ? this.sections.preChorus.content.textContent : '',
+            chorus: this.sections.chorus?.content ? this.sections.chorus.content.textContent : '',
+            bridge: this.sections.bridge?.content ? this.sections.bridge.content.textContent : ''
         };
         
-        // Compare with original
-        this.hasUnsavedChanges = JSON.stringify(currentData) !== JSON.stringify(this.originalSongData);
+        // Compare with original - normalize whitespace for comparison (trim each value)
+        // This way we detect any change, including spaces, but ignore leading/trailing whitespace differences
+        const normalizeData = (data) => ({
+            artist: (data.artist || '').trim(),
+            title: (data.title || '').trim(),
+            verse: (data.verse || '').trim(),
+            preChorus: (data.preChorus || '').trim(),
+            chorus: (data.chorus || '').trim(),
+            bridge: (data.bridge || '').trim()
+        });
+        
+        const normalizedCurrent = normalizeData(currentData);
+        const normalizedOriginal = normalizeData(this.originalSongData);
+        
+        // Compare normalized data
+        this.hasUnsavedChanges = JSON.stringify(normalizedCurrent) !== JSON.stringify(normalizedOriginal);
         
         // Show/hide save button
         if (this.saveBtn) {
@@ -380,15 +393,28 @@ class SongDetailModal {
             this.onUpdate();
         }
         
-        // Update originalSongData to current values so they become the new baseline
-        this.originalSongData = {
-            artist: updates.artist !== undefined ? updates.artist : (this.originalSongData?.artist || ''),
-            title: updates.title !== undefined ? updates.title : (this.originalSongData?.title || ''),
-            verse: updates.verse !== undefined ? updates.verse : (this.originalSongData?.verse || ''),
-            preChorus: updates.preChorus !== undefined ? updates.preChorus : (this.originalSongData?.preChorus || ''),
-            chorus: updates.chorus !== undefined ? updates.chorus : (this.originalSongData?.chorus || ''),
-            bridge: updates.bridge !== undefined ? updates.bridge : (this.originalSongData?.bridge || '')
-        };
+        // Update originalSongData to current saved values so they become the new baseline
+        const savedSong = this.songManager.getSongById(this.currentSongId);
+        if (savedSong) {
+            this.originalSongData = {
+                artist: savedSong.artist || '',
+                title: savedSong.title || '',
+                verse: savedSong.verse || '',
+                preChorus: savedSong.preChorus || '',
+                chorus: savedSong.chorus || '',
+                bridge: savedSong.bridge || ''
+            };
+        } else {
+            // Fallback: use the updates we just saved
+            this.originalSongData = {
+                artist: updates.artist !== undefined ? updates.artist : (this.originalSongData?.artist || ''),
+                title: updates.title !== undefined ? updates.title : (this.originalSongData?.title || ''),
+                verse: updates.verse !== undefined ? updates.verse : (this.originalSongData?.verse || ''),
+                preChorus: updates.preChorus !== undefined ? updates.preChorus : (this.originalSongData?.preChorus || ''),
+                chorus: updates.chorus !== undefined ? updates.chorus : (this.originalSongData?.chorus || ''),
+                bridge: updates.bridge !== undefined ? updates.bridge : (this.originalSongData?.bridge || '')
+            };
+        }
         
         // Reset change tracking
         this.hasUnsavedChanges = false;
@@ -455,7 +481,16 @@ class SongDetailModal {
 
         this.currentSongId = song.id;
         this.hasUnsavedChanges = false;
-        this.originalSongData = null;
+        
+        // Set originalSongData immediately when showing a song, before any user interaction
+        this.originalSongData = {
+            artist: song.artist || '',
+            title: song.title || '',
+            verse: song.verse || '',
+            preChorus: song.preChorus || '',
+            chorus: song.chorus || '',
+            bridge: song.bridge || ''
+        };
 
         // Update artist and title
         if (this.artistElement) {
@@ -649,6 +684,19 @@ class SongDetailModal {
         this.currentSongId = null;
         this.hasUnsavedChanges = false;
         this.originalSongData = null;
+        
+        // Exit edit mode and remove chord buttons when hiding
+        document.querySelectorAll('.editable-field[contenteditable="true"]').forEach(el => {
+            el.setAttribute('contenteditable', 'false');
+            el.classList.remove('editing');
+            const section = el.closest('.song-chord-section');
+            if (section) {
+                const chordBtn = section.querySelector('.chord-modal-btn-detail');
+                if (chordBtn) {
+                    chordBtn.remove();
+                }
+            }
+        });
     }
 }
 
