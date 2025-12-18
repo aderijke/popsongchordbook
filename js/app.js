@@ -16,6 +16,7 @@ class App {
         this.currentFilter = 'all';
         this.currentSetlistId = null;
         this.searchTerm = '';
+        this.viewMode = 'full'; // 'simple' or 'full'
         
         this.tableRenderer = new TableRenderer(
             this.songManager,
@@ -40,6 +41,7 @@ class App {
         this.setupPrintButton();
         this.setupDeselect();
         this.setupHeaderBarToggle();
+        this.setupToggleView();
         await this.addExampleSongIfEmpty();
         this.loadAndRender();
     }
@@ -117,6 +119,9 @@ class App {
         this.songDetailModal.setSongs(allSongs);
         
         this.tableRenderer.render(allSongs);
+        
+        // Apply view mode after rendering
+        this.updateViewMode();
         
         // Restore selected row if it still exists (but don't open modal)
         if (currentSelectedId && this.tableRenderer) {
@@ -790,6 +795,36 @@ class App {
         // Ensure the latest data is shown before printing
         this.loadAndRender();
         window.print();
+    }
+
+    setupToggleView() {
+        const toggleBtn = document.getElementById('toggleViewBtn');
+        if (toggleBtn) {
+            toggleBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.viewMode = this.viewMode === 'full' ? 'simple' : 'full';
+                this.updateViewMode();
+                this.loadAndRender();
+            });
+            this.updateViewMode();
+        }
+    }
+
+    updateViewMode() {
+        const toggleBtn = document.getElementById('toggleViewBtn');
+        const table = document.getElementById('songsTable');
+        if (toggleBtn && table) {
+            if (this.viewMode === 'simple') {
+                toggleBtn.textContent = '📊';
+                toggleBtn.title = 'Volledig overzicht';
+                table.classList.add('simple-view');
+            } else {
+                toggleBtn.textContent = '📋';
+                toggleBtn.title = 'Simpel overzicht';
+                table.classList.remove('simple-view');
+            }
+        }
     }
 
     async importSongs(file) {

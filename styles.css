@@ -345,6 +345,18 @@ header h1 {
     color: #4338ca;
 }
 
+.view-toggle-btn {
+    background: rgba(139, 92, 246, 0.08);
+    color: var(--accent-color);
+    border-color: rgba(139, 92, 246, 0.4);
+}
+
+.view-toggle-btn:hover {
+    background: rgba(139, 92, 246, 0.12);
+    border-color: var(--accent-color);
+    color: #7c3aed;
+}
+
 .setlist-controls {
     display: flex;
     gap: 8px;
@@ -806,6 +818,42 @@ table {
     border-spacing: 0;
     table-layout: auto;
     min-width: 1000px; /* Minimum width to ensure all columns are visible */
+}
+
+/* Simple view - only show Artist and Title columns */
+table.simple-view {
+    min-width: 400px;
+}
+
+/* Hide columns in simple view: Favorite (3), Verse (4), Chorus (5), Pre-Chorus (6), Bridge (7), Acties (8) */
+table.simple-view thead tr th:nth-child(3),
+table.simple-view thead tr th:nth-child(4),
+table.simple-view thead tr th:nth-child(5),
+table.simple-view thead tr th:nth-child(6),
+table.simple-view thead tr th:nth-child(7),
+table.simple-view thead tr th:nth-child(8),
+table.simple-view tbody tr td:nth-child(3),
+table.simple-view tbody tr td:nth-child(4),
+table.simple-view tbody tr td:nth-child(5),
+table.simple-view tbody tr td:nth-child(6),
+table.simple-view tbody tr td:nth-child(7),
+table.simple-view tbody tr td:nth-child(8) {
+    display: none !important;
+}
+
+/* Larger font size in simple view */
+table.simple-view tbody tr td {
+    font-size: 1.3em;
+    padding: 25px 20px;
+}
+
+table.simple-view thead tr th {
+    font-size: 1.1em;
+    padding: 25px 20px;
+}
+
+table.simple-view tbody tr td.title-cell {
+    font-size: 1.4em;
 }
 
 
