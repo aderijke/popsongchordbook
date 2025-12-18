@@ -39,7 +39,15 @@ class ChordDetectorOverlay {
     
     setupEventListeners() {
         if (this.toggleButton) {
-            this.toggleButton.addEventListener('click', () => this.toggleListening());
+            this.toggleButton.addEventListener('click', (e) => {
+                // If minimized, expand first, otherwise toggle listening
+                if (this.isMinimized) {
+                    e.stopPropagation();
+                    this.toggleMinimize();
+                } else {
+                    this.toggleListening();
+                }
+            });
         }
         
         if (this.minimizeButton) {

@@ -823,6 +823,7 @@ table {
 /* Simple view - only show Artist and Title columns */
 table.simple-view {
     min-width: 400px;
+    border-spacing: 0;
 }
 
 /* Hide columns in simple view: Favorite (3), Verse (4), Chorus (5), Pre-Chorus (6), Bridge (7), Acties (8) */
@@ -844,22 +845,30 @@ table.simple-view tbody tr td:nth-child(8) {
 /* Smaller font size and padding in simple view to show more songs on screen */
 table.simple-view tbody tr td {
     font-size: 0.85em;
-    padding: 8px 12px;
+    padding: 4px 12px;
+    line-height: 1.3;
 }
 
 table.simple-view thead tr th {
     font-size: 0.8em;
-    padding: 10px 12px;
+    padding: 6px 12px;
+    line-height: 1.3;
 }
 
 table.simple-view tbody tr td.title-cell {
     font-size: 0.9em;
 }
 
-/* Make rows more compact in simple view */
+/* Make rows more compact in simple view - reduce spacing between rows */
 table.simple-view tbody tr {
     min-height: auto;
     height: auto;
+    border-bottom: 1px solid var(--border-color);
+}
+
+/* Reduce border thickness in simple view */
+table.simple-view tbody tr:not(:last-child) {
+    border-bottom: 1px solid rgba(226, 232, 240, 0.5);
 }
 
 
@@ -2121,12 +2130,12 @@ td:has(.row-edit-input.input-focused) {
     background: rgba(0, 0, 0, 0.95);
     display: flex;
     justify-content: center;
-    align-items: flex-start;
+    align-items: center;
     z-index: 2000;
     backdrop-filter: blur(10px);
     animation: fadeIn 0.3s ease;
-    overflow-y: auto;
-    padding: 20px;
+    overflow: hidden;
+    padding: 15px;
     box-sizing: border-box;
 }
 
@@ -2138,27 +2147,27 @@ td:has(.row-edit-input.input-focused) {
     background: white;
     border-radius: 20px;
     width: 100%;
-    max-width: 900px;
-    height: calc(100vh - 40px);
-    max-height: calc(100vh - 40px);
+    max-width: min(900px, calc(100vw - 30px));
+    max-height: calc(100vh - 30px);
     overflow: hidden;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
     animation: slideUp 0.3s ease;
     display: flex;
     flex-direction: column;
     margin: auto;
+    box-sizing: border-box;
 }
 
 .song-detail-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: 25px 35px;
+    padding: clamp(12px, 2.5vh, 25px) clamp(15px, 3vw, 35px);
     border-radius: 20px 20px 0 0;
     display: flex;
     justify-content: space-between;
     align-items: center;
     position: relative;
     flex-shrink: 0;
-    gap: 15px;
+    gap: clamp(8px, 1.5vw, 15px);
 }
 
 .song-detail-title-section {
@@ -2209,14 +2218,14 @@ td:has(.row-edit-input.input-focused) {
 }
 
 .song-detail-artist {
-    font-size: 1.2em;
+    font-size: clamp(0.9em, 2vw, 1.2em);
     font-weight: 600;
     color: rgba(255, 255, 255, 0.9);
     margin: 0;
     letter-spacing: 0.5px;
     white-space: nowrap;
     cursor: pointer;
-    padding: 4px 8px;
+    padding: clamp(2px, 0.5vh, 4px) clamp(4px, 1vw, 8px);
     border-radius: 6px;
     transition: background 0.2s ease;
     user-select: text;
@@ -2231,7 +2240,7 @@ td:has(.row-edit-input.input-focused) {
 }
 
 .song-detail-title {
-    font-size: clamp(1.3em, 4vw, 2em);
+    font-size: clamp(1.1em, 3vh, 2em);
     font-weight: 800;
     color: white;
     margin: 0;
@@ -2240,7 +2249,7 @@ td:has(.row-edit-input.input-focused) {
     flex: 1;
     min-width: 0;
     cursor: pointer;
-    padding: 4px 8px;
+    padding: clamp(2px, 0.5vh, 4px) clamp(4px, 1vw, 8px);
     border-radius: 6px;
     transition: background 0.2s ease;
     user-select: text;
@@ -2265,9 +2274,9 @@ td:has(.row-edit-input.input-focused) {
     background: rgba(255, 255, 255, 0.2);
     border: 2px solid rgba(255, 255, 255, 0.3);
     color: white;
-    font-size: 2em;
-    width: 45px;
-    height: 45px;
+    font-size: clamp(1.3em, 3vw, 2em);
+    width: clamp(32px, 5vw, 45px);
+    height: clamp(32px, 5vw, 45px);
     border-radius: 50%;
     cursor: pointer;
     display: flex;
@@ -2299,9 +2308,9 @@ td:has(.row-edit-input.input-focused) {
     background: rgba(255, 255, 255, 0.2);
     border: 2px solid rgba(255, 255, 255, 0.3);
     color: white;
-    font-size: 1.5em;
-    width: 40px;
-    height: 40px;
+    font-size: clamp(1.1em, 2.5vw, 1.5em);
+    width: clamp(32px, 4.5vw, 40px);
+    height: clamp(32px, 4.5vw, 40px);
     border-radius: 50%;
     cursor: pointer;
     display: flex;
@@ -2325,10 +2334,10 @@ td:has(.row-edit-input.input-focused) {
 }
 
 .song-detail-body {
-    padding: 25px 35px;
+    padding: clamp(10px, 2vh, 25px) clamp(12px, 2.5vw, 35px);
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: clamp(6px, 1.2vh, 15px);
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
@@ -2340,7 +2349,7 @@ td:has(.row-edit-input.input-focused) {
     background: white;
     border: 2px solid var(--border-color);
     border-radius: 12px;
-    padding: 20px;
+    padding: clamp(8px, 1.5vh, 20px);
     transition: all 0.3s ease;
 }
 
@@ -2355,16 +2364,16 @@ td:has(.row-edit-input.input-focused) {
 }
 
 .chord-section-title {
-    font-size: 1.1em;
+    font-size: clamp(0.75em, 2vw, 1.1em);
     font-weight: 700;
     color: var(--primary-color);
-    margin: 0 0 12px 0;
+    margin: 0 0 clamp(4px, 1vh, 12px) 0;
     text-transform: uppercase;
     letter-spacing: 1px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 10px;
+    gap: clamp(4px, 1vw, 10px);
 }
 
 .chord-section-title-text {
@@ -2376,10 +2385,10 @@ td:has(.row-edit-input.input-focused) {
 }
 
 .chord-section-content {
-    font-size: clamp(1.1em, 3.5vw, 1.6em);
+    font-size: clamp(0.75em, 2.5vh, 1.6em);
     font-weight: 600;
     color: var(--primary-color);
-    line-height: 1.6;
+    line-height: 1.3;
     white-space: pre-wrap;
     word-wrap: break-word;
     min-height: 1.5em;
@@ -2387,7 +2396,7 @@ td:has(.row-edit-input.input-focused) {
 }
 
 .song-chord-section.chorus-section .chord-section-content {
-    font-size: clamp(1.3em, 4vw, 1.8em);
+    font-size: clamp(0.85em, 3vh, 1.8em);
     font-weight: 700;
     color: #92400e;
 }
@@ -2475,42 +2484,42 @@ td:has(.row-edit-input.input-focused) {
     }
     
     .song-detail-modal-content {
+        max-width: calc(100vw - 20px);
         max-height: calc(100vh - 20px);
-        min-height: calc(100vh - 20px);
     }
     
     .song-detail-header {
-        padding: 20px 25px;
+        padding: 18px 20px;
     }
     
     .song-detail-artist {
-        font-size: 1.1em;
+        font-size: 1em;
     }
     
     .song-detail-title {
-        font-size: 1.6em;
+        font-size: 1.5em;
     }
     
     .song-detail-body {
-        padding: 20px 25px;
-        gap: 15px;
+        padding: 18px 20px;
+        gap: 12px;
     }
     
     .song-chord-section {
-        padding: 18px;
+        padding: 15px;
     }
     
     .chord-section-title {
-        font-size: 1em;
+        font-size: 0.95em;
         margin-bottom: 10px;
     }
     
     .chord-section-content {
-        font-size: 1.4em;
+        font-size: 1.3em;
     }
     
     .song-chord-section.chorus-section .chord-section-content {
-        font-size: 1.6em;
+        font-size: 1.5em;
     }
 }
 
@@ -2521,20 +2530,22 @@ td:has(.row-edit-input.input-focused) {
     }
     
     .song-detail-modal-content {
+        max-width: calc(100vw - 20px);
         max-height: calc(100vh - 20px);
-        min-height: calc(100vh - 20px);
+        border-radius: 15px;
     }
     
     .song-detail-header {
-        padding: 20px 15px;
+        padding: 18px 15px;
         flex-direction: row;
         gap: 10px;
+        border-radius: 15px 15px 0 0;
     }
     
     .song-detail-nav-btn {
-        width: 35px;
-        height: 35px;
-        font-size: 1.5em;
+        width: 38px;
+        height: 38px;
+        font-size: 1.4em;
     }
     
     .song-detail-title-section {
@@ -2552,7 +2563,7 @@ td:has(.row-edit-input.input-focused) {
     }
     
     .song-detail-title {
-        font-size: 1.4em;
+        font-size: 1.3em;
     }
     
     .song-detail-header-right {
@@ -2560,46 +2571,52 @@ td:has(.row-edit-input.input-focused) {
     }
     
     .song-detail-close {
-        width: 35px;
-        height: 35px;
+        width: 38px;
+        height: 38px;
         font-size: 1.3em;
     }
     
     .song-detail-body {
-        padding: 25px 20px;
-        gap: 20px;
+        padding: 18px 15px;
+        gap: 15px;
     }
     
     .song-chord-section {
-        padding: 20px;
+        padding: 18px;
     }
     
     .chord-section-title {
-        font-size: 1.1em;
-        margin-bottom: 15px;
+        font-size: 1.05em;
+        margin-bottom: 12px;
     }
     
     .chord-section-content {
-        font-size: 1.5em;
+        font-size: 1.4em;
     }
     
     .song-chord-section.chorus-section .chord-section-content {
-        font-size: 1.7em;
+        font-size: 1.5em;
     }
 }
 
 @media (max-width: 480px) {
+    .song-detail-modal {
+        padding: 8px;
+    }
+    
     .song-detail-modal-content {
-        max-height: calc(100vh - 20px);
-        min-height: calc(100vh - 20px);
+        max-width: calc(100vw - 16px);
+        max-height: calc(100vh - 16px);
+        border-radius: 12px;
     }
     
     .song-detail-header {
-        padding: 20px 15px;
+        padding: 15px 12px;
+        border-radius: 12px 12px 0 0;
     }
     
     .song-detail-title-section {
-        gap: 8px;
+        gap: 6px;
     }
     
     .song-detail-artist {
@@ -2607,16 +2624,21 @@ td:has(.row-edit-input.input-focused) {
     }
     
     .song-detail-title {
-        font-size: 1.3em;
+        font-size: 1.2em;
     }
     
     .song-detail-body {
-        padding: 20px 15px;
-        gap: 15px;
+        padding: 15px 12px;
+        gap: 12px;
     }
     
     .song-chord-section {
         padding: 15px;
+    }
+    
+    .chord-section-title {
+        font-size: 1em;
+        margin-bottom: 10px;
     }
     
     .chord-section-content {
@@ -2624,7 +2646,7 @@ td:has(.row-edit-input.input-focused) {
     }
     
     .song-chord-section.chorus-section .chord-section-content {
-        font-size: 1.5em;
+        font-size: 1.4em;
     }
 }
 
@@ -2639,34 +2661,63 @@ td:has(.row-edit-input.input-focused) {
     box-shadow: var(--card-shadow);
     min-width: 250px;
     max-width: 300px;
-    transition: left 0s, top 0s, min-width 0.3s ease, border-radius 0.3s ease;
+    transition: left 0s, top 0s, min-width 0.3s ease, max-width 0.3s ease, border-radius 0.3s ease;
     font-family: 'Inter', sans-serif;
     overflow: visible;
     /* Ensure body is visible by default */
 }
 
+
 .chord-detector-overlay.minimized {
-    min-width: 180px;
-    max-width: 200px;
-    border-radius: 8px;
+    min-width: 60px;
+    max-width: 60px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background: transparent;
+    box-shadow: none;
+}
+
+.chord-detector-overlay.minimized .chord-detector-header {
+    display: none !important;
+}
+
+.chord-detector-overlay.minimized .chord-detector-body > *:not(.chord-detector-toggle-btn) {
+    display: none !important;
 }
 
 .chord-detector-overlay.minimized .chord-detector-body {
-    max-height: 0 !important;
     padding: 0 !important;
-    opacity: 0 !important;
-    overflow: hidden !important;
     margin: 0 !important;
-    border: none !important;
+    gap: 0 !important;
     min-height: 0 !important;
-    height: 0 !important;
+    max-height: 60px !important;
+    height: 60px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.chord-detector-overlay.minimized .chord-detector-toggle-btn {
+    position: relative !important;
+    width: 60px !important;
+    height: 60px !important;
+    margin: 0 !important;
 }
 
 .chord-detector-content {
     display: flex;
     flex-direction: column;
-    overflow: hidden;
+    overflow: visible;
+    position: relative;
 }
+
+.chord-detector-overlay.minimized .chord-detector-content {
+    position: relative;
+    width: 60px;
+    height: 60px;
+}
+
 
 .chord-detector-header {
     display: flex;
@@ -2907,6 +2958,12 @@ td:has(.row-edit-input.input-focused) {
     justify-content: center;
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
     transition: all 0.3s ease;
+    position: relative;
+    z-index: 1001;
+}
+
+.chord-detector-overlay.minimized .chord-detector-toggle-btn {
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
 }
 
 .chord-detector-toggle-btn:hover {
