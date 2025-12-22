@@ -2926,7 +2926,7 @@ td:has(.row-edit-input.input-focused) {
 .song-detail-close:hover {
     background: rgba(255, 255, 255, 0.3);
     border-color: rgba(255, 255, 255, 0.5);
-    transform: scale(1.1) rotate(90deg);
+    transform: scale(1.1);
 }
 
 .song-detail-close:active {
