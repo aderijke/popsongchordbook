@@ -4140,7 +4140,7 @@ td:has(.row-edit-input.input-focused) {
 /* Piano Keyboard Styles */
 .piano-keyboard {
     position: relative;
-    height: 140px;
+    height: 180px;
     margin: 15px 0;
     background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
     border-radius: 12px;
@@ -4300,7 +4300,7 @@ td:has(.row-edit-input.input-focused) {
     }
     
     .piano-keyboard {
-        height: 120px;
+        height: 150px;
         padding: 12px 8px 8px;
     }
     
@@ -4329,7 +4329,7 @@ td:has(.row-edit-input.input-focused) {
     }
     
     .piano-keyboard {
-        height: 100px;
+        height: 130px;
     }
     
     .chord-card-header .chord-name {
