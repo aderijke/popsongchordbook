@@ -177,7 +177,7 @@ class SongDetailModal {
                 const artistText = this.artistElement.textContent || '';
                 if (!artistText.trim()) {
                     this.artistElement.classList.add('empty-field');
-                    this.artistElement.dataset.placeholder = 'Artiest';
+                    this.artistElement.dataset.placeholder = 'Artist';
                     this.artistElement.textContent = ''; // Clear any whitespace
                 } else {
                     this.artistElement.classList.remove('empty-field');
@@ -219,7 +219,7 @@ class SongDetailModal {
                 const titleText = this.titleElement.textContent || '';
                 if (!titleText.trim()) {
                     this.titleElement.classList.add('empty-field');
-                    this.titleElement.dataset.placeholder = 'Songtitel';
+                    this.titleElement.dataset.placeholder = 'Song Title';
                     this.titleElement.textContent = ''; // Clear any whitespace
                 } else {
                     this.titleElement.classList.remove('empty-field');
@@ -319,7 +319,7 @@ class SongDetailModal {
                 currentElement.textContent = '';
             } else if (currentField === 'title') {
                 currentElement.classList.add('empty-field');
-                currentElement.dataset.placeholder = 'Songtitel';
+                currentElement.dataset.placeholder = 'Song Title';
                 currentElement.textContent = '';
             }
         }
@@ -447,7 +447,7 @@ class SongDetailModal {
         chordBtn.type = 'button';
         chordBtn.className = 'chord-modal-btn-detail';
         chordBtn.innerHTML = '🎵';
-        chordBtn.title = 'Akkoorden toevoegen';
+        chordBtn.title = 'Add chords';
         chordBtn.style.cursor = 'pointer';
         chordBtn.style.pointerEvents = 'auto';
         chordBtn.addEventListener('mousedown', (e) => {
@@ -671,7 +671,7 @@ class SongDetailModal {
 
         // Save any unsaved changes before switching songs
         if (this.hasUnsavedChanges && this.currentSongId) {
-            if (confirm('Je hebt niet-opgeslagen wijzigingen. Wil je deze eerst opslaan?')) {
+            if (confirm('You have unsaved changes. Do you want to save them first?')) {
                 this.saveChanges();
             } else {
                 // Discard changes and reload original data
@@ -717,7 +717,7 @@ class SongDetailModal {
             // Add placeholder styling if empty
             if (!titleText.trim()) {
                 this.titleElement.classList.add('empty-field');
-                this.titleElement.dataset.placeholder = 'Songtitel';
+                this.titleElement.dataset.placeholder = 'Song Title';
             } else {
                 this.titleElement.classList.remove('empty-field');
                 this.titleElement.removeAttribute('data-placeholder');
@@ -847,8 +847,14 @@ class SongDetailModal {
 
     updateFavoriteButton(isFavorite) {
         if (!this.favoriteBtn) return;
-        this.favoriteBtn.innerHTML = isFavorite ? '⭐' : '☆';
-        this.favoriteBtn.title = isFavorite ? 'Verwijder uit favorieten' : 'Voeg toe aan favorieten';
+        const iconSpan = this.favoriteBtn.querySelector('.icon');
+        if (iconSpan) {
+            iconSpan.textContent = isFavorite ? '⭐' : '☆';
+        } else {
+            // Fallback for if structure is not yet set up
+            this.favoriteBtn.innerHTML = isFavorite ? '⭐' : '☆';
+        }
+        this.favoriteBtn.title = isFavorite ? 'Remove from favorites' : 'Add to favorites';
         if (isFavorite) {
             this.favoriteBtn.classList.add('favorite-active');
         } else {
@@ -918,12 +924,20 @@ class SongDetailModal {
     updateYouTubeButton(youtubeUrl) {
         if (!this.youtubeBtn) return;
         
+        const labelSpan = this.youtubeBtn.querySelector('.label');
+        
         if (youtubeUrl && youtubeUrl.trim()) {
             this.youtubeBtn.classList.add('youtube-active');
-            this.youtubeBtn.title = 'YouTube URL bewerken (ingesteld)';
+            this.youtubeBtn.title = 'Edit YouTube URL';
+            if (labelSpan) {
+                labelSpan.textContent = 'Edit URL';
+            }
         } else {
             this.youtubeBtn.classList.remove('youtube-active');
-            this.youtubeBtn.title = 'YouTube URL bewerken';
+            this.youtubeBtn.title = 'Add YouTube URL';
+            if (labelSpan) {
+                labelSpan.textContent = 'Add URL';
+            }
         }
     }
 
@@ -961,7 +975,7 @@ class SongDetailModal {
             this.titleElement.textContent = titleText;
             if (!titleText.trim()) {
                 this.titleElement.classList.add('empty-field');
-                this.titleElement.dataset.placeholder = 'Songtitel';
+                this.titleElement.dataset.placeholder = 'Song Title';
             } else {
                 this.titleElement.classList.remove('empty-field');
                 this.titleElement.removeAttribute('data-placeholder');
@@ -1007,7 +1021,7 @@ class SongDetailModal {
     hide() {
         // Check for unsaved changes before closing
         if (this.hasUnsavedChanges) {
-            if (confirm('Je hebt niet-opgeslagen wijzigingen. Wil je deze eerst opslaan?')) {
+            if (confirm('You have unsaved changes. Do you want to save them first?')) {
                 this.saveChanges();
             } else {
                 this.discardChanges();

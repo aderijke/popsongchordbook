@@ -1328,6 +1328,16 @@ td:has(.row-edit-input.input-focused) {
     transition: all 0.2s ease;
     opacity: 0.8;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.youtube-btn svg {
+    display: block;
+    width: 16px;
+    height: 16px;
 }
 
 .youtube-btn:hover {
@@ -2647,6 +2657,35 @@ td:has(.row-edit-input.input-focused) {
     transition: all 0.2s ease;
     flex-shrink: 0;
     line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.song-detail-favorite-btn.with-label {
+    flex-direction: column;
+    padding: 4px 6px;
+    gap: 2px;
+    min-width: 60px;
+    height: auto;
+    min-height: 50px;
+}
+
+.song-detail-favorite-btn .icon {
+    font-size: 1.2em;
+    line-height: 1;
+    width: 1.2em;
+    height: 1.2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.song-detail-favorite-btn .label {
+    font-size: 0.55em;
+    font-weight: 500;
+    line-height: 1;
+    text-transform: lowercase;
 }
 
 .song-detail-favorite-btn:hover {
@@ -2677,6 +2716,42 @@ td:has(.row-edit-input.input-focused) {
     flex-shrink: 0;
     line-height: 1;
     margin-right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.song-detail-youtube-btn.with-label {
+    flex-direction: column;
+    padding: 4px 6px;
+    gap: 2px;
+    min-width: 60px;
+    height: auto;
+    min-height: 50px;
+}
+
+.song-detail-youtube-btn .icon {
+    font-size: 1.2em;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.song-detail-youtube-btn .icon.youtube-icon svg {
+    width: 1.2em;
+    height: 1.2em;
+    display: block;
+    max-width: 1.2em;
+    max-height: 1.2em;
+}
+
+.song-detail-youtube-btn .label {
+    font-size: 0.55em;
+    font-weight: 500;
+    line-height: 1;
+    text-transform: lowercase;
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .song-detail-youtube-btn:hover {
@@ -2685,9 +2760,17 @@ td:has(.row-edit-input.input-focused) {
     transform: scale(1.1);
 }
 
+.song-detail-youtube-btn:hover .label {
+    color: rgba(255, 255, 255, 0.9);
+}
+
 .song-detail-youtube-btn.youtube-active {
     color: #ef4444;
     text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
+.song-detail-youtube-btn.youtube-active .label {
+    color: rgba(255, 255, 255, 0.7);
 }
 
 .song-detail-youtube-btn.youtube-active:hover {
@@ -2707,6 +2790,41 @@ td:has(.row-edit-input.input-focused) {
     flex-shrink: 0;
     line-height: 1;
     margin-right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.song-detail-youtube-play-btn.with-label {
+    flex-direction: column;
+    padding: 4px 6px;
+    gap: 2px;
+    min-width: 60px;
+    height: auto;
+    min-height: 50px;
+}
+
+.song-detail-youtube-play-btn .icon {
+    font-size: 1.2em;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.song-detail-youtube-play-btn .icon.youtube-icon svg {
+    width: 1.2em;
+    height: 1.2em;
+    display: block;
+    max-width: 1.2em;
+    max-height: 1.2em;
+}
+
+.song-detail-youtube-play-btn .label {
+    font-size: 0.55em;
+    font-weight: 500;
+    line-height: 1;
+    text-transform: lowercase;
 }
 
 .song-detail-youtube-play-btn:hover {
@@ -2817,6 +2935,34 @@ td:has(.row-edit-input.input-focused) {
     flex-shrink: 0;
 }
 
+.song-detail-nav-btn.with-label {
+    flex-direction: column;
+    width: auto;
+    height: auto;
+    min-width: 60px;
+    min-height: 50px;
+    border-radius: 8px;
+    padding: 4px 6px;
+    gap: 2px;
+}
+
+.song-detail-nav-btn .icon {
+    font-size: 1.2em;
+    line-height: 1;
+    width: 1.2em;
+    height: 1.2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.song-detail-nav-btn .label {
+    font-size: 0.55em;
+    font-weight: 500;
+    line-height: 1;
+    text-transform: lowercase;
+}
+
 .song-detail-nav-btn:hover:not(:disabled) {
     background: rgba(255, 255, 255, 0.3);
     border-color: rgba(255, 255, 255, 0.5);
@@ -2849,6 +2995,34 @@ td:has(.row-edit-input.input-focused) {
     padding: 0;
     font-weight: 300;
     flex-shrink: 0;
+}
+
+.song-detail-close.with-label {
+    flex-direction: column;
+    width: auto;
+    height: auto;
+    min-width: 60px;
+    min-height: 50px;
+    border-radius: 8px;
+    padding: 4px 6px;
+    gap: 2px;
+}
+
+.song-detail-close .icon {
+    font-size: 1.2em;
+    line-height: 1;
+    width: 1.2em;
+    height: 1.2em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.song-detail-close .label {
+    font-size: 0.55em;
+    font-weight: 500;
+    line-height: 1;
+    text-transform: lowercase;
 }
 
 .song-detail-close:hover {
@@ -2988,6 +3162,29 @@ td:has(.row-edit-input.input-focused) {
     transition: all 0.2s ease;
     font-family: 'Inter', sans-serif;
     box-shadow: 0 4px 12px rgba(102, 126, 234, 0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.song-detail-save-btn.with-label {
+    flex-direction: column;
+    padding: 8px 16px;
+    gap: 4px;
+    min-width: 60px;
+}
+
+.song-detail-save-btn .icon {
+    font-size: 1.2em;
+    line-height: 1;
+}
+
+.song-detail-save-btn .label {
+    font-size: 0.75em;
+    font-weight: 600;
+    line-height: 1;
+    text-transform: lowercase;
 }
 
 .song-detail-save-btn:hover {

@@ -45,7 +45,7 @@ class ChordDetectorOverlay {
             // Update button to show maximize icon (not minimize)
             if (this.minimizeButton) {
                 this.minimizeButton.textContent = '🔺';
-                this.minimizeButton.title = 'Maximaliseer';
+                this.minimizeButton.title = 'Maximize';
             }
             // Load saved position
             this.loadPosition();
@@ -284,24 +284,24 @@ class ChordDetectorOverlay {
     updateStatus(status, message) {
         if (!this.statusDisplay) return;
         
-        let statusText = 'Niet actief';
+        let statusText = 'Not active';
         let statusClass = 'status-inactive';
         
         switch (status) {
             case 'listening':
-                statusText = '🎤 Microfoon actief - speel een akkoord';
+                statusText = '🎤 Microphone active - play a chord';
                 statusClass = 'status-listening';
                 break;
             case 'stopped':
-                statusText = 'Gestopt';
+                statusText = 'Stopped';
                 statusClass = 'status-inactive';
                 break;
             case 'error':
-                statusText = message || 'Fout opgetreden';
+                statusText = message || 'Error occurred';
                 statusClass = 'status-error';
                 break;
             default:
-                statusText = 'Niet actief';
+                statusText = 'Not active';
                 statusClass = 'status-inactive';
         }
         
@@ -318,20 +318,20 @@ class ChordDetectorOverlay {
             } else {
                 this.toggleButton.classList.remove('active');
                 this.toggleButton.textContent = '🎤';
-                this.toggleButton.title = 'Start detectie';
+                this.toggleButton.title = 'Start detection';
             }
         }
     }
     
     handleError(error) {
-        let errorMessage = 'Fout bij starten van microfoon';
+        let errorMessage = 'Error starting microphone';
         
         if (error.name === 'NotAllowedError' || error.name === 'PermissionDeniedError') {
-            errorMessage = 'Microfoon toegang geweigerd. Controleer browser instellingen.';
+            errorMessage = 'Microphone access denied. Check browser settings.';
         } else if (error.name === 'NotFoundError' || error.name === 'DevicesNotFoundError') {
-            errorMessage = 'Geen microfoon gevonden. Controleer uw apparaat.';
+            errorMessage = 'No microphone found. Check your device.';
         } else if (error.name === 'NotSupportedError') {
-            errorMessage = 'Web Audio API niet ondersteund in deze browser.';
+            errorMessage = 'Web Audio API not supported in this browser.';
         } else if (error.message) {
             errorMessage = error.message;
         }
@@ -355,13 +355,13 @@ class ChordDetectorOverlay {
             this.overlay.classList.add('minimized');
             if (this.minimizeButton) {
                 this.minimizeButton.textContent = '🔺';
-                this.minimizeButton.title = 'Maximaliseer';
+                this.minimizeButton.title = 'Maximize';
             }
         } else {
             this.overlay.classList.remove('minimized');
             if (this.minimizeButton) {
                 this.minimizeButton.textContent = '🔻';
-                this.minimizeButton.title = 'Minimaliseer';
+                this.minimizeButton.title = 'Minimize';
             }
             // Force reflow to ensure smooth animation
             const body = this.overlay.querySelector('.chord-detector-body');
@@ -411,7 +411,7 @@ class ChordDetectorOverlay {
         this.microphoneSelect.innerHTML = '';
         const placeholder = document.createElement('option');
         placeholder.value = '';
-        placeholder.textContent = 'Kies microfoon...';
+        placeholder.textContent = 'Choose microphone...';
         this.microphoneSelect.appendChild(placeholder);
         
         // Reload list when devices change (but only if we already have permission)
@@ -447,7 +447,7 @@ class ChordDetectorOverlay {
         if (devices.length === 0) {
             const option = document.createElement('option');
             option.value = '';
-            option.textContent = requirePermission ? 'Geen microfoons gevonden' : 'Kies microfoon...';
+            option.textContent = requirePermission ? 'No microphones found' : 'Choose microphone...';
             this.microphoneSelect.appendChild(option);
             return;
         }
@@ -455,7 +455,7 @@ class ChordDetectorOverlay {
         devices.forEach(device => {
             const option = document.createElement('option');
             option.value = device.deviceId;
-            option.textContent = device.label || `Microfoon ${devices.indexOf(device) + 1}`;
+            option.textContent = device.label || `Microphone ${devices.indexOf(device) + 1}`;
             this.microphoneSelect.appendChild(option);
         });
         
@@ -713,7 +713,7 @@ class ChordDetectorOverlay {
             const removeBtn = document.createElement('button');
             removeBtn.className = 'remove-chord';
             removeBtn.textContent = '×';
-            removeBtn.title = 'Verwijder akkoord';
+            removeBtn.title = 'Remove chord';
             removeBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 this.removeFromChordHistory(index);

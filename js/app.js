@@ -227,7 +227,7 @@ class App {
     updateSetlistSelect() {
         const select = document.getElementById('setlistSelect');
         const currentValue = select.value;
-        select.innerHTML = '<option value="">Alle Songs</option>';
+        select.innerHTML = '<option value="">All Songs</option>';
         
         this.setlistManager.getAllSetlists().forEach(setlist => {
             const option = document.createElement('option');
@@ -269,8 +269,8 @@ class App {
             }
             // Change button to text when in setlist mode
             if (addSongBtn) {
-                addSongBtn.textContent = 'Songs toevoegen';
-                addSongBtn.title = 'Songs toevoegen aan setlist';
+                addSongBtn.textContent = 'Add songs';
+                addSongBtn.title = 'Add songs to setlist';
             }
             // Hide export, import, and delete all buttons
             if (importControls) {
@@ -289,7 +289,7 @@ class App {
             // Change button back to icon
             if (addSongBtn) {
                 addSongBtn.textContent = '➕';
-                addSongBtn.title = 'Nieuwe Song Toevoegen';
+                addSongBtn.title = 'Add New Song';
             }
             // Show export, import, and delete all buttons
             if (importControls) {
@@ -352,15 +352,15 @@ class App {
             if (this.currentSetlistId) {
                 const setlist = this.setlistManager.getSetlist(this.currentSetlistId);
                 if (setlist) {
-                    if (confirm(`Weet je zeker dat je de setlist "${setlist.name}" wilt verwijderen?`)) {
+                    if (confirm(`Are you sure you want to delete the setlist "${setlist.name}"?`)) {
                         this.setlistManager.deleteSetlist(this.currentSetlistId);
                         this.currentSetlistId = null;
                         this.updateSetlistSelect();
                         const select = document.getElementById('setlistSelect');
                         select.value = '';
-                        // Reset to "Alle Songs" view
+                        // Reset to "All Songs" view
                         this.updateButtonsForSetlistMode();
-                        // Load all songs (reset to "Alle Songs" view)
+                        // Load all songs (reset to "All Songs" view)
                         this.loadAndRender();
                     }
                 }
@@ -427,10 +427,10 @@ class App {
                 this.loadAndRender();
                 let message = '';
                 if (addedCount > 0) {
-                    message = `${addedCount} song(s) toegevoegd`;
+                    message = `${addedCount} song(s) added`;
                 }
                 if (alreadyInSetlistCount > 0) {
-                    message += message ? `, ${alreadyInSetlistCount} al aanwezig` : `${alreadyInSetlistCount} song(s) al aanwezig`;
+                    message += message ? `, ${alreadyInSetlistCount} already present` : `${alreadyInSetlistCount} song(s) already present`;
                 }
                 alert(message);
             }
@@ -471,9 +471,9 @@ class App {
 
             const label = document.createElement('label');
             label.htmlFor = `song-${song.id}`;
-            label.textContent = `${song.artist || 'Onbekend'} - ${song.title || 'Geen titel'}`;
+            label.textContent = `${song.artist || 'Unknown'} - ${song.title || 'No title'}`;
             if (isInSetlist) {
-                label.innerHTML += ' <span class="in-setlist-badge">(al in setlist)</span>';
+                label.innerHTML += ' <span class="in-setlist-badge">(already in setlist)</span>';
             }
 
             songItem.appendChild(checkbox);
@@ -649,7 +649,7 @@ class App {
         const setlist = this.setlistManager.getSetlist(this.currentSetlistId);
         
         if (setlist) {
-            modalTitle.textContent = `Songs toevoegen aan "${setlist.name}"`;
+            modalTitle.textContent = `Add songs to "${setlist.name}"`;
             this.populateSongsList(setlist);
             modal.classList.remove('hidden');
         }
@@ -701,7 +701,7 @@ class App {
         // Extract video ID from YouTube URL
         const videoId = this.extractYouTubeVideoId(youtubeUrl);
         if (!videoId) {
-            alert('Ongeldige YouTube URL. Gebruik een volledige YouTube URL (bijv. https://www.youtube.com/watch?v=VIDEO_ID)');
+            alert('Invalid YouTube URL. Use a full YouTube URL (e.g. https://www.youtube.com/watch?v=VIDEO_ID)');
             return;
         }
         
@@ -736,7 +736,7 @@ class App {
         if (!player || !container || !title) return;
         
         // Set title
-        title.textContent = `${song.artist || 'Onbekend'} - ${song.title || 'Geen titel'}`;
+        title.textContent = `${song.artist || 'Unknown'} - ${song.title || 'No title'}`;
         
         // Clear previous iframe
         container.innerHTML = '';
@@ -942,14 +942,14 @@ class App {
         const songCount = this.songManager.getAllSongs().length;
         
         if (songCount === 0) {
-            alert('Er zijn geen songs om te verwijderen.');
+            alert('There are no songs to delete.');
             return;
         }
 
         // Show warning with song count
-        const message = `WAARSCHUWING: Je staat op het punt om alle ${songCount} song(s) permanent te verwijderen!\n\n` +
-                       `Deze actie kan niet ongedaan worden gemaakt.\n\n` +
-                       `Weet je zeker dat je door wilt gaan?`;
+        const message = `WARNING: You are about to permanently delete all ${songCount} song(s)!\n\n` +
+                       `This action cannot be undone.\n\n` +
+                       `Are you sure you want to continue?`;
         
         if (!confirm(message)) {
             return;
@@ -957,8 +957,8 @@ class App {
 
         // Double confirmation
         const doubleConfirm = confirm(
-            `Laatste bevestiging: Alle ${songCount} song(s) worden nu verwijderd.\n\n` +
-            `Klik "OK" om te bevestigen of "Annuleren" om af te breken.`
+            `Final confirmation: All ${songCount} song(s) will now be deleted.\n\n` +
+            `Click "OK" to confirm or "Cancel" to abort.`
         );
 
         if (!doubleConfirm) {
@@ -973,7 +973,7 @@ class App {
         this.updateSetlistSelect();
 
         // Show success message
-        alert(`Alle ${songCount} song(s) zijn succesvol verwijderd.`);
+        alert(`All ${songCount} song(s) have been successfully deleted.`);
     }
 
     exportSongs() {
@@ -1045,19 +1045,19 @@ class App {
             if (iconSpan) {
                 if (this.viewMode === 'simple') {
                     iconSpan.textContent = '📊';
-                    toggleBtn.title = 'Volledig overzicht';
+                    toggleBtn.title = 'Full view';
                 } else {
                     iconSpan.textContent = '📋';
-                    toggleBtn.title = 'Simpel overzicht';
+                    toggleBtn.title = 'Simple view';
                 }
             } else {
                 // Fallback for if structure is not yet set up
                 if (this.viewMode === 'simple') {
                     toggleBtn.textContent = '📊';
-                    toggleBtn.title = 'Volledig overzicht';
+                    toggleBtn.title = 'Full view';
                 } else {
                     toggleBtn.textContent = '📋';
-                    toggleBtn.title = 'Simpel overzicht';
+                    toggleBtn.title = 'Simple view';
                 }
             }
             if (this.viewMode === 'simple') {
@@ -1086,9 +1086,9 @@ class App {
             let replace = true;
             if (currentSongCount > 0) {
                 const importChoice = confirm(
-                    `Hoe wil je de ${songCount} song(s) importeren?\n\n` +
-                    `Klik "OK" om huidige songs te verwijderen en nieuwe te importeren.\n` +
-                    `Klik "Annuleren" om nieuwe songs toe te voegen aan bestaande songs.`
+                    `How do you want to import ${songCount} song(s)?\n\n` +
+                    `Click "OK" to delete current songs and import new ones.\n` +
+                    `Click "Cancel" to add new songs to existing songs.`
                 );
                 replace = importChoice;
             }

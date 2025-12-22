@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="nl">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,22 +15,22 @@
         <header>
             <div class="header-top">
                 <h1>Interactive Chord Book</h1>
-                <button id="toggleHeaderBarCollapsed" class="toggle-header-bar-btn collapsed-position" title="Toon knoppenbalk">▲</button>
+                <button id="toggleHeaderBarCollapsed" class="toggle-header-bar-btn collapsed-position" title="Show button bar">▲</button>
             </div>
             <div class="header-bar" id="headerBar">
-                <button id="toggleHeaderBar" class="toggle-header-bar-btn normal-position" title="Verberg knoppenbalk">▼</button>
+                <button id="toggleHeaderBar" class="toggle-header-bar-btn normal-position" title="Hide button bar">▼</button>
                 
                 <!-- Filters & Search Section -->
                 <div class="header-section filters-section">
                     <span class="section-label">Filter:</span>
                     <div class="filter-buttons">
-                        <button id="filterAll" class="filter-btn active">Alle</button>
-                        <button id="filterFavorites" class="filter-btn">⭐ Favorieten</button>
+                        <button id="filterAll" class="filter-btn active">All</button>
+                        <button id="filterFavorites" class="filter-btn">⭐ Favorites</button>
                     </div>
                     <div class="search-section-container">
                         <div class="search-input-wrapper">
-                            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Zoek op artiest of titel..." autocomplete="off">
-                            <button id="clearSearchBtn" class="clear-search-btn hidden" title="Zoekveld legen">×</button>
+                            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search by artist or title..." autocomplete="off">
+                            <button id="clearSearchBtn" class="clear-search-btn hidden" title="Clear search field">×</button>
                         </div>
                     </div>
                 </div>
@@ -42,39 +42,39 @@
                         <span class="section-label">Setlist:</span>
                         <div class="setlist-controls">
                             <select id="setlistSelect" class="setlist-select">
-                                <option value="">Alle Songs</option>
+                                <option value="">All Songs</option>
                             </select>
-                            <button id="createSetlistBtn" class="setlist-btn" title="Nieuwe Setlist">+</button>
-                            <button id="deleteSetlistBtn" class="setlist-btn delete-setlist-btn hidden" title="Verwijder setlist">🗑️</button>
+                            <button id="createSetlistBtn" class="setlist-btn" title="New Setlist">+</button>
+                            <button id="deleteSetlistBtn" class="setlist-btn delete-setlist-btn hidden" title="Delete setlist">🗑️</button>
                         </div>
                     </div>
                     
                     <!-- Actions -->
                     <div class="actions-group">
-                        <button id="toggleViewBtn" class="import-export-btn view-toggle-btn with-label" title="Wissel tussen simpel en volledig overzicht">
+                        <button id="toggleViewBtn" class="import-export-btn view-toggle-btn with-label" title="Toggle between simple and full view">
                             <span class="icon">📋</span>
-                            <span class="label">Weergave</span>
+                            <span class="label">View</span>
                         </button>
-                        <button id="addSongBtn" class="add-song-btn with-label" title="Nieuwe Song Toevoegen">
+                        <button id="addSongBtn" class="add-song-btn with-label" title="Add New Song">
                             <span class="icon">➕</span>
-                            <span class="label">Toevoegen</span>
+                            <span class="label">Add</span>
                         </button>
                         <div class="import-export-controls">
-                            <button id="exportBtn" class="import-export-btn with-label" title="Exporteer">
+                            <button id="exportBtn" class="import-export-btn with-label" title="Export">
                                 <span class="icon">📤</span>
                                 <span class="label">Export</span>
                             </button>
-                            <label for="importFile" class="import-export-btn with-label" title="Importeer">
+                            <label for="importFile" class="import-export-btn with-label" title="Import">
                                 <span class="icon">📥</span>
                                 <span class="label">Import</span>
                             </label>
                             <input type="file" id="importFile" accept=".json" style="display: none;">
-                            <button id="deleteAllSongsBtn" class="import-export-btn delete-all-btn with-label" title="Verwijder alle songs">
+                            <button id="deleteAllSongsBtn" class="import-export-btn delete-all-btn with-label" title="Delete all songs">
                                 <span class="icon">🗑️</span>
-                                <span class="label">Verwijder</span>
+                                <span class="label">Delete</span>
                             </button>
                         </div>
-                        <button id="printTableBtn" class="import-export-btn print-btn with-label" title="Print volledige tabel">
+                        <button id="printTableBtn" class="import-export-btn print-btn with-label" title="Print full table">
                             <span class="icon">🖨️</span>
                             <span class="label">Print</span>
                         </button>
@@ -90,7 +90,7 @@
                 <span class="separator">-</span>
                 <span id="selectedTitle" class="selected-title"></span>
             </div>
-            <button id="deselectBtn" class="deselect-btn" title="Sluiten (Escape)">×</button>
+            <button id="deselectBtn" class="deselect-btn" title="Close (Escape)">×</button>
         </div>
         
         <!-- Black overlay when row is selected -->
@@ -108,11 +108,11 @@
                 <thead>
                     <tr>
                         <th class="sortable" data-column="artist">
-                            Artiest
+                            Artist
                             <span class="sort-indicator"></span>
                         </th>
                         <th class="sortable" data-column="title">
-                            Songtitel
+                            Song Title
                             <span class="sort-indicator"></span>
                         </th>
                         <th class="sortable favorite-column" data-column="favorite">
@@ -123,7 +123,7 @@
                         <th class="chorus-column">Chorus</th>
                         <th>Pre-Chorus</th>
                         <th>Bridge</th>
-                        <th class="actions-column">Acties</th>
+                        <th class="actions-column">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="songsTableBody">
@@ -138,38 +138,38 @@
     <div id="chordModal" class="chord-modal hidden">
         <div class="chord-modal-content">
             <div class="chord-modal-header">
-                <h3>Selecteer Akkoorden</h3>
+                <h3>Select Chords</h3>
                 <button class="chord-modal-close" id="chordModalClose">&times;</button>
             </div>
             <div class="chord-modal-body">
                 <div class="chord-categories">
                     <div class="chord-category">
-                        <h4>Majeur</h4>
+                        <h4>Major</h4>
                         <div class="chord-buttons" id="majorChords"></div>
                     </div>
                     <div class="chord-category">
-                        <h4>Mineur</h4>
+                        <h4>Minor</h4>
                         <div class="chord-buttons" id="minorChords"></div>
                     </div>
                     <div class="chord-category toggleable" id="susAddCategory">
                         <div class="chord-category-header">
                             <h4>Sus & Add</h4>
-                            <button class="toggle-category-btn" id="toggleSusAdd">Toon</button>
+                            <button class="toggle-category-btn" id="toggleSusAdd">Show</button>
                         </div>
                         <div class="chord-buttons hidden" id="susAddChords"></div>
                     </div>
                     <div class="chord-category toggleable" id="specialCategory">
                         <div class="chord-category-header">
-                            <h4>Speciale</h4>
-                            <button class="toggle-category-btn" id="toggleSpecial">Toon</button>
+                            <h4>Special</h4>
+                            <button class="toggle-category-btn" id="toggleSpecial">Show</button>
                         </div>
                         <div class="chord-buttons hidden" id="specialChords"></div>
                     </div>
                 </div>
                 <div class="chord-input-section">
-                    <label>Of typ zelf akkoorden:</label>
-                    <input type="text" id="chordCustomInput" placeholder="Bijv: C G Am F" />
-                    <button id="chordAddCustom" class="chord-add-btn">Toevoegen</button>
+                    <label>Or type chords yourself:</label>
+                    <input type="text" id="chordCustomInput" placeholder="E.g.: C G Am F" />
+                    <button id="chordAddCustom" class="chord-add-btn">Add</button>
                 </div>
             </div>
         </div>
@@ -179,12 +179,12 @@
     <div id="setlistModal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Nieuwe Setlist</h3>
+                <h3>New Setlist</h3>
                 <button class="modal-close" id="setlistModalClose">&times;</button>
             </div>
             <div class="modal-body">
-                <input type="text" id="setlistNameInput" placeholder="Setlist naam..." />
-                <button id="setlistCreateBtn" class="modal-submit-btn">Aanmaken</button>
+                <input type="text" id="setlistNameInput" placeholder="Setlist name..." />
+                <button id="setlistCreateBtn" class="modal-submit-btn">Create</button>
             </div>
         </div>
     </div>
@@ -193,23 +193,23 @@
     <div id="addSongsToSetlistModal" class="modal hidden">
         <div class="modal-content modal-large">
             <div class="modal-header">
-                <h3 id="addSongsModalTitle">Songs toevoegen aan setlist</h3>
+                <h3 id="addSongsModalTitle">Add songs to setlist</h3>
                 <button class="modal-close" id="addSongsModalClose">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="songs-selection-container">
                     <div class="selection-controls">
-                        <button id="selectAllSongs" class="selection-btn">Alles selecteren</button>
-                        <button id="deselectAllSongs" class="selection-btn">Alles deselecteren</button>
-                        <span id="selectedCount" class="selected-count">0 geselecteerd</span>
+                        <button id="selectAllSongs" class="selection-btn">Select all</button>
+                        <button id="deselectAllSongs" class="selection-btn">Deselect all</button>
+                        <span id="selectedCount" class="selected-count">0 selected</span>
                     </div>
                     <div class="songs-list" id="songsListContainer">
                         <!-- Songs will be dynamically inserted here -->
                     </div>
                 </div>
                 <div class="modal-actions">
-                    <button id="addSelectedSongsBtn" class="modal-submit-btn">Geselecteerde songs toevoegen</button>
-                    <button id="cancelAddSongsBtn" class="modal-cancel-btn">Annuleren</button>
+                    <button id="addSelectedSongsBtn" class="modal-submit-btn">Add selected songs</button>
+                    <button id="cancelAddSongsBtn" class="modal-cancel-btn">Cancel</button>
                 </div>
             </div>
         </div>
@@ -219,18 +219,46 @@
     <div id="songDetailModal" class="song-detail-modal hidden">
         <div class="song-detail-modal-content">
             <div class="song-detail-header">
-                <button class="song-detail-nav-btn song-detail-prev" id="songDetailPrev" title="Vorige song">‹</button>
+                <button class="song-detail-nav-btn song-detail-prev with-label" id="songDetailPrev" title="Previous song">
+                    <span class="icon">‹</span>
+                    <span class="label">Previous</span>
+                </button>
                 <div class="song-detail-title-section">
                     <h2 id="songDetailArtist" class="song-detail-artist editable-field" data-field="artist" contenteditable="false"></h2>
                     <span class="song-detail-separator">-</span>
                     <h1 id="songDetailTitle" class="song-detail-title editable-field" data-field="title" contenteditable="false"></h1>
-                    <button id="songDetailYouTubePlayBtn" class="song-detail-youtube-play-btn hidden" title="YouTube afspelen">▶️</button>
-                    <button id="songDetailYouTubeBtn" class="song-detail-youtube-btn" title="YouTube URL bewerken">🎬</button>
-                    <button id="songDetailFavoriteBtn" class="song-detail-favorite-btn" title="Voeg toe aan favorieten">☆</button>
+                    <button id="songDetailYouTubePlayBtn" class="song-detail-youtube-play-btn with-label hidden" title="Play YouTube video">
+                        <span class="icon youtube-icon">
+                            <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                                <path d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55 C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19 C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.63-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#FF0000"/>
+                                <path d="M 45,24 27,14 27,34" fill="#fff"/>
+                            </svg>
+                        </span>
+                        <span class="label">Play</span>
+                    </button>
+                    <button id="songDetailYouTubeBtn" class="song-detail-youtube-btn with-label" title="Edit YouTube URL">
+                        <span class="icon youtube-icon">
+                            <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                                <path d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55 C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19 C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.63-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#FF0000"/>
+                                <path d="M 45,24 27,14 27,34" fill="#fff"/>
+                            </svg>
+                        </span>
+                        <span class="label">Add URL</span>
+                    </button>
+                    <button id="songDetailFavoriteBtn" class="song-detail-favorite-btn with-label" title="Add to favorites">
+                        <span class="icon">☆</span>
+                        <span class="label">Favorite</span>
+                    </button>
                 </div>
                 <div class="song-detail-header-right">
-                    <button class="song-detail-nav-btn song-detail-next" id="songDetailNext" title="Volgende song">›</button>
-                    <button class="song-detail-close" id="songDetailModalClose">&times;</button>
+                    <button class="song-detail-nav-btn song-detail-next with-label" id="songDetailNext" title="Next song">
+                        <span class="icon">›</span>
+                        <span class="label">Next</span>
+                    </button>
+                    <button class="song-detail-close with-label" id="songDetailModalClose" title="Close">
+                        <span class="icon">&times;</span>
+                        <span class="label">Close</span>
+                    </button>
                 </div>
             </div>
             <div class="song-detail-body">
@@ -251,7 +279,10 @@
                     <div class="chord-section-content editable-field" data-field="bridge" id="bridgeContent" contenteditable="false"></div>
                 </div>
                 <div class="song-detail-actions">
-                    <button id="songDetailSaveBtn" class="song-detail-save-btn hidden">💾 Opslaan</button>
+                    <button id="songDetailSaveBtn" class="song-detail-save-btn with-label hidden">
+                        <span class="icon">💾</span>
+                        <span class="label">Save</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -267,8 +298,8 @@
             <div class="modal-body">
                 <input type="url" id="youtubeUrlInput" placeholder="https://www.youtube.com/watch?v=..." />
                 <div class="modal-actions">
-                    <button id="youtubeUrlSaveBtn" class="modal-submit-btn">Opslaan</button>
-                    <button id="youtubeUrlCancelBtn" class="modal-cancel-btn">Annuleren</button>
+                    <button id="youtubeUrlSaveBtn" class="modal-submit-btn">Save</button>
+                    <button id="youtubeUrlCancelBtn" class="modal-cancel-btn">Cancel</button>
                 </div>
             </div>
         </div>
@@ -280,8 +311,8 @@
             <div class="youtube-mini-player-header">
                 <span id="youtubePlayerTitle" class="youtube-player-title"></span>
                 <div class="youtube-player-controls">
-                    <button id="youtubePlayerMinimize" class="youtube-player-minimize-btn" title="Minimaliseer">🔻</button>
-                    <button id="youtubePlayerClose" class="youtube-player-close-btn" title="Sluiten">×</button>
+                    <button id="youtubePlayerMinimize" class="youtube-player-minimize-btn" title="Minimize">🔻</button>
+                    <button id="youtubePlayerClose" class="youtube-player-close-btn" title="Close">×</button>
                 </div>
             </div>
             <div class="youtube-mini-player-body">
@@ -296,32 +327,32 @@
     <div id="chordDetectorOverlay" class="chord-detector-overlay">
         <div class="chord-detector-content">
             <div class="chord-detector-header">
-                <h3>Akkoord Detectie</h3>
+                <h3>Chord Detection</h3>
                 <div class="chord-detector-header-buttons">
-                    <button id="chordDetectorMinimize" class="chord-detector-minimize-btn" title="Minimaliseer">🔻</button>
+                    <button id="chordDetectorMinimize" class="chord-detector-minimize-btn" title="Minimize">🔻</button>
                 </div>
             </div>
             <div class="chord-detector-body">
                 <div class="chord-display">
                     <div id="detectedChord" class="detected-chord-display">--</div>
-                    <div id="chordDetectorStatus" class="chord-detector-status">Niet actief</div>
+                    <div id="chordDetectorStatus" class="chord-detector-status">Not active</div>
                     <div class="audio-level-container">
-                        <div class="audio-level-label">Geluid:</div>
+                        <div class="audio-level-label">Sound:</div>
                         <div class="audio-level-bar">
                             <div id="audioLevelIndicator" class="audio-level-indicator"></div>
                         </div>
                     </div>
                 </div>
-                <button id="chordDetectorToggle" class="chord-detector-toggle-btn" title="Start detectie">🎤</button>
-                <select id="microphoneSelect" class="microphone-select" title="Kies microfoon"></select>
+                <button id="chordDetectorToggle" class="chord-detector-toggle-btn" title="Start detection">🎤</button>
+                <select id="microphoneSelect" class="microphone-select" title="Choose microphone"></select>
                 
                 <!-- Chord History -->
                 <div class="chord-history-section">
                     <div class="chord-history-header">
-                        <span>Geschiedenis</span>
+                        <span>History</span>
                         <div class="chord-history-actions">
-                            <button id="copyChordHistory" class="copy-history-btn" title="Kopieer naar klembord">📋</button>
-                            <button id="clearChordHistory" class="clear-history-btn" title="Wis geschiedenis">🗑️</button>
+                            <button id="copyChordHistory" class="copy-history-btn" title="Copy to clipboard">📋</button>
+                            <button id="clearChordHistory" class="clear-history-btn" title="Clear history">🗑️</button>
                         </div>
                     </div>
                     <div id="chordHistory" class="chord-history-list"></div>
