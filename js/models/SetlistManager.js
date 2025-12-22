@@ -8,33 +8,92 @@ class SetlistManager {
         this.onSetlistsChanged = null; // Callback for when setlists change externally
     }
 
-    async loadSetlists() {
-        // Try Firebase first if available and authenticated
+    async loadSetlists(forceFromFirebase = false) {
+        // First, try to load from cache (localStorage)
+        if (!forceFromFirebase) {
+            try {
+                const stored = localStorage.getItem(this.storageKey);
+                if (stored) {
+                    const setlists = JSON.parse(stored);
+                    this.setlists = this.normalizeSetlists(setlists);
+                    // Return cached data immediately, then sync in background
+                    if (this.firebaseManager && this.firebaseManager.isAuthenticated()) {
+                        // Sync with Firebase in background (non-blocking)
+                        this.syncFromFirebase().catch(err => {
+                            console.error('Background sync error:', err);
+                        });
+                    }
+                    return this.setlists;
+                }
+            } catch (e) {
+                console.error('Error loading setlists from localStorage:', e);
+            }
+        }
+
+        // If no cache or forceFromFirebase, load from Firebase
         if (this.firebaseManager && this.firebaseManager.isAuthenticated()) {
             try {
                 const userId = this.firebaseManager.getCurrentUser().uid;
                 const setlists = await this.firebaseManager.loadSetlists(userId);
                 this.setlists = this.normalizeSetlists(setlists);
+                // Cache the data
+                this.cacheSetlists();
                 return this.setlists;
             } catch (error) {
                 console.error('Error loading setlists from Firebase:', error);
-                // Fallback to localStorage
+                // If Firebase fails and we have cache, use cache
+                try {
+                    const stored = localStorage.getItem(this.storageKey);
+                    if (stored) {
+                        this.setlists = this.normalizeSetlists(JSON.parse(stored));
+                        return this.setlists;
+                    }
+                } catch (e) {
+                    console.error('Error loading from cache after Firebase failure:', e);
+                }
             }
-        }
-
-        // Fallback to localStorage
-        try {
-            const stored = localStorage.getItem(this.storageKey);
-            if (stored) {
-                this.setlists = this.normalizeSetlists(JSON.parse(stored));
-                return this.setlists;
-            }
-        } catch (e) {
-            console.error('Error loading setlists from localStorage:', e);
         }
         
+        // No data available
         this.setlists = [];
         return [];
+    }
+
+    // Sync from Firebase in background (for cache updates)
+    async syncFromFirebase() {
+        if (!this.firebaseManager || !this.firebaseManager.isAuthenticated()) {
+            return;
+        }
+
+        try {
+            const userId = this.firebaseManager.getCurrentUser().uid;
+            const setlists = await this.firebaseManager.loadSetlists(userId);
+            const normalizedSetlists = this.normalizeSetlists(setlists);
+            
+            // Only update if data is different (avoid unnecessary updates)
+            const currentSetlistsStr = JSON.stringify(this.setlists);
+            const newSetlistsStr = JSON.stringify(normalizedSetlists);
+            
+            if (currentSetlistsStr !== newSetlistsStr) {
+                this.setlists = normalizedSetlists;
+                this.cacheSetlists();
+                // Notify listeners if callback is set
+                if (this.onSetlistsChanged) {
+                    this.onSetlistsChanged();
+                }
+            }
+        } catch (error) {
+            console.error('Background sync error:', error);
+        }
+    }
+
+    // Cache setlists to localStorage
+    cacheSetlists() {
+        try {
+            localStorage.setItem(this.storageKey, JSON.stringify(this.setlists));
+        } catch (error) {
+            console.error('Error caching setlists:', error);
+        }
     }
 
     normalizeSetlists(setlists) {
@@ -51,34 +110,28 @@ class SetlistManager {
     setSetlists(setlists, skipSave = false) {
         this.setlists = this.normalizeSetlists(setlists);
         if (!skipSave) {
-            this.saveSetlists();
+            // Fire and forget - don't await to avoid blocking
+            this.saveSetlists().catch(err => console.error('Error saving setlists:', err));
+        } else {
+            // Still cache even if we skip Firebase save
+            this.cacheSetlists();
         }
     }
 
     async saveSetlists() {
-        // Save to Firebase if available and authenticated
+        // Always cache to localStorage first (fast, local)
+        this.cacheSetlists();
+
+        // Then save to Firebase in background (only if authenticated)
         if (this.firebaseManager && this.firebaseManager.isAuthenticated()) {
             try {
                 const userId = this.firebaseManager.getCurrentUser().uid;
+                // Save to Firebase (this will trigger real-time sync on other devices)
                 await this.firebaseManager.saveSetlists(userId, this.setlists);
-                // Also save to localStorage as backup
-                try {
-                    localStorage.setItem(this.storageKey, JSON.stringify(this.setlists));
-                } catch (e) {
-                    console.warn('Could not save to localStorage:', e);
-                }
-                return;
             } catch (error) {
                 console.error('Error saving setlists to Firebase:', error);
-                // Fallback to localStorage
+                // Data is already cached, so app continues to work offline
             }
-        }
-
-        // Fallback to localStorage
-        try {
-            localStorage.setItem(this.storageKey, JSON.stringify(this.setlists));
-        } catch (e) {
-            console.error('Error saving setlists to localStorage:', e);
         }
     }
 
@@ -155,11 +208,20 @@ class SetlistManager {
 
         this.syncEnabled = true;
         this.firebaseManager.onSetlistsChange(userId, (setlists) => {
-            // Update setlists without triggering save (to avoid infinite loop)
-            this.setSetlists(setlists, true);
-            // Notify listeners
-            if (this.onSetlistsChanged) {
-                this.onSetlistsChanged();
+            // Only update if data actually changed (avoid unnecessary UI updates)
+            const newSetlists = this.normalizeSetlists(setlists);
+            const currentSetlistsStr = JSON.stringify(this.setlists);
+            const newSetlistsStr = JSON.stringify(newSetlists);
+            
+            if (currentSetlistsStr !== newSetlistsStr) {
+                // Update setlists without triggering save (to avoid infinite loop)
+                this.setSetlists(setlists, true);
+                // Update cache
+                this.cacheSetlists();
+                // Notify listeners
+                if (this.onSetlistsChanged) {
+                    this.onSetlistsChanged();
+                }
             }
         });
     }

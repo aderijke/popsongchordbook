@@ -9,37 +9,98 @@ class SongManager {
         this.onSongsChanged = null; // Callback for when songs change externally
     }
 
-    async loadSongs() {
-        // Try Firebase first if available and authenticated
+    async loadSongs(forceFromFirebase = false) {
+        // First, try to load from cache (localStorage)
+        if (!forceFromFirebase) {
+            try {
+                const stored = localStorage.getItem(this.storageKey);
+                if (stored) {
+                    const songs = JSON.parse(stored);
+                    this.songs = this.normalizeSongs(songs);
+                    this.updateNextId();
+                    // Return cached data immediately, then sync in background
+                    if (this.firebaseManager && this.firebaseManager.isAuthenticated()) {
+                        // Sync with Firebase in background (non-blocking)
+                        this.syncFromFirebase().catch(err => {
+                            console.error('Background sync error:', err);
+                        });
+                    }
+                    return this.songs;
+                }
+            } catch (error) {
+                console.error('Error loading songs from localStorage:', error);
+            }
+        }
+
+        // If no cache or forceFromFirebase, load from Firebase
         if (this.firebaseManager && this.firebaseManager.isAuthenticated()) {
             try {
                 const userId = this.firebaseManager.getCurrentUser().uid;
                 const songs = await this.firebaseManager.loadSongs(userId);
                 this.songs = this.normalizeSongs(songs);
                 this.updateNextId();
+                // Cache the data
+                this.cacheSongs();
                 return this.songs;
             } catch (error) {
                 console.error('Error loading songs from Firebase:', error);
-                // Fallback to localStorage
+                // If Firebase fails and we have cache, use cache
+                try {
+                    const stored = localStorage.getItem(this.storageKey);
+                    if (stored) {
+                        const songs = JSON.parse(stored);
+                        this.songs = this.normalizeSongs(songs);
+                        this.updateNextId();
+                        return this.songs;
+                    }
+                } catch (e) {
+                    console.error('Error loading from cache after Firebase failure:', e);
+                }
             }
-        }
-
-        // Fallback to localStorage
-        try {
-            const stored = localStorage.getItem(this.storageKey);
-            if (stored) {
-                const songs = JSON.parse(stored);
-                this.songs = this.normalizeSongs(songs);
-                this.updateNextId();
-                return this.songs;
-            }
-        } catch (error) {
-            console.error('Error loading songs from localStorage:', error);
         }
         
+        // No data available
         this.songs = [];
         this.nextId = 1;
         return [];
+    }
+
+    // Sync from Firebase in background (for cache updates)
+    async syncFromFirebase() {
+        if (!this.firebaseManager || !this.firebaseManager.isAuthenticated()) {
+            return;
+        }
+
+        try {
+            const userId = this.firebaseManager.getCurrentUser().uid;
+            const songs = await this.firebaseManager.loadSongs(userId);
+            const normalizedSongs = this.normalizeSongs(songs);
+            
+            // Only update if data is different (avoid unnecessary updates)
+            const currentSongsStr = JSON.stringify(this.songs);
+            const newSongsStr = JSON.stringify(normalizedSongs);
+            
+            if (currentSongsStr !== newSongsStr) {
+                this.songs = normalizedSongs;
+                this.updateNextId();
+                this.cacheSongs();
+                // Notify listeners if callback is set
+                if (this.onSongsChanged) {
+                    this.onSongsChanged();
+                }
+            }
+        } catch (error) {
+            console.error('Background sync error:', error);
+        }
+    }
+
+    // Cache songs to localStorage
+    cacheSongs() {
+        try {
+            localStorage.setItem(this.storageKey, JSON.stringify(this.songs));
+        } catch (error) {
+            console.error('Error caching songs:', error);
+        }
     }
 
     normalizeSongs(songs) {
@@ -70,29 +131,19 @@ class SongManager {
     }
 
     async saveSongs() {
-        // Save to Firebase if available and authenticated
+        // Always cache to localStorage first (fast, local)
+        this.cacheSongs();
+
+        // Then save to Firebase in background (only if authenticated)
         if (this.firebaseManager && this.firebaseManager.isAuthenticated()) {
             try {
                 const userId = this.firebaseManager.getCurrentUser().uid;
+                // Save to Firebase (this will trigger real-time sync on other devices)
                 await this.firebaseManager.saveSongs(userId, this.songs);
-                // Also save to localStorage as backup
-                try {
-                    localStorage.setItem(this.storageKey, JSON.stringify(this.songs));
-                } catch (e) {
-                    console.warn('Could not save to localStorage:', e);
-                }
-                return;
             } catch (error) {
                 console.error('Error saving songs to Firebase:', error);
-                // Fallback to localStorage
+                // Data is already cached, so app continues to work offline
             }
-        }
-
-        // Fallback to localStorage
-        try {
-            localStorage.setItem(this.storageKey, JSON.stringify(this.songs));
-        } catch (error) {
-            console.error('Error saving songs to localStorage:', error);
         }
     }
 
@@ -234,11 +285,20 @@ class SongManager {
 
         this.syncEnabled = true;
         this.firebaseManager.onSongsChange(userId, (songs) => {
-            // Update songs without triggering save (to avoid infinite loop)
-            this.setSongs(songs, true);
-            // Notify listeners
-            if (this.onSongsChanged) {
-                this.onSongsChanged();
+            // Only update if data actually changed (avoid unnecessary UI updates)
+            const newSongs = this.normalizeSongs(songs);
+            const currentSongsStr = JSON.stringify(this.songs);
+            const newSongsStr = JSON.stringify(newSongs);
+            
+            if (currentSongsStr !== newSongsStr) {
+                // Update songs without triggering save (to avoid infinite loop)
+                this.setSongs(songs, true);
+                // Update cache
+                this.cacheSongs();
+                // Notify listeners
+                if (this.onSongsChanged) {
+                    this.onSongsChanged();
+                }
             }
         });
     }

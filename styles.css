@@ -282,8 +282,8 @@ header h1 {
 /* Search Section Container - now part of filters section */
 .search-section-container {
     flex: 1 1 auto;
-    min-width: 200px;
-    max-width: 400px;
+    min-width: 120px;
+    max-width: 240px;
 }
 
 .search-section-container .search-input-wrapper {

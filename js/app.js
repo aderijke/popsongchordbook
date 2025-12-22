@@ -52,25 +52,30 @@ class App {
         // Setup auth modal
         this.authModal = new AuthModal(this.firebaseManager, (user) => this.handleAuthSuccess(user));
 
-        // Setup auth state listener
-        this.firebaseManager.onAuthStateChanged((user) => {
-            if (user) {
-                this.handleAuthSuccess(user);
-            } else {
-                this.handleAuthFailure();
-            }
+        // Wait for auth state to be restored (handles page refresh)
+        // This ensures we wait for Firebase to restore the session before checking auth state
+        await new Promise((resolve) => {
+            let resolved = false;
+            // Setup auth state listener - wait for first state change
+            this.firebaseManager.onAuthStateChanged((user) => {
+                if (user) {
+                    // User is authenticated (either logged in or session restored)
+                    if (!this.isAuthenticated) {
+                        this.handleAuthSuccess(user);
+                    }
+                } else {
+                    // No user - show login modal
+                    if (!this.isAuthenticated) {
+                        this.handleAuthFailure();
+                    }
+                }
+                // Resolve after first auth state check (only once)
+                if (!resolved) {
+                    resolved = true;
+                    resolve();
+                }
+            });
         });
-
-        // Check initial auth state
-        const currentUser = this.firebaseManager.getCurrentUser();
-        if (!currentUser) {
-            // Show login modal
-            this.authModal.show(true);
-            return; // Don't continue initialization until authenticated
-        }
-
-        // User is authenticated, continue initialization
-        await this.initializeApp();
     }
 
     async initializeApp() {
@@ -120,7 +125,30 @@ class App {
     }
 
     async checkAndMigrateData(user) {
-        // Check if there's local data to migrate
+        const userId = user.uid;
+        const migrationKey = `migration_completed_${userId}`;
+        
+        // Check if migration already completed for this user
+        if (localStorage.getItem(migrationKey) === 'true') {
+            return; // Migration already done for this user
+        }
+
+        // Check if Firebase account already has data (not a new account)
+        try {
+            const existingSongs = await this.firebaseManager.loadSongs(userId);
+            const existingSetlists = await this.firebaseManager.loadSetlists(userId);
+            
+            // If account already has data, mark migration as completed and skip
+            if (existingSongs.length > 0 || existingSetlists.length > 0) {
+                localStorage.setItem(migrationKey, 'true');
+                return; // Account already has data, no migration needed
+            }
+        } catch (error) {
+            console.error('Error checking existing data:', error);
+            // Continue to check local data
+        }
+
+        // Check if there's local data to migrate (only for new accounts)
         const localSongs = localStorage.getItem('popsongChordBook');
         const localSetlists = localStorage.getItem('popsongSetlists');
 
@@ -130,15 +158,14 @@ class App {
                 const setlists = localSetlists ? JSON.parse(localSetlists) : [];
 
                 if (songs.length > 0 || setlists.length > 0) {
-                    // Ask user if they want to migrate
+                    // Ask user if they want to migrate (only for new accounts with local data)
                     const shouldMigrate = confirm(
                         `Je hebt ${songs.length} song(s) en ${setlists.length} setlist(s) lokaal opgeslagen.\n\n` +
-                        `Wil je deze data naar je Firebase account migreren?\n\n` +
+                        `Wil je deze data naar je nieuwe Firebase account migreren?\n\n` +
                         `Klik "OK" om te migreren, of "Annuleren" om te starten met een lege collectie.`
                     );
 
                     if (shouldMigrate) {
-                        const userId = user.uid;
                         const result = await this.firebaseManager.migrateLocalDataToFirebase(userId, songs, setlists);
                         
                         if (result.merged) {
@@ -155,30 +182,35 @@ class App {
                             );
                         }
                     }
+                    
+                    // Mark migration as completed (even if user declined)
+                    localStorage.setItem(migrationKey, 'true');
                 }
             } catch (error) {
                 console.error('Migration error:', error);
                 alert('Er is een fout opgetreden bij het migreren van data.');
             }
+        } else {
+            // No local data, mark migration as completed
+            localStorage.setItem(migrationKey, 'true');
         }
     }
 
     async loadDataFromFirebase() {
         try {
-            const userId = this.firebaseManager.getCurrentUser().uid;
+            // Load from cache first (fast, no database call)
+            // This will automatically sync with Firebase in background if needed
+            await this.songManager.loadSongs(false); // false = use cache first
+            await this.setlistManager.loadSetlists(false); // false = use cache first
             
-            // Load songs
-            const songs = await this.songManager.loadSongs();
-            
-            // Load setlists
-            const setlists = await this.setlistManager.loadSetlists();
-            
-            // Update UI
+            // Update UI immediately with cached data
             this.loadAndRender();
             this.updateSetlistSelect();
         } catch (error) {
-            console.error('Error loading data from Firebase:', error);
-            alert('Fout bij het laden van data. Probeer de pagina te verversen.');
+            console.error('Error loading data:', error);
+            // Try to continue with whatever data we have
+            this.loadAndRender();
+            this.updateSetlistSelect();
         }
     }
 

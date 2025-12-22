@@ -33,6 +33,13 @@ class FirebaseManager {
             this.database = firebase.database();
             this.initialized = true;
 
+            // Set auth persistence to LOCAL (default, but explicit for clarity)
+            // This ensures the user stays logged in after page refresh
+            this.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
+                .catch((error) => {
+                    console.error('Error setting auth persistence:', error);
+                });
+
             // Set up auth state listener
             this.auth.onAuthStateChanged((user) => {
                 this.currentUser = user;
