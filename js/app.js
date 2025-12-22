@@ -382,6 +382,39 @@ class App {
         const clearSearchBtn = document.getElementById('clearSearchBtn');
         if (!searchInput) return;
         
+        // Function to adjust font size based on input width
+        const adjustFontSize = () => {
+            const inputWidth = searchInput.offsetWidth;
+            // Calculate font size based on width
+            // Min width: 120px -> font-size: 0.7em
+            // Max width: 240px -> font-size: 0.95em
+            const minWidth = 120;
+            const maxWidth = 240;
+            const minFontSize = 0.7;
+            const maxFontSize = 0.95;
+            
+            // Clamp the width
+            const clampedWidth = Math.max(minWidth, Math.min(maxWidth, inputWidth));
+            
+            // Calculate font size proportionally
+            const ratio = (clampedWidth - minWidth) / (maxWidth - minWidth);
+            const fontSize = minFontSize + (maxFontSize - minFontSize) * ratio;
+            
+            searchInput.style.fontSize = `${fontSize}em`;
+        };
+        
+        // Adjust font size on resize
+        const resizeObserver = new ResizeObserver(() => {
+            adjustFontSize();
+        });
+        resizeObserver.observe(searchInput);
+        
+        // Also adjust on window resize
+        window.addEventListener('resize', adjustFontSize);
+        
+        // Initial adjustment
+        adjustFontSize();
+        
         // Toggle clear button visibility
         const toggleClearButton = () => {
             if (clearSearchBtn) {

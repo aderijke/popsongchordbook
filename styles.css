@@ -592,7 +592,7 @@ header h1 {
     font-size: 0.95em;
     font-family: inherit;
     background: white;
-    transition: all 0.2s ease;
+    transition: font-size 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
     box-sizing: border-box;
 }
 
