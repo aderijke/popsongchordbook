@@ -696,7 +696,7 @@ class ChordDetectorOverlay {
         this.chordHistoryList.innerHTML = '';
         
         if (this.chordHistory.length === 0) {
-            this.chordHistoryList.innerHTML = '<div style="color: #999; font-size: 0.8em; padding: 8px 0;">Nog geen akkoorden gedetecteerd</div>';
+            this.chordHistoryList.innerHTML = '<div style="color: #999; font-size: 0.8em; padding: 8px 0;">No chords detected yet</div>';
             return;
         }
         

@@ -268,19 +268,31 @@
             </div>
             <div class="song-detail-body">
                 <div class="song-chord-section" id="verseSection">
-                    <h3 class="chord-section-title">Verse</h3>
+                    <div class="chord-section-header">
+                        <h3 class="chord-section-title">Verse</h3>
+                        <button class="piano-chord-btn" data-section="verse" title="Show piano chords">🎹</button>
+                    </div>
                     <div class="chord-section-content editable-field" data-field="verse" id="verseContent" contenteditable="false"></div>
                 </div>
                 <div class="song-chord-section chorus-section" id="chorusSection">
-                    <h3 class="chord-section-title">Chorus</h3>
+                    <div class="chord-section-header">
+                        <h3 class="chord-section-title">Chorus</h3>
+                        <button class="piano-chord-btn" data-section="chorus" title="Show piano chords">🎹</button>
+                    </div>
                     <div class="chord-section-content editable-field" data-field="chorus" id="chorusContent" contenteditable="false"></div>
                 </div>
                 <div class="song-chord-section" id="preChorusSection">
-                    <h3 class="chord-section-title">Pre-Chorus</h3>
+                    <div class="chord-section-header">
+                        <h3 class="chord-section-title">Pre-Chorus</h3>
+                        <button class="piano-chord-btn" data-section="preChorus" title="Show piano chords">🎹</button>
+                    </div>
                     <div class="chord-section-content editable-field" data-field="preChorus" id="preChorusContent" contenteditable="false"></div>
                 </div>
                 <div class="song-chord-section" id="bridgeSection">
-                    <h3 class="chord-section-title">Bridge</h3>
+                    <div class="chord-section-header">
+                        <h3 class="chord-section-title">Bridge</h3>
+                        <button class="piano-chord-btn" data-section="bridge" title="Show piano chords">🎹</button>
+                    </div>
                     <div class="chord-section-content editable-field" data-field="bridge" id="bridgeContent" contenteditable="false"></div>
                 </div>
                 <div class="song-detail-actions">
@@ -377,6 +389,7 @@
     <script src="js/ui/SongDetailModal.js"></script>
     <script src="js/ui/TableRenderer.js"></script>
     <script src="js/ui/ChordDetectorOverlay.js"></script>
+    <script src="js/ui/PianoChordOverlay.js"></script>
     <!-- Main App -->
     <script src="js/app.js"></script>
 </body>

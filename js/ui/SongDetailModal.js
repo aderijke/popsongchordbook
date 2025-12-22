@@ -44,7 +44,12 @@ class SongDetailModal {
         };
         this.hasUnsavedChanges = false;
         this.originalSongData = null;
+        
+        // Initialize Piano Chord Overlay
+        this.pianoChordOverlay = new PianoChordOverlay();
+        
         this.setupEventListeners();
+        this.setupPianoButtons();
     }
 
     setSongs(songs) {
@@ -154,6 +159,34 @@ class SongDetailModal {
                     }
                 }
             }
+        });
+    }
+    
+    setupPianoButtons() {
+        // Setup piano chord buttons for each section
+        const pianoButtons = this.modal.querySelectorAll('.piano-chord-btn');
+        
+        pianoButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                
+                const sectionKey = btn.dataset.section;
+                const section = this.sections[sectionKey];
+                
+                if (section && section.content && this.pianoChordOverlay) {
+                    const chordText = section.content.textContent || '';
+                    const sectionNames = {
+                        'verse': 'Verse',
+                        'chorus': 'Chorus',
+                        'preChorus': 'Pre-Chorus',
+                        'bridge': 'Bridge'
+                    };
+                    const sectionName = sectionNames[sectionKey] || sectionKey;
+                    
+                    this.pianoChordOverlay.show(sectionName, chordText);
+                }
+            });
         });
     }
     

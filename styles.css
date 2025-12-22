@@ -3970,3 +3970,375 @@ td:has(.row-edit-input.input-focused) {
         print-color-adjust: exact;
     }
 }
+
+/* ====================================
+   Piano Chord Overlay Styles
+   ==================================== */
+
+/* Section header with piano button */
+.chord-section-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+}
+
+.chord-section-header .chord-section-title {
+    margin-bottom: 0;
+}
+
+/* Piano button in section header */
+.piano-chord-btn {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    font-size: 1.2em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    flex-shrink: 0;
+}
+
+.piano-chord-btn:hover {
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.piano-chord-btn:active {
+    transform: translateY(0) scale(0.98);
+}
+
+/* Piano Chord Overlay Modal */
+.piano-chord-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(4px);
+    z-index: 2000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.piano-chord-overlay.hidden {
+    display: none;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.piano-chord-modal {
+    background: white;
+    border-radius: 20px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4);
+    max-width: 900px;
+    width: 100%;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.piano-chord-header {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    padding: 20px 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.piano-chord-header h3 {
+    margin: 0;
+    font-size: 1.4em;
+    font-weight: 700;
+}
+
+.piano-chord-close {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.5em;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s ease;
+}
+
+.piano-chord-close:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: scale(1.1);
+}
+
+.piano-chord-body {
+    padding: 25px;
+    overflow-y: auto;
+    flex: 1;
+}
+
+.piano-chord-list {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+}
+
+/* Individual Chord Card */
+.piano-chord-card {
+    background: #f8fafc;
+    border-radius: 16px;
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    transition: all 0.2s ease;
+}
+
+.piano-chord-card:hover {
+    box-shadow: 0 8px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+.chord-card-header {
+    margin-bottom: 15px;
+}
+
+.chord-card-header .chord-name {
+    font-size: 1.8em;
+    font-weight: 800;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+/* Piano Keyboard Styles */
+.piano-keyboard {
+    position: relative;
+    height: 140px;
+    margin: 15px 0;
+    background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
+    border-radius: 12px;
+    padding: 15px 10px 10px;
+    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
+    overflow: hidden;
+}
+
+.white-keys {
+    display: flex;
+    height: 100%;
+    gap: 2px;
+}
+
+.piano-key {
+    position: relative;
+    display: flex;
+    align-items: flex-end;
+    justify-content: center;
+    transition: all 0.15s ease;
+}
+
+.white-key {
+    flex: 1;
+    background: linear-gradient(180deg, #fafafa 0%, #e8e8e8 100%);
+    border-radius: 0 0 6px 6px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2), inset 0 -2px 4px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ccc;
+    border-top: none;
+}
+
+.white-key.highlighted {
+    background: linear-gradient(180deg, #a78bfa 0%, #8b5cf6 100%);
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.5), inset 0 -2px 4px rgba(0, 0, 0, 0.1);
+    border-color: #7c3aed;
+}
+
+.white-key.highlighted.root {
+    background: linear-gradient(180deg, #f472b6 0%, #ec4899 100%);
+    box-shadow: 0 4px 15px rgba(236, 72, 153, 0.5), inset 0 -2px 4px rgba(0, 0, 0, 0.1);
+    border-color: #db2777;
+}
+
+.black-keys {
+    position: absolute;
+    top: 15px;
+    left: 10px;
+    right: 10px;
+    height: 55%;
+    pointer-events: none;
+}
+
+.black-key {
+    position: absolute;
+    width: 5.5%;
+    height: 100%;
+    background: linear-gradient(180deg, #2d2d2d 0%, #1a1a1a 100%);
+    border-radius: 0 0 4px 4px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4), inset 0 -2px 4px rgba(255, 255, 255, 0.05);
+    z-index: 10;
+    pointer-events: auto;
+}
+
+.black-key.highlighted {
+    background: linear-gradient(180deg, #a78bfa 0%, #7c3aed 100%);
+    box-shadow: 0 4px 15px rgba(139, 92, 246, 0.6), inset 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.black-key.highlighted.root {
+    background: linear-gradient(180deg, #f472b6 0%, #db2777 100%);
+    box-shadow: 0 4px 15px rgba(236, 72, 153, 0.6), inset 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.key-label {
+    font-size: 0.65em;
+    font-weight: 700;
+    padding-bottom: 8px;
+    color: white;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.white-key .key-label {
+    color: white;
+}
+
+.black-key .key-label {
+    color: white;
+    padding-bottom: 5px;
+    font-size: 0.55em;
+}
+
+/* Chord notes info */
+.chord-notes-info {
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border-color);
+    font-size: 0.9em;
+    color: var(--text-light);
+}
+
+.notes-label {
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.notes-list {
+    font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+    color: var(--secondary-color);
+    font-weight: 500;
+}
+
+/* No chords message */
+.no-chords-message {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-light);
+}
+
+.no-chords-message p {
+    margin: 10px 0;
+}
+
+.no-chords-message .hint {
+    font-size: 0.9em;
+    opacity: 0.8;
+}
+
+/* Responsive styles for piano overlay */
+@media (max-width: 768px) {
+    .piano-chord-overlay {
+        padding: 10px;
+    }
+    
+    .piano-chord-modal {
+        max-height: 95vh;
+        border-radius: 16px;
+    }
+    
+    .piano-chord-header {
+        padding: 15px 20px;
+    }
+    
+    .piano-chord-header h3 {
+        font-size: 1.2em;
+    }
+    
+    .piano-chord-body {
+        padding: 15px;
+    }
+    
+    .piano-chord-card {
+        padding: 15px;
+    }
+    
+    .chord-card-header .chord-name {
+        font-size: 1.5em;
+    }
+    
+    .piano-keyboard {
+        height: 120px;
+        padding: 12px 8px 8px;
+    }
+    
+    .black-key {
+        width: 6%;
+    }
+    
+    .key-label {
+        font-size: 0.55em;
+    }
+    
+    .black-key .key-label {
+        font-size: 0.5em;
+    }
+}
+
+@media (max-width: 480px) {
+    .piano-chord-header h3 {
+        font-size: 1em;
+    }
+    
+    .piano-chord-close {
+        width: 36px;
+        height: 36px;
+        font-size: 1.3em;
+    }
+    
+    .piano-keyboard {
+        height: 100px;
+    }
+    
+    .chord-card-header .chord-name {
+        font-size: 1.3em;
+    }
+    
+    .piano-chord-btn {
+        width: 32px;
+        height: 32px;
+        font-size: 1em;
+    }
+}
