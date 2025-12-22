@@ -841,31 +841,20 @@ header h1 {
     width: 100%;
     max-width: 100%;
     -webkit-overflow-scrolling: touch;
-    /* Hide scrollbar for header area */
-    scrollbar-gutter: stable;
+    /* Hide scrollbar but keep scrolling functionality */
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
     /* Prevent horizontal wobbling on iPad */
     overscroll-behavior-x: none;
     overscroll-behavior-y: auto;
     touch-action: pan-y;
 }
 
+/* Hide scrollbar for WebKit browsers (Chrome, Safari, etc.) */
 .table-wrapper::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-
-.table-wrapper::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 10px;
-}
-
-.table-wrapper::-webkit-scrollbar-thumb {
-    background: var(--secondary-color);
-    border-radius: 10px;
-}
-
-.table-wrapper::-webkit-scrollbar-thumb:hover {
-    background: var(--accent-color);
+    width: 0;
+    height: 0;
+    display: none;
 }
 
 
@@ -943,20 +932,6 @@ thead {
     top: 0;
     z-index: 100;
     border-radius: 20px 20px 0 0;
-}
-
-/* Hide scrollbar in header area by using a pseudo-element on table-wrapper */
-.table-wrapper::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: 8px;
-    height: 60px; /* Approximate header height */
-    background: var(--bg-gradient);
-    border-radius: 0 20px 0 0;
-    z-index: 102;
-    pointer-events: none; /* Allow clicks to pass through */
 }
 
 thead th {
