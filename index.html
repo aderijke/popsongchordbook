@@ -54,8 +54,14 @@
                         <button id="toggleViewBtn" class="import-export-btn view-toggle-btn" title="Wissel tussen simpel en volledig overzicht">📋</button>
                         <button id="addSongBtn" class="add-song-btn" title="Nieuwe Song Toevoegen">➕</button>
                         <div class="import-export-controls">
-                            <button id="exportBtn" class="import-export-btn" title="Exporteer">📥</button>
-                            <label for="importFile" class="import-export-btn" title="Importeer">📤</label>
+                            <button id="exportBtn" class="import-export-btn with-label" title="Exporteer">
+                                <span class="icon">📥</span>
+                                <span class="label">Export</span>
+                            </button>
+                            <label for="importFile" class="import-export-btn with-label" title="Importeer">
+                                <span class="icon">📤</span>
+                                <span class="label">Import</span>
+                            </label>
                             <input type="file" id="importFile" accept=".json" style="display: none;">
                             <button id="deleteAllSongsBtn" class="import-export-btn delete-all-btn" title="Verwijder alle songs">🗑️</button>
                         </div>

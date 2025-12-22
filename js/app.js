@@ -784,11 +784,21 @@ class App {
 
         // Show feedback
         const exportBtn = document.getElementById('exportBtn');
-        const originalText = exportBtn.textContent;
-        exportBtn.textContent = '✓ Geëxporteerd!';
-        setTimeout(() => {
-            exportBtn.textContent = originalText;
-        }, 2000);
+        const iconElement = exportBtn.querySelector('.icon');
+        if (iconElement) {
+            const originalIcon = iconElement.textContent;
+            iconElement.textContent = '✓';
+            setTimeout(() => {
+                iconElement.textContent = originalIcon;
+            }, 2000);
+        } else {
+            // Fallback for old structure
+            const originalText = exportBtn.textContent;
+            exportBtn.textContent = '✓ Geëxporteerd!';
+            setTimeout(() => {
+                exportBtn.textContent = originalText;
+            }, 2000);
+        }
     }
 
     printTable() {

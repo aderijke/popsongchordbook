@@ -51,6 +51,10 @@ html {
     box-sizing: border-box;
     max-width: 100%;
     transition: opacity 0.3s ease;
+    height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 /* Hide main content when row is selected and focused view is ready */
@@ -61,8 +65,9 @@ body:has(.selection-overlay:not(.hidden)):has(.focused-view:not(.hidden)) .conta
 }
 
 header {
-    margin-bottom: 40px;
+    margin-bottom: 20px;
     position: relative;
+    flex-shrink: 0;
 }
 
 header::before {
@@ -312,11 +317,33 @@ header h1 {
     transition: all 0.2s ease;
     white-space: nowrap;
     display: flex;
+    flex-direction: row;
     align-items: center;
     justify-content: center;
     min-width: 38px;
     height: 38px;
     font-family: inherit;
+}
+
+.import-export-btn.with-label {
+    flex-direction: column;
+    padding: 6px 8px;
+    gap: 2px;
+    min-width: 50px;
+    height: auto;
+    min-height: 38px;
+}
+
+.import-export-btn .icon {
+    font-size: 1.2em;
+    line-height: 1;
+}
+
+.import-export-btn .label {
+    font-size: 0.6em;
+    font-weight: 500;
+    line-height: 1;
+    text-transform: lowercase;
 }
 
 .import-export-btn:hover {
@@ -781,11 +808,12 @@ header h1 {
 .table-wrapper {
     overflow-x: auto;
     overflow-y: auto;
-    max-height: calc(100vh - 200px);
+    flex: 1;
+    min-height: 0;
     background: white;
     border-radius: 20px;
     box-shadow: var(--card-shadow);
-    margin-bottom: 30px;
+    margin-bottom: 0;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(255, 255, 255, 0.8);
     position: relative;
@@ -825,14 +853,15 @@ table {
     border-collapse: separate;
     border-spacing: 0;
     table-layout: auto;
-    min-width: 1000px; /* Minimum width to ensure all columns are visible */
+    min-width: 800px; /* Reduced minimum width for better tablet fit */
 }
 
 /* Simple view - only show Artist and Title columns */
 table.simple-view {
-    min-width: 400px;
+    min-width: 100%;
     border-spacing: 0;
     border-collapse: separate;
+    table-layout: fixed;
 }
 
 /* Hide columns in simple view: Favorite (3), Verse (4), Chorus (5), Pre-Chorus (6), Bridge (7), Acties (8) */
@@ -1073,22 +1102,41 @@ td input:focus {
 }
 
 .actions-column {
-    width: 150px;
+    width: auto;
+    min-width: fit-content;
+    max-width: fit-content;
     text-align: center;
+    white-space: nowrap;
+    padding-left: 4px;
+    padding-right: 4px;
+}
+
+th.actions-column {
+    padding: 10px 4px;
+}
+
+.actions-cell {
+    width: auto;
+    min-width: fit-content;
+    max-width: fit-content;
+    text-align: center;
+    white-space: nowrap;
+    padding: 8px 4px;
 }
 
 .edit-btn {
     background: rgba(99, 102, 241, 0.1);
     color: var(--secondary-color);
     border: 1px solid rgba(99, 102, 241, 0.3);
-    padding: 6px 12px;
-    font-size: 0.9em;
-    border-radius: 6px;
+    padding: 3px 6px;
+    font-size: 0.8em;
+    border-radius: 4px;
     cursor: pointer;
     transition: all 0.2s ease;
     font-weight: 500;
-    margin-right: 8px;
+    margin-right: 2px;
     opacity: 0.7;
+    white-space: nowrap;
 }
 
 .edit-btn:hover {
@@ -1222,13 +1270,14 @@ td:has(.row-edit-input.input-focused) {
     background: rgba(239, 68, 68, 0.1);
     color: #ef4444;
     border: 1px solid rgba(239, 68, 68, 0.3);
-    padding: 6px 12px;
-    font-size: 0.9em;
-    border-radius: 6px;
+    padding: 3px 6px;
+    font-size: 0.8em;
+    border-radius: 4px;
     cursor: pointer;
     transition: all 0.2s ease;
     font-weight: 500;
     opacity: 0.7;
+    white-space: nowrap;
 }
 
 .delete-btn:hover {
@@ -1319,18 +1368,26 @@ td:has(.row-edit-input.input-focused) {
 /* Responsive Design */
 @media (max-width: 768px) {
     .container {
-        padding: 20px;
+        padding: 15px 10px;
+    }
+    
+    header {
+        margin-bottom: 10px;
+    }
+    
+    header::before {
+        display: none;
     }
     
     .header-top {
         flex-direction: column;
         align-items: stretch;
-        gap: 15px;
+        gap: 10px;
         position: relative;
     }
     
     header h1 {
-        font-size: 1.75em;
+        font-size: 1.5em;
         text-align: center;
     }
     
@@ -1343,8 +1400,8 @@ td:has(.row-edit-input.input-focused) {
     .header-bar {
         flex-direction: column;
         align-items: stretch;
-        gap: 15px;
-        padding: 15px 20px;
+        gap: 10px;
+        padding: 10px 15px;
     }
     
     .header-section {
@@ -1358,7 +1415,7 @@ td:has(.row-edit-input.input-focused) {
     
     .header-section:not(:last-child) {
         border-bottom: 1px solid var(--border-color);
-        padding-bottom: 15px;
+        padding-bottom: 10px;
     }
     
     .filters-section,
@@ -1367,18 +1424,24 @@ td:has(.row-edit-input.input-focused) {
         width: 100%;
         flex-direction: column;
         align-items: stretch;
-        gap: 10px;
+        gap: 8px;
     }
     
     .section-label {
         width: 100%;
         margin-bottom: 5px;
+        font-size: 0.8em;
     }
     
     .filter-buttons,
     .setlist-controls {
         width: 100%;
         flex-wrap: wrap;
+    }
+    
+    .filter-btn {
+        padding: 6px 10px;
+        font-size: 0.8em;
     }
     
     .search-section-container {
@@ -1390,13 +1453,15 @@ td:has(.row-edit-input.input-focused) {
         width: 100%;
         flex-direction: column;
         align-items: stretch;
-        gap: 10px;
+        gap: 8px;
     }
     
     .setlist-select {
         flex: 1;
         min-width: 0;
         max-width: none;
+        height: 36px;
+        font-size: 0.85em;
     }
     
     .actions-group {
@@ -1407,6 +1472,7 @@ td:has(.row-edit-input.input-focused) {
     .add-song-btn {
         flex: 1;
         min-width: 0;
+        height: 36px;
     }
     
     .import-export-controls {
@@ -1414,29 +1480,43 @@ td:has(.row-edit-input.input-focused) {
         flex-wrap: wrap;
     }
     
+    .import-export-btn {
+        height: 36px;
+        min-width: 36px;
+    }
+    
+    .table-wrapper {
+        border-radius: 10px;
+    }
+    
     table {
-        font-size: 0.9em;
-        min-width: 1000px; /* Keep minimum width on mobile */
+        font-size: 0.85em;
+        min-width: 100%;
+        table-layout: fixed;
     }
     
     th, td {
-        padding: 12px 10px;
+        padding: 8px 6px;
     }
     
     th {
-        font-size: 0.85em;
-        padding: 14px 10px;
+        font-size: 0.7em;
+        padding: 10px 6px;
+    }
+    
+    td {
+        font-size: 0.75em;
     }
     
     /* Adjust column min-widths for mobile */
     th:first-child,
     td:first-child {
-        min-width: 100px; /* Artist */
+        min-width: 0;
     }
     
     th:nth-child(2),
     td:nth-child(2) {
-        min-width: 140px; /* Title */
+        min-width: 0;
     }
     
     th:nth-child(4),
@@ -1447,12 +1527,12 @@ td:has(.row-edit-input.input-focused) {
     td:nth-child(6),
     th:nth-child(7),
     td:nth-child(7) {
-        min-width: 120px; /* Chord columns */
+        min-width: 0;
     }
     
     .delete-btn {
-        padding: 5px 10px;
-        font-size: 0.75em;
+        padding: 4px 8px;
+        font-size: 0.7em;
     }
     
 }
@@ -1489,30 +1569,49 @@ td:has(.row-edit-input.input-focused) {
 
 @media (max-width: 480px) {
     .container {
-        padding: 15px;
+        padding: 10px 8px;
+    }
+    
+    header {
+        margin-bottom: 8px;
     }
     
     header h1 {
-        font-size: 1.5em;
+        font-size: 1.3em;
+    }
+    
+    .header-bar {
+        padding: 8px 12px;
+        gap: 8px;
     }
     
     .add-song-btn {
-        padding: 10px 20px;
-        font-size: 0.95em;
+        padding: 8px 16px;
+        font-size: 0.85em;
         width: 100%;
+        height: 34px;
+    }
+    
+    .table-wrapper {
+        border-radius: 8px;
     }
     
     table {
-        font-size: 0.85em;
+        font-size: 0.75em;
     }
     
     th, td {
-        padding: 12px 8px;
+        padding: 6px 4px;
+    }
+    
+    th {
+        font-size: 0.65em;
+        padding: 8px 4px;
     }
     
     .delete-btn {
-        padding: 4px 8px;
-        font-size: 0.7em;
+        padding: 3px 6px;
+        font-size: 0.65em;
     }
     
 }
@@ -2008,6 +2107,91 @@ td:has(.row-edit-input.input-focused) {
 
 /* Tablets (iPad, etc.) */
 @media (max-width: 1024px) and (min-width: 769px) {
+    .container {
+        padding: 15px;
+    }
+    
+    header {
+        margin-bottom: 10px;
+    }
+    
+    header h1 {
+        font-size: 1.5em;
+    }
+    
+    header::before {
+        display: none;
+    }
+    
+    .header-bar {
+        padding: 10px 40px 10px 15px;
+        gap: 10px;
+    }
+    
+    .section-label {
+        font-size: 0.8em;
+    }
+    
+    .filter-btn {
+        padding: 6px 12px;
+        font-size: 0.8em;
+    }
+    
+    .setlist-select {
+        padding: 6px 10px;
+        font-size: 0.8em;
+        min-width: 100px;
+        height: 32px;
+    }
+    
+    .setlist-btn,
+    .import-export-btn,
+    .add-song-btn {
+        padding: 6px 10px;
+        font-size: 0.85em;
+        min-width: 32px;
+        height: 32px;
+    }
+    
+    .search-input {
+        padding: 8px 35px 8px 12px;
+        font-size: 0.85em;
+    }
+    
+    .table-wrapper {
+        border-radius: 12px;
+    }
+    
+    table {
+        min-width: 700px;
+    }
+    
+    th {
+        padding: 10px 8px;
+        font-size: 0.75em;
+    }
+    
+    td {
+        padding: 8px 6px;
+        font-size: 0.8em;
+        min-height: 40px;
+    }
+    
+    td.title-cell {
+        font-size: 0.85em;
+        min-width: 150px;
+    }
+    
+    .favorite-btn {
+        font-size: 1.2em;
+    }
+    
+    .edit-btn,
+    .delete-btn {
+        padding: 4px 8px;
+        font-size: 0.75em;
+    }
+    
     .chord-modal-content {
         width: 95%;
         max-width: 600px;
@@ -2068,6 +2252,86 @@ td:has(.row-edit-input.input-focused) {
     .chord-add-btn {
         padding: 8px 20px;
         font-size: 0.9em;
+    }
+}
+
+/* iPad Pro 9.7" and similar tablets - Portrait */
+@media (max-width: 810px) and (min-width: 768px) and (orientation: portrait) {
+    .container {
+        padding: 10px;
+    }
+    
+    header {
+        margin-bottom: 8px;
+    }
+    
+    header h1 {
+        font-size: 1.3em;
+    }
+    
+    header::before {
+        display: none;
+    }
+    
+    .header-bar {
+        padding: 8px 35px 8px 12px;
+        gap: 8px;
+        flex-direction: column;
+    }
+    
+    .table-wrapper {
+        border-radius: 10px;
+    }
+    
+    table {
+        min-width: 100%;
+        table-layout: fixed;
+    }
+    
+    th {
+        padding: 8px 4px;
+        font-size: 0.65em;
+    }
+    
+    td {
+        padding: 6px 4px;
+        font-size: 0.7em;
+    }
+    
+    td.title-cell {
+        font-size: 0.75em;
+        min-width: 0;
+    }
+}
+
+/* iPad Pro 9.7" and similar tablets - Landscape */
+@media (max-width: 1024px) and (min-width: 768px) and (orientation: landscape) {
+    .container {
+        padding: 10px 15px;
+    }
+    
+    header {
+        margin-bottom: 8px;
+    }
+    
+    header::before {
+        display: none;
+    }
+    
+    table {
+        min-width: 100%;
+        table-layout: fixed;
+    }
+    
+    th {
+        padding: 8px 6px;
+        font-size: 0.7em;
+    }
+    
+    td {
+        padding: 6px 5px;
+        font-size: 0.75em;
+        min-height: 35px;
     }
 }
 
