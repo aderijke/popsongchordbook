@@ -1122,6 +1122,10 @@ th.actions-column {
     text-align: center;
     white-space: nowrap;
     padding: 8px 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
 }
 
 .edit-btn {
@@ -1290,6 +1294,153 @@ td:has(.row-edit-input.input-focused) {
 .delete-btn:active {
     transform: translateY(0);
     background: rgba(239, 68, 68, 0.2);
+}
+
+.youtube-btn {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 3px 6px;
+    font-size: 0.8em;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0.8;
+    flex-shrink: 0;
+}
+
+.youtube-btn:hover {
+    background: rgba(34, 197, 94, 0.15);
+    border-color: rgba(34, 197, 94, 0.5);
+    color: #22c55e;
+    opacity: 1;
+    transform: translateY(-1px);
+}
+
+.youtube-btn:active {
+    transform: translateY(0);
+    background: rgba(34, 197, 94, 0.2);
+}
+
+.youtube-url-cell {
+    display: none;
+}
+
+.youtube-url-cell:not(.hidden) {
+    display: table-cell;
+}
+
+.youtube-url-input {
+    width: 100%;
+    min-width: 300px;
+    max-width: 500px;
+}
+
+/* YouTube Mini Player */
+.youtube-mini-player {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    width: 400px;
+    max-width: calc(100vw - 40px);
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
+    z-index: 10000;
+    transition: all 0.3s ease;
+    overflow: hidden;
+    touch-action: none; /* Prevent default touch behavior for dragging */
+}
+
+.youtube-mini-player.hidden {
+    display: none;
+}
+
+.youtube-mini-player.minimized {
+    height: 60px;
+}
+
+.youtube-mini-player.minimized .youtube-mini-player-body {
+    display: none;
+}
+
+.youtube-mini-player-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.youtube-mini-player-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 16px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+    cursor: move;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+}
+
+.youtube-player-title {
+    font-size: 0.9em;
+    font-weight: 600;
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-right: 10px;
+}
+
+.youtube-player-controls {
+    display: flex;
+    gap: 8px;
+}
+
+.youtube-player-minimize-btn,
+.youtube-player-close-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 14px;
+    transition: background 0.2s ease;
+}
+
+.youtube-player-minimize-btn:hover,
+.youtube-player-close-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.youtube-mini-player-body {
+    padding: 0;
+    background: #000;
+}
+
+.youtube-player-container {
+    position: relative;
+    width: 100%;
+    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    height: 0;
+    overflow: hidden;
+}
+
+.youtube-iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
 }
 
 .cancel-btn {
@@ -1630,6 +1781,11 @@ td:has(.row-edit-input.input-focused) {
     align-items: center;
     z-index: 1000;
     backdrop-filter: blur(5px);
+}
+
+/* YouTube URL modal should appear above song detail modal */
+#youtubeUrlModal {
+    z-index: 3000;
 }
 
 .modal.hidden {
@@ -2488,6 +2644,36 @@ td:has(.row-edit-input.input-focused) {
     text-shadow: 0 0 15px rgba(251, 191, 36, 0.7);
 }
 
+.song-detail-youtube-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.5em;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    line-height: 1;
+    margin-right: 8px;
+}
+
+.song-detail-youtube-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: rgba(255, 255, 255, 0.9);
+    transform: scale(1.1);
+}
+
+.song-detail-youtube-btn.youtube-active {
+    color: #ef4444;
+    text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
+}
+
+.song-detail-youtube-btn.youtube-active:hover {
+    color: #dc2626;
+    text-shadow: 0 0 15px rgba(239, 68, 68, 0.7);
+}
+
 .song-detail-separator {
     color: rgba(255, 255, 255, 0.7);
     font-size: 1.2em;
@@ -2512,6 +2698,14 @@ td:has(.row-edit-input.input-focused) {
     -moz-user-select: text;
     -ms-user-select: text;
     min-height: 1.5em;
+    position: relative;
+}
+
+.song-detail-artist.empty-field::before {
+    content: attr(data-placeholder);
+    color: rgba(255, 255, 255, 0.5);
+    font-style: italic;
+    pointer-events: none;
 }
 
 .song-detail-artist:hover {
@@ -2535,6 +2729,15 @@ td:has(.row-edit-input.input-focused) {
     -webkit-user-select: text;
     -moz-user-select: text;
     -ms-user-select: text;
+    position: relative;
+}
+
+.song-detail-title.empty-field::before {
+    content: attr(data-placeholder);
+    color: rgba(255, 255, 255, 0.5);
+    font-style: italic;
+    pointer-events: none;
+}
     min-height: 1.5em;
 }
 

@@ -16,6 +16,12 @@ class SongDetailModal {
         this.artistElement = document.getElementById('songDetailArtist');
         this.titleElement = document.getElementById('songDetailTitle');
         this.favoriteBtn = document.getElementById('songDetailFavoriteBtn');
+        this.youtubeBtn = document.getElementById('songDetailYouTubeBtn');
+        this.youtubeUrlModal = document.getElementById('youtubeUrlModal');
+        this.youtubeUrlInput = document.getElementById('youtubeUrlInput');
+        this.youtubeUrlSaveBtn = document.getElementById('youtubeUrlSaveBtn');
+        this.youtubeUrlCancelBtn = document.getElementById('youtubeUrlCancelBtn');
+        this.youtubeUrlModalClose = document.getElementById('youtubeUrlModalClose');
         this.sections = {
             verse: {
                 section: document.getElementById('verseSection'),
@@ -57,6 +63,51 @@ class SongDetailModal {
                 e.stopPropagation();
                 this.toggleFavorite();
             });
+        }
+        
+        // Setup YouTube URL button
+        if (this.youtubeBtn) {
+            this.youtubeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.openYouTubeUrlModal();
+            });
+        }
+        
+        // Setup YouTube URL modal
+        if (this.youtubeUrlModal) {
+            if (this.youtubeUrlModalClose) {
+                this.youtubeUrlModalClose.addEventListener('click', () => {
+                    this.closeYouTubeUrlModal();
+                });
+            }
+            if (this.youtubeUrlCancelBtn) {
+                this.youtubeUrlCancelBtn.addEventListener('click', () => {
+                    this.closeYouTubeUrlModal();
+                });
+            }
+            if (this.youtubeUrlSaveBtn) {
+                this.youtubeUrlSaveBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    e.preventDefault();
+                    this.saveYouTubeUrl();
+                });
+            }
+            this.youtubeUrlModal.addEventListener('click', (e) => {
+                if (e.target === this.youtubeUrlModal) {
+                    this.closeYouTubeUrlModal();
+                }
+            });
+            if (this.youtubeUrlInput) {
+                this.youtubeUrlInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        this.saveYouTubeUrl();
+                    } else if (e.key === 'Escape') {
+                        e.preventDefault();
+                        this.closeYouTubeUrlModal();
+                    }
+                });
+            }
         }
         
         this.modal.addEventListener('click', (e) => {
@@ -104,9 +155,28 @@ class SongDetailModal {
             this.artistElement.addEventListener('blur', () => {
                 this.artistElement.setAttribute('contenteditable', 'false');
                 this.artistElement.classList.remove('editing');
+                
+                // Update placeholder state
+                const artistText = this.artistElement.textContent || '';
+                if (!artistText.trim()) {
+                    this.artistElement.classList.add('empty-field');
+                    this.artistElement.dataset.placeholder = 'Artiest';
+                    this.artistElement.textContent = ''; // Clear any whitespace
+                } else {
+                    this.artistElement.classList.remove('empty-field');
+                    this.artistElement.removeAttribute('data-placeholder');
+                }
+                
                 this.checkForChanges();
             });
-            this.artistElement.addEventListener('input', () => this.checkForChanges());
+            this.artistElement.addEventListener('input', () => {
+                // Remove placeholder when user starts typing
+                if (this.artistElement.classList.contains('empty-field')) {
+                    this.artistElement.classList.remove('empty-field');
+                    this.artistElement.removeAttribute('data-placeholder');
+                }
+                this.checkForChanges();
+            });
         }
         if (this.titleElement) {
             this.titleElement.addEventListener('click', (e) => {
@@ -116,6 +186,18 @@ class SongDetailModal {
             this.titleElement.addEventListener('blur', () => {
                 this.titleElement.setAttribute('contenteditable', 'false');
                 this.titleElement.classList.remove('editing');
+                
+                // Update placeholder state
+                const titleText = this.titleElement.textContent || '';
+                if (!titleText.trim()) {
+                    this.titleElement.classList.add('empty-field');
+                    this.titleElement.dataset.placeholder = 'Songtitel';
+                    this.titleElement.textContent = ''; // Clear any whitespace
+                } else {
+                    this.titleElement.classList.remove('empty-field');
+                    this.titleElement.removeAttribute('data-placeholder');
+                }
+                
                 this.checkForChanges();
                 // Remove chord button if exists (shouldn't be there for title, but just in case)
                 const chordBtn = this.titleElement.parentElement?.querySelector('.chord-modal-btn-detail');
@@ -123,7 +205,14 @@ class SongDetailModal {
                     chordBtn.remove();
                 }
             });
-            this.titleElement.addEventListener('input', () => this.checkForChanges());
+            this.titleElement.addEventListener('input', () => {
+                // Remove placeholder when user starts typing
+                if (this.titleElement.classList.contains('empty-field')) {
+                    this.titleElement.classList.remove('empty-field');
+                    this.titleElement.removeAttribute('data-placeholder');
+                }
+                this.checkForChanges();
+            });
         }
         
         // Setup section fields
@@ -179,6 +268,16 @@ class SongDetailModal {
                 chordBtn.remove();
             }
         });
+        
+        // Remove placeholder when entering edit mode
+        if (element.classList.contains('empty-field')) {
+            element.classList.remove('empty-field');
+            element.removeAttribute('data-placeholder');
+            // Clear text content so placeholder doesn't interfere
+            if (!element.textContent.trim()) {
+                element.textContent = '';
+            }
+        }
         
         // Enable editing
         element.setAttribute('contenteditable', 'true');
@@ -494,19 +593,44 @@ class SongDetailModal {
 
         // Update artist and title
         if (this.artistElement) {
-            this.artistElement.textContent = song.artist || '';
+            const artistText = song.artist || '';
+            this.artistElement.textContent = artistText;
             this.artistElement.setAttribute('contenteditable', 'false');
             this.artistElement.classList.remove('editing');
+            
+            // Add placeholder styling if empty
+            if (!artistText.trim()) {
+                this.artistElement.classList.add('empty-field');
+                this.artistElement.dataset.placeholder = 'Artiest';
+            } else {
+                this.artistElement.classList.remove('empty-field');
+                this.artistElement.removeAttribute('data-placeholder');
+            }
         }
         if (this.titleElement) {
-            this.titleElement.textContent = song.title || '';
+            const titleText = song.title || '';
+            this.titleElement.textContent = titleText;
             this.titleElement.setAttribute('contenteditable', 'false');
             this.titleElement.classList.remove('editing');
+            
+            // Add placeholder styling if empty
+            if (!titleText.trim()) {
+                this.titleElement.classList.add('empty-field');
+                this.titleElement.dataset.placeholder = 'Songtitel';
+            } else {
+                this.titleElement.classList.remove('empty-field');
+                this.titleElement.removeAttribute('data-placeholder');
+            }
         }
 
         // Update favorite button
         if (this.favoriteBtn) {
             this.updateFavoriteButton(song.favorite || false);
+        }
+        
+        // Update YouTube button
+        if (this.youtubeBtn) {
+            this.updateYouTubeButton(song.youtubeUrl || '');
         }
 
         // Hide save button
@@ -619,6 +743,76 @@ class SongDetailModal {
         }
     }
 
+    openYouTubeUrlModal() {
+        if (!this.youtubeUrlModal || !this.currentSongId) return;
+        
+        const song = this.songManager.getSongById(this.currentSongId);
+        if (!song) return;
+        
+        // Set current URL in input
+        if (this.youtubeUrlInput) {
+            this.youtubeUrlInput.value = song.youtubeUrl || '';
+        }
+        
+        // Show modal
+        this.youtubeUrlModal.classList.remove('hidden');
+        
+        // Focus input
+        setTimeout(() => {
+            if (this.youtubeUrlInput) {
+                this.youtubeUrlInput.focus();
+                this.youtubeUrlInput.select();
+            }
+        }, 100);
+    }
+
+    closeYouTubeUrlModal() {
+        if (this.youtubeUrlModal) {
+            this.youtubeUrlModal.classList.add('hidden');
+        }
+        if (this.youtubeUrlInput) {
+            this.youtubeUrlInput.value = '';
+        }
+    }
+
+    saveYouTubeUrl() {
+        if (!this.currentSongId) {
+            return;
+        }
+        
+        if (!this.youtubeUrlInput) {
+            return;
+        }
+        
+        const url = this.youtubeUrlInput.value.trim();
+        
+        // Update song
+        this.songManager.updateSong(this.currentSongId, { youtubeUrl: url });
+        
+        // Update button state
+        this.updateYouTubeButton(url);
+        
+        // Close modal first
+        this.closeYouTubeUrlModal();
+        
+        // Notify parent to refresh table
+        if (this.onUpdate && typeof this.onUpdate === 'function') {
+            this.onUpdate();
+        }
+    }
+
+    updateYouTubeButton(youtubeUrl) {
+        if (!this.youtubeBtn) return;
+        
+        if (youtubeUrl && youtubeUrl.trim()) {
+            this.youtubeBtn.classList.add('youtube-active');
+            this.youtubeBtn.title = 'YouTube URL bewerken (ingesteld)';
+        } else {
+            this.youtubeBtn.classList.remove('youtube-active');
+            this.youtubeBtn.title = 'YouTube URL bewerken';
+        }
+    }
+
     discardChanges() {
         if (!this.currentSongId || !this.originalSongData) return;
         
@@ -628,10 +822,26 @@ class SongDetailModal {
         
         // Restore original values
         if (this.artistElement) {
-            this.artistElement.textContent = this.originalSongData.artist || '';
+            const artistText = this.originalSongData.artist || '';
+            this.artistElement.textContent = artistText;
+            if (!artistText.trim()) {
+                this.artistElement.classList.add('empty-field');
+                this.artistElement.dataset.placeholder = 'Artiest';
+            } else {
+                this.artistElement.classList.remove('empty-field');
+                this.artistElement.removeAttribute('data-placeholder');
+            }
         }
         if (this.titleElement) {
-            this.titleElement.textContent = this.originalSongData.title || '';
+            const titleText = this.originalSongData.title || '';
+            this.titleElement.textContent = titleText;
+            if (!titleText.trim()) {
+                this.titleElement.classList.add('empty-field');
+                this.titleElement.dataset.placeholder = 'Songtitel';
+            } else {
+                this.titleElement.classList.remove('empty-field');
+                this.titleElement.removeAttribute('data-placeholder');
+            }
         }
         if (this.sections.verse?.content) {
             this.sections.verse.content.textContent = this.originalSongData.verse || '';

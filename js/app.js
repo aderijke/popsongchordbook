@@ -24,7 +24,8 @@ class App {
             (songId, field, value) => this.handleCellEdit(songId, field, value),
             (songId) => this.handleDelete(songId),
             this.chordModal,
-            (songId) => this.handleToggleFavorite(songId)
+            (songId) => this.handleToggleFavorite(songId),
+            (songId) => this.handlePlayYouTube(songId)
         );
 
         this.init();
@@ -683,6 +684,220 @@ class App {
             });
             // Re-render table
             this.loadAndRender();
+        }
+    }
+
+    handlePlayYouTube(songId) {
+        const song = this.songManager.getSongById(songId);
+        if (!song) return;
+        
+        const youtubeUrl = song.youtubeUrl || '';
+        if (!youtubeUrl.trim()) {
+            alert('Geen YouTube URL ingesteld voor dit liedje. Voeg een YouTube URL toe in de bewerkmodus.');
+            return;
+        }
+        
+        // Extract video ID from YouTube URL
+        const videoId = this.extractYouTubeVideoId(youtubeUrl);
+        if (!videoId) {
+            alert('Ongeldige YouTube URL. Gebruik een volledige YouTube URL (bijv. https://www.youtube.com/watch?v=VIDEO_ID)');
+            return;
+        }
+        
+        // Show and initialize mini player
+        this.showYouTubeMiniPlayer(song, videoId);
+    }
+
+    extractYouTubeVideoId(url) {
+        if (!url) return null;
+        
+        // Handle various YouTube URL formats
+        const patterns = [
+            /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/,
+            /youtube\.com\/watch\?.*v=([^&\n?#]+)/
+        ];
+        
+        for (const pattern of patterns) {
+            const match = url.match(pattern);
+            if (match && match[1]) {
+                return match[1];
+            }
+        }
+        
+        return null;
+    }
+
+    showYouTubeMiniPlayer(song, videoId) {
+        const player = document.getElementById('youtubeMiniPlayer');
+        const container = document.getElementById('youtubePlayerContainer');
+        const title = document.getElementById('youtubePlayerTitle');
+        
+        if (!player || !container || !title) return;
+        
+        // Set title
+        title.textContent = `${song.artist || 'Onbekend'} - ${song.title || 'Geen titel'}`;
+        
+        // Clear previous iframe
+        container.innerHTML = '';
+        
+        // Create YouTube iframe
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+        iframe.allow = 'accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture';
+        iframe.allowFullscreen = true;
+        iframe.frameBorder = '0';
+        iframe.className = 'youtube-iframe';
+        
+        container.appendChild(iframe);
+        
+        // Show player
+        player.classList.remove('hidden');
+        
+        // Setup event listeners if not already done
+        this.setupYouTubeMiniPlayer();
+    }
+
+    setupYouTubeMiniPlayer() {
+        const player = document.getElementById('youtubeMiniPlayer');
+        const closeBtn = document.getElementById('youtubePlayerClose');
+        const minimizeBtn = document.getElementById('youtubePlayerMinimize');
+        const header = player?.querySelector('.youtube-mini-player-header');
+        
+        if (!player) return;
+        
+        // Remove existing listeners by cloning
+        const newCloseBtn = closeBtn?.cloneNode(true);
+        const newMinimizeBtn = minimizeBtn?.cloneNode(true);
+        
+        if (closeBtn && newCloseBtn) {
+            closeBtn.parentNode.replaceChild(newCloseBtn, closeBtn);
+            newCloseBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.hideYouTubeMiniPlayer();
+            });
+        }
+        
+        if (minimizeBtn && newMinimizeBtn) {
+            minimizeBtn.parentNode.replaceChild(newMinimizeBtn, minimizeBtn);
+            newMinimizeBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                player.classList.toggle('minimized');
+                newMinimizeBtn.textContent = player.classList.contains('minimized') ? '🔺' : '🔻';
+            });
+        }
+        
+        // Setup drag functionality (works with mouse and touch)
+        if (header && !player.dataset.dragSetup) {
+            player.dataset.dragSetup = 'true';
+            let isDragging = false;
+            let currentX = 0;
+            let currentY = 0;
+            let initialX = 0;
+            let initialY = 0;
+            let xOffset = 0;
+            let yOffset = 0;
+            
+            // Get current position from CSS
+            const updateOffset = () => {
+                const rect = player.getBoundingClientRect();
+                xOffset = rect.left;
+                yOffset = rect.top;
+            };
+            
+            updateOffset();
+            
+            const dragStart = (e) => {
+                // Don't drag if clicking on buttons
+                if (e.target.closest('.youtube-player-close-btn') || 
+                    e.target.closest('.youtube-player-minimize-btn')) {
+                    return;
+                }
+                
+                if (e.type === 'touchstart') {
+                    initialX = e.touches[0].clientX - xOffset;
+                    initialY = e.touches[0].clientY - yOffset;
+                } else {
+                    initialX = e.clientX - xOffset;
+                    initialY = e.clientY - yOffset;
+                }
+                
+                if (header.contains(e.target) || e.target === header) {
+                    isDragging = true;
+                    player.style.transition = 'none';
+                }
+            };
+            
+            const drag = (e) => {
+                if (!isDragging) return;
+                
+                e.preventDefault();
+                
+                if (e.type === 'touchmove') {
+                    currentX = e.touches[0].clientX - initialX;
+                    currentY = e.touches[0].clientY - initialY;
+                } else {
+                    currentX = e.clientX - initialX;
+                    currentY = e.clientY - initialY;
+                }
+                
+                xOffset = currentX;
+                yOffset = currentY;
+                
+                // Keep player within viewport bounds
+                const maxX = window.innerWidth - player.offsetWidth;
+                const maxY = window.innerHeight - player.offsetHeight;
+                
+                xOffset = Math.max(0, Math.min(xOffset, maxX));
+                yOffset = Math.max(0, Math.min(yOffset, maxY));
+                
+                setTranslate(xOffset, yOffset, player);
+            };
+            
+            const dragEnd = () => {
+                if (!isDragging) return;
+                
+                initialX = currentX;
+                initialY = currentY;
+                isDragging = false;
+                player.style.transition = 'all 0.3s ease';
+            };
+            
+            const setTranslate = (xPos, yPos, el) => {
+                el.style.transform = `translate(${xPos}px, ${yPos}px)`;
+                el.style.left = '0';
+                el.style.top = '0';
+                el.style.right = 'auto';
+                el.style.bottom = 'auto';
+            };
+            
+            // Mouse events
+            header.addEventListener('mousedown', dragStart);
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', dragEnd);
+            
+            // Touch events (for iPad/mobile)
+            header.addEventListener('touchstart', dragStart, { passive: false });
+            document.addEventListener('touchmove', drag, { passive: false });
+            document.addEventListener('touchend', dragEnd);
+            
+            // Make header cursor indicate draggable
+            header.style.cursor = 'move';
+            header.style.userSelect = 'none';
+        }
+    }
+
+    hideYouTubeMiniPlayer() {
+        const player = document.getElementById('youtubeMiniPlayer');
+        const container = document.getElementById('youtubePlayerContainer');
+        
+        if (player) {
+            player.classList.add('hidden');
+            player.classList.remove('minimized');
+        }
+        
+        // Clear iframe to stop video
+        if (container) {
+            container.innerHTML = '';
         }
     }
 

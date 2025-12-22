@@ -1,12 +1,13 @@
 // TableRenderer - Tabel rendering en updates
 class TableRenderer {
-    constructor(songManager, onRowSelect, onCellEdit, onDelete, chordModal, onToggleFavorite) {
+    constructor(songManager, onRowSelect, onCellEdit, onDelete, chordModal, onToggleFavorite, onPlayYouTube) {
         this.songManager = songManager;
         this.onRowSelect = onRowSelect;
         this.onCellEdit = onCellEdit;
         this.onDelete = onDelete;
         this.chordModal = chordModal;
         this.onToggleFavorite = onToggleFavorite;
+        this.onPlayYouTube = onPlayYouTube;
         this.tbody = document.getElementById('songsTableBody');
         this.selectedRowId = null;
         this.editingRowId = null;
@@ -62,6 +63,7 @@ class TableRenderer {
         row.addEventListener('click', (e) => {
             // Don't select if clicking on buttons or input fields
             if (e.target.classList.contains('delete-btn') || 
+                e.target.classList.contains('youtube-btn') ||
                 e.target.classList.contains('favorite-btn') ||
                 e.target.closest('.favorite-btn') ||
                 e.target.tagName === 'INPUT') {
@@ -132,10 +134,11 @@ class TableRenderer {
         bridgeCell.className += ' chord-cell';
         row.appendChild(bridgeCell);
 
-        // Actions cell with Delete button only
+        // Actions cell with Delete and YouTube buttons
         const actionsCell = document.createElement('td');
         actionsCell.className = 'actions-cell';
         
+        // Delete button first
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-btn';
         deleteBtn.textContent = '🗑️';
@@ -149,6 +152,31 @@ class TableRenderer {
             }
         });
         actionsCell.appendChild(deleteBtn);
+        
+        // YouTube button - always create but hide if no URL exists
+        // Always check fresh data from songManager
+        const currentSong = this.songManager.getSongById(song.id);
+        const hasYouTubeUrl = currentSong && currentSong.youtubeUrl && currentSong.youtubeUrl.trim();
+        
+        const youtubeBtn = document.createElement('button');
+        youtubeBtn.className = 'youtube-btn';
+        youtubeBtn.textContent = '▶️';
+        youtubeBtn.title = 'YouTube afspelen';
+        youtubeBtn.dataset.songId = song.id;
+        
+        // Hide button if no YouTube URL
+        if (!hasYouTubeUrl) {
+            youtubeBtn.style.display = 'none';
+        }
+        
+        youtubeBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (this.onPlayYouTube) {
+                this.onPlayYouTube(song.id);
+            }
+        });
+        actionsCell.appendChild(youtubeBtn);
+        
         row.appendChild(actionsCell);
 
         return row;

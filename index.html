@@ -55,11 +55,11 @@
                         <button id="addSongBtn" class="add-song-btn" title="Nieuwe Song Toevoegen">➕</button>
                         <div class="import-export-controls">
                             <button id="exportBtn" class="import-export-btn with-label" title="Exporteer">
-                                <span class="icon">📥</span>
+                                <span class="icon">📤</span>
                                 <span class="label">Export</span>
                             </button>
                             <label for="importFile" class="import-export-btn with-label" title="Importeer">
-                                <span class="icon">📤</span>
+                                <span class="icon">📥</span>
                                 <span class="label">Import</span>
                             </label>
                             <input type="file" id="importFile" accept=".json" style="display: none;">
@@ -212,6 +212,7 @@
                     <h2 id="songDetailArtist" class="song-detail-artist editable-field" data-field="artist" contenteditable="false"></h2>
                     <span class="song-detail-separator">-</span>
                     <h1 id="songDetailTitle" class="song-detail-title editable-field" data-field="title" contenteditable="false"></h1>
+                    <button id="songDetailYouTubeBtn" class="song-detail-youtube-btn" title="YouTube URL bewerken">🎬</button>
                     <button id="songDetailFavoriteBtn" class="song-detail-favorite-btn" title="Voeg toe aan favorieten">☆</button>
                 </div>
                 <div class="song-detail-header-right">
@@ -238,6 +239,41 @@
                 </div>
                 <div class="song-detail-actions">
                     <button id="songDetailSaveBtn" class="song-detail-save-btn hidden">💾 Opslaan</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- YouTube URL Modal -->
+    <div id="youtubeUrlModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>YouTube URL</h3>
+                <button class="modal-close" id="youtubeUrlModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <input type="url" id="youtubeUrlInput" placeholder="https://www.youtube.com/watch?v=..." />
+                <div class="modal-actions">
+                    <button id="youtubeUrlSaveBtn" class="modal-submit-btn">Opslaan</button>
+                    <button id="youtubeUrlCancelBtn" class="modal-cancel-btn">Annuleren</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- YouTube Mini Player -->
+    <div id="youtubeMiniPlayer" class="youtube-mini-player hidden">
+        <div class="youtube-mini-player-content">
+            <div class="youtube-mini-player-header">
+                <span id="youtubePlayerTitle" class="youtube-player-title"></span>
+                <div class="youtube-player-controls">
+                    <button id="youtubePlayerMinimize" class="youtube-player-minimize-btn" title="Minimaliseer">🔻</button>
+                    <button id="youtubePlayerClose" class="youtube-player-close-btn" title="Sluiten">×</button>
+                </div>
+            </div>
+            <div class="youtube-mini-player-body">
+                <div id="youtubePlayerContainer" class="youtube-player-container">
+                    <!-- YouTube iframe will be inserted here -->
                 </div>
             </div>
         </div>
