@@ -18,7 +18,13 @@
                     <h1>Pop Song Chord Book</h1>
                     <p class="header-subtitle">Your interactive playalong songbook</p>
                 </div>
-                <button id="toggleHeaderBarCollapsed" class="toggle-header-bar-btn collapsed-position" title="Show button bar">▲</button>
+                <div class="header-top-actions">
+                    <button id="profileBtn" class="profile-btn with-label" title="Profiel">
+                        <span class="icon">👤</span>
+                        <span class="label">Profiel</span>
+                    </button>
+                    <button id="toggleHeaderBarCollapsed" class="toggle-header-bar-btn collapsed-position" title="Show button bar">▲</button>
+                </div>
             </div>
             <div class="header-bar" id="headerBar">
                 <button id="toggleHeaderBar" class="toggle-header-bar-btn normal-position" title="Hide button bar">▼</button>
@@ -184,6 +190,49 @@
                         <button type="button" id="authToggleToLogin" class="auth-toggle-link">Inloggen</button>
                     </div>
                 </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Profile Modal -->
+    <div id="profileModal" class="modal auth-modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Profiel</h3>
+                <button class="modal-close" id="profileModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="profile-info-section">
+                    <div class="auth-form-group">
+                        <label>E-mailadres</label>
+                        <div class="profile-email-display" id="profileEmail">-</div>
+                    </div>
+                </div>
+                
+                <div class="profile-password-section">
+                    <h4>Wachtwoord wijzigen</h4>
+                    <form id="profileChangePasswordForm" class="auth-form">
+                        <div class="auth-form-group">
+                            <label for="profileCurrentPassword">Huidig wachtwoord</label>
+                            <input type="password" id="profileCurrentPassword" class="auth-input" placeholder="••••••" required autocomplete="current-password">
+                        </div>
+                        <div class="auth-form-group">
+                            <label for="profileNewPassword">Nieuw wachtwoord</label>
+                            <input type="password" id="profileNewPassword" class="auth-input" placeholder="Minimaal 6 karakters" required autocomplete="new-password">
+                        </div>
+                        <div class="auth-form-group">
+                            <label for="profileConfirmPassword">Bevestig nieuw wachtwoord</label>
+                            <input type="password" id="profileConfirmPassword" class="auth-input" placeholder="Herhaal nieuw wachtwoord" required autocomplete="new-password">
+                        </div>
+                        <div id="profileChangePasswordError" class="auth-error hidden"></div>
+                        <div id="profileChangePasswordSuccess" class="auth-success hidden"></div>
+                        <button type="submit" id="profileChangePasswordBtn" class="modal-submit-btn auth-submit-btn">Wachtwoord wijzigen</button>
+                    </form>
+                </div>
+                
+                <div class="profile-actions-section">
+                    <button id="profileLogoutBtn" class="modal-cancel-btn logout-btn">Uitloggen</button>
+                </div>
             </div>
         </div>
     </div>
@@ -451,6 +500,7 @@
     <script src="js/ui/ChordDetectorOverlay.js"></script>
     <script src="js/ui/PianoChordOverlay.js"></script>
     <script src="js/ui/AuthModal.js"></script>
+    <script src="js/ui/ProfileModal.js"></script>
     <!-- Main App -->
     <script src="js/app.js"></script>
 </body>

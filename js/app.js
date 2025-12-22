@@ -51,6 +51,9 @@ class App {
 
         // Setup auth modal
         this.authModal = new AuthModal(this.firebaseManager, (user) => this.handleAuthSuccess(user));
+        
+        // Setup profile modal (will be initialized after auth)
+        this.profileModal = null;
 
         // Wait for auth state to be restored (handles page refresh)
         // This ensures we wait for Firebase to restore the session before checking auth state
@@ -80,6 +83,10 @@ class App {
 
     async initializeApp() {
         this.isAuthenticated = true;
+        
+        // Setup profile modal
+        this.profileModal = new ProfileModal(this.firebaseManager, () => this.handleSignOut());
+        this.setupProfile();
         
         // Setup UI components
         this.setupSorting();
@@ -121,6 +128,26 @@ class App {
         // Show login modal
         if (this.authModal) {
             this.authModal.show(true);
+        }
+    }
+
+    handleSignOut() {
+        this.isAuthenticated = false;
+        // Disable sync
+        this.songManager.disableSync();
+        this.setlistManager.disableSync();
+        // Show login modal
+        if (this.authModal) {
+            this.authModal.show(true);
+        }
+    }
+
+    setupProfile() {
+        const profileBtn = document.getElementById('profileBtn');
+        if (profileBtn && this.profileModal) {
+            profileBtn.addEventListener('click', () => {
+                this.profileModal.show();
+            });
         }
     }
 

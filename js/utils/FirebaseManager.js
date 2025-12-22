@@ -102,15 +102,35 @@ class FirebaseManager {
         }
 
         try {
-            // Remove all listeners
+            // Remove all listeners FIRST, before signing out
+            // In Firebase compat mode, .on() returns a function that you call to unsubscribe
             this.songsListeners.forEach((listener, userId) => {
-                listener.off();
+                try {
+                    if (typeof listener === 'function') {
+                        listener(); // Call the unsubscribe function
+                    } else if (listener && typeof listener.off === 'function') {
+                        listener.off(); // Fallback for object with .off() method
+                    }
+                } catch (error) {
+                    console.error('Error removing songs listener:', error);
+                }
             });
             this.setlistsListeners.forEach((listener, userId) => {
-                listener.off();
+                try {
+                    if (typeof listener === 'function') {
+                        listener(); // Call the unsubscribe function
+                    } else if (listener && typeof listener.off === 'function') {
+                        listener.off(); // Fallback for object with .off() method
+                    }
+                } catch (error) {
+                    console.error('Error removing setlists listener:', error);
+                }
             });
             this.songsListeners.clear();
             this.setlistsListeners.clear();
+
+            // Small delay to ensure listeners are fully removed
+            await new Promise(resolve => setTimeout(resolve, 100));
 
             await this.auth.signOut();
             this.currentUser = null;
@@ -120,6 +140,27 @@ class FirebaseManager {
             return {
                 success: false,
                 error: error.message
+            };
+        }
+    }
+
+    async changePassword(newPassword) {
+        if (!this.initialized) {
+            return { success: false, error: 'Firebase not initialized' };
+        }
+
+        if (!this.currentUser) {
+            return { success: false, error: 'Geen gebruiker ingelogd' };
+        }
+
+        try {
+            await this.currentUser.updatePassword(newPassword);
+            return { success: true };
+        } catch (error) {
+            console.error('Change password error:', error);
+            return {
+                success: false,
+                error: this.getAuthErrorMessage(error.code) || error.message
             };
         }
     }
@@ -239,14 +280,27 @@ class FirebaseManager {
 
         // Remove existing listener if any
         if (this.songsListeners.has(userId)) {
-            this.songsListeners.get(userId).off();
+            const oldListener = this.songsListeners.get(userId);
+            if (typeof oldListener === 'function') {
+                oldListener(); // Call the unsubscribe function
+            } else if (oldListener && typeof oldListener.off === 'function') {
+                oldListener.off(); // Fallback for object with .off() method
+            }
         }
 
         const songsRef = this.database.ref(`users/${userId}/songs`);
         const listener = songsRef.on('value', (snapshot) => {
-            const songsData = snapshot.val();
-            const songs = songsData ? Object.values(songsData) : [];
-            callback(songs);
+            // Check if snapshot exists and database is still initialized
+            if (!snapshot || !this.initialized || !this.database) {
+                return;
+            }
+            try {
+                const songsData = snapshot.val();
+                const songs = songsData ? Object.values(songsData) : [];
+                callback(songs);
+            } catch (error) {
+                console.error('Error in songs listener callback:', error);
+            }
         });
 
         this.songsListeners.set(userId, listener);
@@ -259,14 +313,27 @@ class FirebaseManager {
 
         // Remove existing listener if any
         if (this.setlistsListeners.has(userId)) {
-            this.setlistsListeners.get(userId).off();
+            const oldListener = this.setlistsListeners.get(userId);
+            if (typeof oldListener === 'function') {
+                oldListener(); // Call the unsubscribe function
+            } else if (oldListener && typeof oldListener.off === 'function') {
+                oldListener.off(); // Fallback for object with .off() method
+            }
         }
 
         const setlistsRef = this.database.ref(`users/${userId}/setlists`);
         const listener = setlistsRef.on('value', (snapshot) => {
-            const setlistsData = snapshot.val();
-            const setlists = setlistsData ? Object.values(setlistsData) : [];
-            callback(setlists);
+            // Check if snapshot exists and database is still initialized
+            if (!snapshot || !this.initialized || !this.database) {
+                return;
+            }
+            try {
+                const setlistsData = snapshot.val();
+                const setlists = setlistsData ? Object.values(setlistsData) : [];
+                callback(setlists);
+            } catch (error) {
+                console.error('Error in setlists listener callback:', error);
+            }
         });
 
         this.setlistsListeners.set(userId, listener);
@@ -274,14 +341,24 @@ class FirebaseManager {
 
     removeSongsListener(userId) {
         if (this.songsListeners.has(userId)) {
-            this.songsListeners.get(userId).off();
+            const listener = this.songsListeners.get(userId);
+            if (typeof listener === 'function') {
+                listener(); // Call the unsubscribe function
+            } else if (listener && typeof listener.off === 'function') {
+                listener.off(); // Fallback for object with .off() method
+            }
             this.songsListeners.delete(userId);
         }
     }
 
     removeSetlistsListener(userId) {
         if (this.setlistsListeners.has(userId)) {
-            this.setlistsListeners.get(userId).off();
+            const listener = this.setlistsListeners.get(userId);
+            if (typeof listener === 'function') {
+                listener(); // Call the unsubscribe function
+            } else if (listener && typeof listener.off === 'function') {
+                listener.off(); // Fallback for object with .off() method
+            }
             this.setlistsListeners.delete(userId);
         }
     }
@@ -364,7 +441,8 @@ class FirebaseManager {
             'auth/user-not-found': 'Geen account gevonden met dit e-mailadres.',
             'auth/wrong-password': 'Onjuist wachtwoord.',
             'auth/too-many-requests': 'Te veel mislukte pogingen. Probeer later opnieuw.',
-            'auth/network-request-failed': 'Netwerkfout. Controleer je internetverbinding.'
+            'auth/network-request-failed': 'Netwerkfout. Controleer je internetverbinding.',
+            'auth/requires-recent-login': 'Voor deze actie moet je recent zijn ingelogd. Log uit en log opnieuw in.'
         };
 
         return errorMessages[errorCode] || `Fout: ${errorCode}`;

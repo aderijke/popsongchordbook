@@ -95,6 +95,52 @@ header::before {
     transition: margin-bottom 0.3s ease;
 }
 
+.header-top-actions {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.profile-btn {
+    background: rgba(255, 255, 255, 0.95);
+    border: 2px solid var(--border-color);
+    color: var(--text-color);
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9em;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    padding: 6px 12px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: inherit;
+}
+
+.profile-btn:hover {
+    background: white;
+    border-color: var(--secondary-color);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.profile-btn:active {
+    transform: translateY(0);
+}
+
+.profile-btn .icon {
+    font-size: 1.1em;
+}
+
+.profile-btn .label {
+    font-size: 0.9em;
+}
+
 .toggle-header-bar-btn {
     background: rgba(255, 255, 255, 0.95);
     border: 2px solid var(--border-color);
@@ -121,10 +167,10 @@ header::before {
 }
 
 .toggle-header-bar-btn.collapsed-position {
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
+    position: relative;
+    right: auto;
+    top: auto;
+    transform: none;
 }
 
 .toggle-header-bar-btn.normal-position:hover {
@@ -1858,6 +1904,16 @@ td:has(.row-edit-input.input-focused) {
     align-items: center;
     z-index: 1000;
     backdrop-filter: blur(5px);
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+/* Profile modal container - ensure it stays within viewport */
+#profileModal {
+    align-items: flex-start;
+    padding-top: 5vh;
+    padding-bottom: 5vh;
 }
 
 /* YouTube URL modal should appear above song detail modal */
@@ -1924,6 +1980,209 @@ td:has(.row-edit-input.input-focused) {
 /* Auth modal - hide close button (login is required) */
 .auth-modal .modal-close {
     display: none !important;
+}
+
+/* Profile modal - show close button */
+#profileModal .modal-close {
+    display: flex !important;
+}
+
+/* Profile modal responsive styling */
+#profileModal .modal-content {
+    max-height: calc(90vh - 40px);
+    max-width: 90vw;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    margin: auto;
+}
+
+#profileModal .modal-header {
+    flex-shrink: 0;
+}
+
+#profileModal .modal-body {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
+    padding: 20px 25px;
+}
+
+/* Ensure modal fits on small screens */
+@media (max-height: 600px) {
+    #profileModal .modal-content {
+        max-height: 95vh;
+    }
+    
+    #profileModal .modal-body {
+        padding: 15px 20px;
+    }
+    
+    .profile-info-section,
+    .profile-password-section,
+    .profile-actions-section {
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        padding-top: 15px;
+    }
+    
+    .auth-form-group {
+        margin-bottom: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    #profileModal .modal-content {
+        width: 95%;
+        max-width: 95vw;
+        border-radius: 15px;
+    }
+    
+    #profileModal .modal-header {
+        padding: 15px 20px;
+    }
+    
+    #profileModal .modal-body {
+        padding: 15px 20px;
+    }
+    
+    .profile-info-section,
+    .profile-password-section,
+    .profile-actions-section {
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        padding-top: 15px;
+    }
+}
+
+/* Profile modal specific styles */
+.profile-info-section {
+    margin-bottom: 25px;
+    padding-bottom: 25px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.profile-email-display {
+    background: rgba(99, 102, 241, 0.05);
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-size: 1em;
+    color: var(--text-color);
+    font-weight: 500;
+}
+
+.profile-password-section {
+    margin-bottom: 25px;
+}
+
+.profile-password-section h4 {
+    margin: 0 0 20px 0;
+    color: var(--primary-color);
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+.profile-actions-section {
+    margin-top: 25px;
+    padding-top: 25px;
+    border-top: 2px solid var(--border-color);
+}
+
+.logout-btn {
+    width: 100%;
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+    border: 2px solid rgba(239, 68, 68, 0.3);
+    margin-left: 0;
+}
+
+.logout-btn:hover {
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.5);
+}
+
+.auth-form-group {
+    margin-bottom: 20px;
+}
+
+.auth-form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-color);
+    font-weight: 500;
+    font-size: 0.95em;
+}
+
+.auth-input {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    font-size: 1em;
+    font-family: inherit;
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.auth-input:focus {
+    outline: none;
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+.auth-form {
+    margin-top: 15px;
+}
+
+.auth-error {
+    background: rgba(239, 68, 68, 0.1);
+    color: #dc2626;
+    border: 1px solid rgba(239, 68, 68, 0.3);
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+.auth-success {
+    background: rgba(34, 197, 94, 0.1);
+    color: #16a34a;
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 0.9em;
+    font-weight: 500;
+}
+
+.auth-submit-btn {
+    margin-top: 10px;
+}
+
+.auth-toggle {
+    margin-top: 20px;
+    text-align: center;
+    font-size: 0.9em;
+    color: var(--text-light);
+}
+
+.auth-toggle-link {
+    background: none;
+    border: none;
+    color: var(--secondary-color);
+    cursor: pointer;
+    text-decoration: underline;
+    font-size: inherit;
+    font-family: inherit;
+    padding: 0;
+    margin-left: 5px;
+}
+
+.auth-toggle-link:hover {
+    color: var(--accent-color);
 }
 
 .modal-body {
