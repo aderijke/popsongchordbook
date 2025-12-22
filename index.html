@@ -137,6 +137,57 @@
         
     </div>
     
+    <!-- Auth Modal -->
+    <div id="authModal" class="modal auth-modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="authModalTitle">Inloggen</h3>
+                <button class="modal-close" id="authModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <!-- Login Form -->
+                <form id="authLoginForm" class="auth-form">
+                    <div class="auth-form-group">
+                        <label for="authLoginEmail">E-mailadres</label>
+                        <input type="email" id="authLoginEmail" class="auth-input" placeholder="jouw@email.com" required autocomplete="email">
+                    </div>
+                    <div class="auth-form-group">
+                        <label for="authLoginPassword">Wachtwoord</label>
+                        <input type="password" id="authLoginPassword" class="auth-input" placeholder="••••••" required autocomplete="current-password">
+                    </div>
+                    <div id="authLoginError" class="auth-error hidden"></div>
+                    <button type="submit" id="authLoginBtn" class="modal-submit-btn auth-submit-btn">Inloggen</button>
+                    <div class="auth-toggle">
+                        <span>Nog geen account?</span>
+                        <button type="button" id="authToggleToCreate" class="auth-toggle-link">Maak een account aan</button>
+                    </div>
+                </form>
+
+                <!-- Create Account Form -->
+                <form id="authCreateForm" class="auth-form hidden">
+                    <div class="auth-form-group">
+                        <label for="authCreateEmail">E-mailadres</label>
+                        <input type="email" id="authCreateEmail" class="auth-input" placeholder="jouw@email.com" required autocomplete="email">
+                    </div>
+                    <div class="auth-form-group">
+                        <label for="authCreatePassword">Wachtwoord</label>
+                        <input type="password" id="authCreatePassword" class="auth-input" placeholder="Minimaal 6 karakters" required autocomplete="new-password">
+                    </div>
+                    <div class="auth-form-group">
+                        <label for="authCreateConfirmPassword">Bevestig wachtwoord</label>
+                        <input type="password" id="authCreateConfirmPassword" class="auth-input" placeholder="Herhaal wachtwoord" required autocomplete="new-password">
+                    </div>
+                    <div id="authCreateError" class="auth-error hidden"></div>
+                    <button type="submit" id="authCreateBtn" class="modal-submit-btn auth-submit-btn">Account aanmaken</button>
+                    <div class="auth-toggle">
+                        <span>Al een account?</span>
+                        <button type="button" id="authToggleToLogin" class="auth-toggle-link">Inloggen</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
     <!-- Chord Selection Modal -->
     <div id="chordModal" class="chord-modal hidden">
         <div class="chord-modal-content">
@@ -378,18 +429,28 @@
         </div>
     </div>
     
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+    
+    <!-- Firebase Config -->
+    <script src="js/config/firebase-config.js"></script>
+    
     <!-- Models -->
     <script src="js/models/SongManager.js"></script>
     <script src="js/models/SetlistManager.js"></script>
     <!-- Utils -->
     <script src="js/utils/Sorter.js"></script>
     <script src="js/utils/ChordDetector.js"></script>
+    <script src="js/utils/FirebaseManager.js"></script>
     <!-- UI Components -->
     <script src="js/ui/ChordModal.js"></script>
     <script src="js/ui/SongDetailModal.js"></script>
     <script src="js/ui/TableRenderer.js"></script>
     <script src="js/ui/ChordDetectorOverlay.js"></script>
     <script src="js/ui/PianoChordOverlay.js"></script>
+    <script src="js/ui/AuthModal.js"></script>
     <!-- Main App -->
     <script src="js/app.js"></script>
 </body>

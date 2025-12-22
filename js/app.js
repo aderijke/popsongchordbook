@@ -1,8 +1,15 @@
 // Main Application
 class App {
     constructor() {
-        this.songManager = new SongManager();
-        this.setlistManager = new SetlistManager();
+        // Initialize Firebase Manager first
+        this.firebaseManager = new FirebaseManager();
+        this.authModal = null;
+        this.isAuthenticated = false;
+        this.migrationCompleted = false;
+        
+        // Initialize managers (will be connected to Firebase after auth)
+        this.songManager = new SongManager(this.firebaseManager);
+        this.setlistManager = new SetlistManager(this.firebaseManager);
         this.sorter = new Sorter();
         this.chordModal = new ChordModal();
         this.songDetailModal = new SongDetailModal(
@@ -33,6 +40,43 @@ class App {
     }
 
     async init() {
+        // Initialize Firebase
+        try {
+            await this.firebaseManager.initialize();
+        } catch (error) {
+            console.error('Firebase initialization failed:', error);
+            alert('Firebase initialisatie mislukt. Controleer je Firebase configuratie.');
+            return;
+        }
+
+        // Setup auth modal
+        this.authModal = new AuthModal(this.firebaseManager, (user) => this.handleAuthSuccess(user));
+
+        // Setup auth state listener
+        this.firebaseManager.onAuthStateChanged((user) => {
+            if (user) {
+                this.handleAuthSuccess(user);
+            } else {
+                this.handleAuthFailure();
+            }
+        });
+
+        // Check initial auth state
+        const currentUser = this.firebaseManager.getCurrentUser();
+        if (!currentUser) {
+            // Show login modal
+            this.authModal.show(true);
+            return; // Don't continue initialization until authenticated
+        }
+
+        // User is authenticated, continue initialization
+        await this.initializeApp();
+    }
+
+    async initializeApp() {
+        this.isAuthenticated = true;
+        
+        // Setup UI components
         this.setupSorting();
         this.setupAddSongButton();
         this.setupFilters();
@@ -44,8 +88,115 @@ class App {
         this.setupDeselect();
         this.setupHeaderBarToggle();
         this.setupToggleView();
+
+        // Load data from Firebase
+        await this.loadDataFromFirebase();
+
+        // Setup real-time sync
+        this.setupRealtimeSync();
+
+        // Add example song if empty
         await this.addExampleSongIfEmpty();
         this.loadAndRender();
+    }
+
+    async handleAuthSuccess(user) {
+        if (!this.isAuthenticated) {
+            // First time authentication - check for migration
+            await this.checkAndMigrateData(user);
+            await this.initializeApp();
+        }
+    }
+
+    handleAuthFailure() {
+        this.isAuthenticated = false;
+        // Disable sync
+        this.songManager.disableSync();
+        this.setlistManager.disableSync();
+        // Show login modal
+        if (this.authModal) {
+            this.authModal.show(true);
+        }
+    }
+
+    async checkAndMigrateData(user) {
+        // Check if there's local data to migrate
+        const localSongs = localStorage.getItem('popsongChordBook');
+        const localSetlists = localStorage.getItem('popsongSetlists');
+
+        if (localSongs || localSetlists) {
+            try {
+                const songs = localSongs ? JSON.parse(localSongs) : [];
+                const setlists = localSetlists ? JSON.parse(localSetlists) : [];
+
+                if (songs.length > 0 || setlists.length > 0) {
+                    // Ask user if they want to migrate
+                    const shouldMigrate = confirm(
+                        `Je hebt ${songs.length} song(s) en ${setlists.length} setlist(s) lokaal opgeslagen.\n\n` +
+                        `Wil je deze data naar je Firebase account migreren?\n\n` +
+                        `Klik "OK" om te migreren, of "Annuleren" om te starten met een lege collectie.`
+                    );
+
+                    if (shouldMigrate) {
+                        const userId = user.uid;
+                        const result = await this.firebaseManager.migrateLocalDataToFirebase(userId, songs, setlists);
+                        
+                        if (result.merged) {
+                            alert(
+                                `Migratie voltooid!\n\n` +
+                                `${result.songsAdded} nieuwe song(s) toegevoegd.\n` +
+                                `${result.setlistsAdded} nieuwe setlist(s) toegevoegd.`
+                            );
+                        } else {
+                            alert(
+                                `Migratie voltooid!\n\n` +
+                                `${result.songsAdded} song(s) gemigreerd.\n` +
+                                `${result.setlistsAdded} setlist(s) gemigreerd.`
+                            );
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Migration error:', error);
+                alert('Er is een fout opgetreden bij het migreren van data.');
+            }
+        }
+    }
+
+    async loadDataFromFirebase() {
+        try {
+            const userId = this.firebaseManager.getCurrentUser().uid;
+            
+            // Load songs
+            const songs = await this.songManager.loadSongs();
+            
+            // Load setlists
+            const setlists = await this.setlistManager.loadSetlists();
+            
+            // Update UI
+            this.loadAndRender();
+            this.updateSetlistSelect();
+        } catch (error) {
+            console.error('Error loading data from Firebase:', error);
+            alert('Fout bij het laden van data. Probeer de pagina te verversen.');
+        }
+    }
+
+    setupRealtimeSync() {
+        const userId = this.firebaseManager.getCurrentUser().uid;
+        
+        // Setup songs sync
+        this.songManager.onSongsChanged = () => {
+            this.loadAndRender();
+        };
+        this.songManager.enableSync(userId);
+
+        // Setup setlists sync
+        this.setlistManager.onSetlistsChanged = () => {
+            this.updateSetlistSelect();
+            this.loadAndRender();
+        };
+        this.setlistManager.enableSync(userId);
     }
     
     setupHeaderBarToggle() {
@@ -212,8 +363,8 @@ class App {
         toggleClearButton();
     }
 
-    handleToggleFavorite(songId) {
-        this.songManager.toggleFavorite(songId);
+    async handleToggleFavorite(songId) {
+        await this.songManager.toggleFavorite(songId);
         this.loadAndRender();
     }
 
@@ -326,10 +477,10 @@ class App {
             }
         });
 
-        const createSetlist = () => {
+        const createSetlist = async () => {
             const name = nameInput.value.trim();
             if (name) {
-                this.setlistManager.createSetlist(name);
+                await this.setlistManager.createSetlist(name);
                 this.updateSetlistSelect();
                 modal.classList.add('hidden');
                 nameInput.value = '';
@@ -348,12 +499,12 @@ class App {
 
     setupDeleteSetlist() {
         const deleteBtn = document.getElementById('deleteSetlistBtn');
-        deleteBtn.addEventListener('click', () => {
+        deleteBtn.addEventListener('click', async () => {
             if (this.currentSetlistId) {
                 const setlist = this.setlistManager.getSetlist(this.currentSetlistId);
                 if (setlist) {
                     if (confirm(`Are you sure you want to delete the setlist "${setlist.name}"?`)) {
-                        this.setlistManager.deleteSetlist(this.currentSetlistId);
+                        await this.setlistManager.deleteSetlist(this.currentSetlistId);
                         this.currentSetlistId = null;
                         this.updateSetlistSelect();
                         const select = document.getElementById('setlistSelect');
@@ -408,20 +559,20 @@ class App {
             this.updateSelectedCount();
         });
 
-        addSelectedBtn.addEventListener('click', () => {
+        addSelectedBtn.addEventListener('click', async () => {
             const checkboxes = songsContainer.querySelectorAll('input[type="checkbox"]:checked:not(:disabled)');
             let addedCount = 0;
             let alreadyInSetlistCount = 0;
 
-            checkboxes.forEach(cb => {
+            for (const cb of checkboxes) {
                 const songId = parseInt(cb.value);
-                const success = this.setlistManager.addSongToSetlist(this.currentSetlistId, songId);
+                const success = await this.setlistManager.addSongToSetlist(this.currentSetlistId, songId);
                 if (success) {
                     addedCount++;
                 } else {
                     alreadyInSetlistCount++;
                 }
-            });
+            }
 
             if (addedCount > 0 || alreadyInSetlistCount > 0) {
                 this.loadAndRender();
@@ -524,17 +675,17 @@ class App {
                 // Check if data has the expected structure
                 if (data && data.songs && Array.isArray(data.songs) && data.songs.length > 0) {
                     // Add all default songs
-                    data.songs.forEach(song => {
-                        this.songManager.addSong(song);
-                    });
+                    for (const song of data.songs) {
+                        await this.songManager.addSong(song);
+                    }
                     
                     // Import setlists if present
                     if (data.setlists && Array.isArray(data.setlists) && data.setlists.length > 0) {
-                        this.setlistManager.importSetlists(data.setlists);
+                        await this.setlistManager.importSetlists(data.setlists);
                     }
                 } else {
                     // Fallback to single example if JSON structure is invalid
-                    this.songManager.addSong({
+                    await this.songManager.addSong({
                         artist: 'Bryan Adams',
                         title: 'Summer of 69',
                         verse: 'D A (3x)',
@@ -546,7 +697,7 @@ class App {
             } catch (error) {
                 console.error('Error loading default songs from JSON:', error);
                 // Fallback to single example if JSON file cannot be loaded
-                this.songManager.addSong({
+                await this.songManager.addSong({
                     artist: 'Bryan Adams',
                     title: 'Summer of 69',
                     verse: 'D A (3x)',
@@ -623,8 +774,8 @@ class App {
         }
     }
 
-    handleCellEdit(songId, field, value) {
-        this.songManager.updateSong(songId, { [field]: value });
+    async handleCellEdit(songId, field, value) {
+        await this.songManager.updateSong(songId, { [field]: value });
         // Selection remains visible in the row itself
     }
 
@@ -655,8 +806,8 @@ class App {
         }
     }
 
-    addNewSong() {
-        const newSong = this.songManager.addSong({
+    async addNewSong() {
+        const newSong = await this.songManager.addSong({
             artist: '',
             title: '',
             verse: '',
@@ -677,12 +828,13 @@ class App {
         }, 50);
     }
 
-    handleDelete(songId) {
-        if (this.songManager.deleteSong(songId)) {
+    async handleDelete(songId) {
+        if (await this.songManager.deleteSong(songId)) {
             // Remove song from all setlists
-            this.setlistManager.getAllSetlists().forEach(setlist => {
-                this.setlistManager.removeSongFromSetlist(setlist.id, songId);
-            });
+            const setlists = this.setlistManager.getAllSetlists();
+            for (const setlist of setlists) {
+                await this.setlistManager.removeSongFromSetlist(setlist.id, songId);
+            }
             // Re-render table
             this.loadAndRender();
         }
@@ -938,7 +1090,7 @@ class App {
         });
     }
 
-    deleteAllSongs() {
+    async deleteAllSongs() {
         const songCount = this.songManager.getAllSongs().length;
         
         if (songCount === 0) {
@@ -966,7 +1118,7 @@ class App {
         }
 
         // Delete all songs
-        this.songManager.deleteAllSongs();
+        await this.songManager.deleteAllSongs();
 
         // Re-render
         this.loadAndRender();
@@ -1094,11 +1246,11 @@ class App {
             }
 
             // Import songs
-            const result = this.songManager.importSongs(importData.songs, replace);
+            const result = await this.songManager.importSongs(importData.songs, replace);
 
             // Import setlists if present
             if (importData.setlists && Array.isArray(importData.setlists)) {
-                this.setlistManager.importSetlists(importData.setlists);
+                await this.setlistManager.importSetlists(importData.setlists);
             }
 
             // Re-render

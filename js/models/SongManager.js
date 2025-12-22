@@ -1,46 +1,108 @@
-// SongManager - Data management en localStorage
+// SongManager - Data management met Firebase en localStorage fallback
 class SongManager {
-    constructor() {
+    constructor(firebaseManager = null) {
         this.storageKey = 'popsongChordBook';
-        this.songs = this.loadSongs();
-        this.nextId = this.songs.length > 0 
-            ? Math.max(...this.songs.map(s => s.id)) + 1 
-            : 1;
+        this.firebaseManager = firebaseManager;
+        this.songs = [];
+        this.nextId = 1;
+        this.syncEnabled = false;
+        this.onSongsChanged = null; // Callback for when songs change externally
     }
 
-    loadSongs() {
+    async loadSongs() {
+        // Try Firebase first if available and authenticated
+        if (this.firebaseManager && this.firebaseManager.isAuthenticated()) {
+            try {
+                const userId = this.firebaseManager.getCurrentUser().uid;
+                const songs = await this.firebaseManager.loadSongs(userId);
+                this.songs = this.normalizeSongs(songs);
+                this.updateNextId();
+                return this.songs;
+            } catch (error) {
+                console.error('Error loading songs from Firebase:', error);
+                // Fallback to localStorage
+            }
+        }
+
+        // Fallback to localStorage
         try {
             const stored = localStorage.getItem(this.storageKey);
             if (stored) {
                 const songs = JSON.parse(stored);
-                // Ensure all songs have favorite property
-                return songs.map(song => ({
-                    ...song,
-                    favorite: song.favorite || false,
-                    youtubeUrl: song.youtubeUrl || ''
-                }));
+                this.songs = this.normalizeSongs(songs);
+                this.updateNextId();
+                return this.songs;
             }
         } catch (error) {
-            console.error('Error loading songs:', error);
+            console.error('Error loading songs from localStorage:', error);
         }
+        
+        this.songs = [];
+        this.nextId = 1;
         return [];
     }
 
-    saveSongs() {
-        try {
-            localStorage.setItem(this.storageKey, JSON.stringify(this.songs));
-        } catch (error) {
-            console.error('Error saving songs:', error);
+    normalizeSongs(songs) {
+        if (!Array.isArray(songs)) return [];
+        return songs.map(song => ({
+            ...song,
+            favorite: song.favorite || false,
+            youtubeUrl: song.youtubeUrl || ''
+        }));
+    }
+
+    updateNextId() {
+        if (this.songs.length > 0) {
+            this.nextId = Math.max(...this.songs.map(s => s.id)) + 1;
+        } else {
+            this.nextId = 1;
         }
     }
 
-    deleteAllSongs() {
-        this.songs = [];
-        this.nextId = 1;
-        this.saveSongs();
+    // Set songs (used for real-time sync from Firebase)
+    setSongs(songs, skipSave = false) {
+        this.songs = this.normalizeSongs(songs);
+        this.updateNextId();
+        if (!skipSave) {
+            // Fire and forget - don't await to avoid blocking
+            this.saveSongs().catch(err => console.error('Error saving songs:', err));
+        }
     }
 
-    addSong(song) {
+    async saveSongs() {
+        // Save to Firebase if available and authenticated
+        if (this.firebaseManager && this.firebaseManager.isAuthenticated()) {
+            try {
+                const userId = this.firebaseManager.getCurrentUser().uid;
+                await this.firebaseManager.saveSongs(userId, this.songs);
+                // Also save to localStorage as backup
+                try {
+                    localStorage.setItem(this.storageKey, JSON.stringify(this.songs));
+                } catch (e) {
+                    console.warn('Could not save to localStorage:', e);
+                }
+                return;
+            } catch (error) {
+                console.error('Error saving songs to Firebase:', error);
+                // Fallback to localStorage
+            }
+        }
+
+        // Fallback to localStorage
+        try {
+            localStorage.setItem(this.storageKey, JSON.stringify(this.songs));
+        } catch (error) {
+            console.error('Error saving songs to localStorage:', error);
+        }
+    }
+
+    async deleteAllSongs() {
+        this.songs = [];
+        this.nextId = 1;
+        await this.saveSongs();
+    }
+
+    async addSong(song) {
         const newSong = {
             id: this.nextId++,
             artist: song.artist || '',
@@ -53,15 +115,15 @@ class SongManager {
             youtubeUrl: song.youtubeUrl || ''
         };
         this.songs.push(newSong);
-        this.saveSongs();
+        await this.saveSongs();
         return newSong;
     }
 
-    toggleFavorite(id) {
+    async toggleFavorite(id) {
         const song = this.songs.find(s => s.id === id);
         if (song) {
             song.favorite = !song.favorite;
-            this.saveSongs();
+            await this.saveSongs();
             return song;
         }
         return null;
@@ -78,7 +140,7 @@ class SongManager {
         return this.songs;
     }
 
-    importSongs(importedSongs, replace = true) {
+    async importSongs(importedSongs, replace = true) {
         // Validate and normalize imported songs
         const normalizedSongs = importedSongs.map(song => ({
             id: song.id || this.nextId++,
@@ -136,7 +198,7 @@ class SongManager {
             };
         }
 
-        this.saveSongs();
+        await this.saveSongs();
         return {
             added: normalizedSongs.length,
             duplicates: 0,
@@ -144,24 +206,52 @@ class SongManager {
         };
     }
 
-    updateSong(id, updates) {
+    async updateSong(id, updates) {
         const song = this.songs.find(s => s.id === id);
         if (song) {
             Object.assign(song, updates);
-            this.saveSongs();
+            await this.saveSongs();
             return song;
         }
         return null;
     }
 
-    deleteSong(id) {
+    async deleteSong(id) {
         const index = this.songs.findIndex(s => s.id === id);
         if (index !== -1) {
             this.songs.splice(index, 1);
-            this.saveSongs();
+            await this.saveSongs();
             return true;
         }
         return false;
+    }
+
+    // Enable real-time sync from Firebase
+    enableSync(userId) {
+        if (!this.firebaseManager || this.syncEnabled) {
+            return;
+        }
+
+        this.syncEnabled = true;
+        this.firebaseManager.onSongsChange(userId, (songs) => {
+            // Update songs without triggering save (to avoid infinite loop)
+            this.setSongs(songs, true);
+            // Notify listeners
+            if (this.onSongsChanged) {
+                this.onSongsChanged();
+            }
+        });
+    }
+
+    // Disable real-time sync
+    disableSync() {
+        if (this.firebaseManager && this.syncEnabled) {
+            const userId = this.firebaseManager.getCurrentUser()?.uid;
+            if (userId) {
+                this.firebaseManager.removeSongsListener(userId);
+            }
+            this.syncEnabled = false;
+        }
     }
 
     getAllSongs() {
