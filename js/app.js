@@ -107,8 +107,7 @@ class App {
         // Setup real-time sync
         this.setupRealtimeSync();
 
-        // Add example song if empty
-        await this.addExampleSongIfEmpty();
+        // Load and render songs (no default songs for new users)
         this.loadAndRender();
     }
 
