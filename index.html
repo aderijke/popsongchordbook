@@ -51,8 +51,14 @@
                     
                     <!-- Actions -->
                     <div class="actions-group">
-                        <button id="toggleViewBtn" class="import-export-btn view-toggle-btn" title="Wissel tussen simpel en volledig overzicht">📋</button>
-                        <button id="addSongBtn" class="add-song-btn" title="Nieuwe Song Toevoegen">➕</button>
+                        <button id="toggleViewBtn" class="import-export-btn view-toggle-btn with-label" title="Wissel tussen simpel en volledig overzicht">
+                            <span class="icon">📋</span>
+                            <span class="label">Weergave</span>
+                        </button>
+                        <button id="addSongBtn" class="add-song-btn with-label" title="Nieuwe Song Toevoegen">
+                            <span class="icon">➕</span>
+                            <span class="label">Toevoegen</span>
+                        </button>
                         <div class="import-export-controls">
                             <button id="exportBtn" class="import-export-btn with-label" title="Exporteer">
                                 <span class="icon">📤</span>
@@ -63,9 +69,15 @@
                                 <span class="label">Import</span>
                             </label>
                             <input type="file" id="importFile" accept=".json" style="display: none;">
-                            <button id="deleteAllSongsBtn" class="import-export-btn delete-all-btn" title="Verwijder alle songs">🗑️</button>
+                            <button id="deleteAllSongsBtn" class="import-export-btn delete-all-btn with-label" title="Verwijder alle songs">
+                                <span class="icon">🗑️</span>
+                                <span class="label">Verwijder</span>
+                            </button>
                         </div>
-                        <button id="printTableBtn" class="import-export-btn print-btn" title="Print volledige tabel">🖨️</button>
+                        <button id="printTableBtn" class="import-export-btn print-btn with-label" title="Print volledige tabel">
+                            <span class="icon">🖨️</span>
+                            <span class="label">Print</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -212,6 +224,7 @@
                     <h2 id="songDetailArtist" class="song-detail-artist editable-field" data-field="artist" contenteditable="false"></h2>
                     <span class="song-detail-separator">-</span>
                     <h1 id="songDetailTitle" class="song-detail-title editable-field" data-field="title" contenteditable="false"></h1>
+                    <button id="songDetailYouTubePlayBtn" class="song-detail-youtube-play-btn hidden" title="YouTube afspelen">▶️</button>
                     <button id="songDetailYouTubeBtn" class="song-detail-youtube-btn" title="YouTube URL bewerken">🎬</button>
                     <button id="songDetailFavoriteBtn" class="song-detail-favorite-btn" title="Voeg toe aan favorieten">☆</button>
                 </div>

@@ -1,11 +1,12 @@
 // SongDetailModal - Modal voor song details weergave
 class SongDetailModal {
-    constructor(songManager, onNavigate, onUpdate = null, chordModal = null, onToggleFavorite = null) {
+    constructor(songManager, onNavigate, onUpdate = null, chordModal = null, onToggleFavorite = null, onPlayYouTube = null) {
         this.songManager = songManager;
         this.onNavigate = onNavigate;
         this.onUpdate = onUpdate;
         this.chordModal = chordModal;
         this.onToggleFavorite = onToggleFavorite;
+        this.onPlayYouTube = onPlayYouTube;
         this.currentSongId = null;
         this.allSongs = [];
         this.modal = document.getElementById('songDetailModal');
@@ -17,6 +18,7 @@ class SongDetailModal {
         this.titleElement = document.getElementById('songDetailTitle');
         this.favoriteBtn = document.getElementById('songDetailFavoriteBtn');
         this.youtubeBtn = document.getElementById('songDetailYouTubeBtn');
+        this.youtubePlayBtn = document.getElementById('songDetailYouTubePlayBtn');
         this.youtubeUrlModal = document.getElementById('youtubeUrlModal');
         this.youtubeUrlInput = document.getElementById('youtubeUrlInput');
         this.youtubeUrlSaveBtn = document.getElementById('youtubeUrlSaveBtn');
@@ -70,6 +72,16 @@ class SongDetailModal {
             this.youtubeBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 this.openYouTubeUrlModal();
+            });
+        }
+        
+        // Setup YouTube Play button
+        if (this.youtubePlayBtn) {
+            this.youtubePlayBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (this.onPlayYouTube && this.currentSongId) {
+                    this.onPlayYouTube(this.currentSongId);
+                }
             });
         }
         
@@ -152,7 +164,12 @@ class SongDetailModal {
                 e.stopPropagation();
                 this.enterEditMode(this.artistElement);
             });
-            this.artistElement.addEventListener('blur', () => {
+            this.artistElement.addEventListener('blur', (e) => {
+                // Don't blur if we're moving to next field with Tab
+                if (e.relatedTarget && e.relatedTarget.hasAttribute('contenteditable') && e.relatedTarget.getAttribute('contenteditable') === 'true') {
+                    return;
+                }
+                
                 this.artistElement.setAttribute('contenteditable', 'false');
                 this.artistElement.classList.remove('editing');
                 
@@ -177,13 +194,24 @@ class SongDetailModal {
                 }
                 this.checkForChanges();
             });
+            this.artistElement.addEventListener('keydown', (e) => {
+                if (e.key === 'Tab' && !e.shiftKey) {
+                    e.preventDefault();
+                    this.moveToNextField(this.artistElement);
+                }
+            });
         }
         if (this.titleElement) {
             this.titleElement.addEventListener('click', (e) => {
                 e.stopPropagation();
                 this.enterEditMode(this.titleElement);
             });
-            this.titleElement.addEventListener('blur', () => {
+            this.titleElement.addEventListener('blur', (e) => {
+                // Don't blur if we're moving to next field with Tab
+                if (e.relatedTarget && e.relatedTarget.hasAttribute('contenteditable') && e.relatedTarget.getAttribute('contenteditable') === 'true') {
+                    return;
+                }
+                
                 this.titleElement.setAttribute('contenteditable', 'false');
                 this.titleElement.classList.remove('editing');
                 
@@ -213,6 +241,12 @@ class SongDetailModal {
                 }
                 this.checkForChanges();
             });
+            this.titleElement.addEventListener('keydown', (e) => {
+                if (e.key === 'Tab' && !e.shiftKey) {
+                    e.preventDefault();
+                    this.moveToNextField(this.titleElement);
+                }
+            });
         }
         
         // Setup section fields
@@ -223,6 +257,11 @@ class SongDetailModal {
                     this.enterEditMode(section.content);
                 });
                 section.content.addEventListener('blur', (e) => {
+                    // Don't blur if we're moving to next field with Tab
+                    if (e.relatedTarget && e.relatedTarget.hasAttribute('contenteditable') && e.relatedTarget.getAttribute('contenteditable') === 'true') {
+                        return;
+                    }
+                    
                     // Use setTimeout to allow click event on button to fire first
                     setTimeout(() => {
                         // Check if button still exists and if we're still in edit mode
@@ -244,10 +283,72 @@ class SongDetailModal {
                     }, 100);
                 });
                 section.content.addEventListener('input', () => this.checkForChanges());
+                section.content.addEventListener('keydown', (e) => {
+                    if (e.key === 'Tab' && !e.shiftKey) {
+                        e.preventDefault();
+                        this.moveToNextField(section.content);
+                    }
+                });
             }
         });
     }
     
+    moveToNextField(currentElement) {
+        // Define field order: artist -> title -> verse -> chorus -> preChorus -> bridge
+        const fieldOrder = ['artist', 'title', 'verse', 'chorus', 'preChorus', 'bridge'];
+        const currentField = currentElement.dataset.field;
+        const currentIndex = fieldOrder.indexOf(currentField);
+        
+        if (currentIndex === -1 || currentIndex >= fieldOrder.length - 1) {
+            // Last field or unknown field - just exit edit mode
+            currentElement.setAttribute('contenteditable', 'false');
+            currentElement.classList.remove('editing');
+            return;
+        }
+        
+        // Save current field content
+        const currentValue = currentElement.textContent.trim();
+        currentElement.setAttribute('contenteditable', 'false');
+        currentElement.classList.remove('editing');
+        
+        // Update placeholder for current field if empty
+        if (!currentValue && (currentField === 'artist' || currentField === 'title')) {
+            if (currentField === 'artist') {
+                currentElement.classList.add('empty-field');
+                currentElement.dataset.placeholder = 'Artiest';
+                currentElement.textContent = '';
+            } else if (currentField === 'title') {
+                currentElement.classList.add('empty-field');
+                currentElement.dataset.placeholder = 'Songtitel';
+                currentElement.textContent = '';
+            }
+        }
+        
+        // Check for changes on current field
+        this.checkForChanges();
+        
+        // Find next field
+        const nextField = fieldOrder[currentIndex + 1];
+        let nextElement = null;
+        
+        if (nextField === 'artist') {
+            nextElement = this.artistElement;
+        } else if (nextField === 'title') {
+            nextElement = this.titleElement;
+        } else {
+            // Section field
+            const section = this.sections[nextField];
+            nextElement = section?.content;
+        }
+        
+        if (nextElement) {
+            // Small delay to ensure previous field is saved
+            setTimeout(() => {
+                this.enterEditMode(nextElement);
+            }, 50);
+        }
+    }
+
     enterEditMode(element) {
         if (!element) {
             return;
@@ -562,7 +663,7 @@ class SongDetailModal {
         }
     }
 
-    show(song) {
+    show(song, autoEditArtist = false) {
         if (!song) {
             this.hide();
             return;
@@ -632,6 +733,11 @@ class SongDetailModal {
         if (this.youtubeBtn) {
             this.updateYouTubeButton(song.youtubeUrl || '');
         }
+        
+        // Update YouTube Play button visibility
+        if (this.youtubePlayBtn) {
+            this.updateYouTubePlayButton(song.youtubeUrl || '');
+        }
 
         // Hide save button
         if (this.saveBtn) {
@@ -684,6 +790,13 @@ class SongDetailModal {
         // Show modal
         if (this.modal) {
             this.modal.classList.remove('hidden');
+        }
+        
+        // Auto-focus and enter edit mode for artist field if requested (for new songs)
+        if (autoEditArtist && this.artistElement) {
+            setTimeout(() => {
+                this.enterEditMode(this.artistElement);
+            }, 100);
         }
     }
 
@@ -791,6 +904,7 @@ class SongDetailModal {
         
         // Update button state
         this.updateYouTubeButton(url);
+        this.updateYouTubePlayButton(url);
         
         // Close modal first
         this.closeYouTubeUrlModal();
@@ -810,6 +924,16 @@ class SongDetailModal {
         } else {
             this.youtubeBtn.classList.remove('youtube-active');
             this.youtubeBtn.title = 'YouTube URL bewerken';
+        }
+    }
+
+    updateYouTubePlayButton(youtubeUrl) {
+        if (!this.youtubePlayBtn) return;
+        
+        if (youtubeUrl && youtubeUrl.trim()) {
+            this.youtubePlayBtn.classList.remove('hidden');
+        } else {
+            this.youtubePlayBtn.classList.add('hidden');
         }
     }
 

@@ -589,6 +589,27 @@ header h1 {
     justify-content: center;
 }
 
+.add-song-btn.with-label {
+    flex-direction: column;
+    padding: 6px 8px;
+    gap: 2px;
+    min-width: 50px;
+    height: auto;
+    min-height: 38px;
+}
+
+.add-song-btn .icon {
+    font-size: 1.2em;
+    line-height: 1;
+}
+
+.add-song-btn .label {
+    font-size: 0.6em;
+    font-weight: 500;
+    line-height: 1;
+    text-transform: lowercase;
+}
+
 .add-song-btn::before {
     content: '';
     position: absolute;
@@ -2672,6 +2693,31 @@ td:has(.row-edit-input.input-focused) {
 .song-detail-youtube-btn.youtube-active:hover {
     color: #dc2626;
     text-shadow: 0 0 15px rgba(239, 68, 68, 0.7);
+}
+
+.song-detail-youtube-play-btn {
+    background: transparent;
+    border: none;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 1.5em;
+    cursor: pointer;
+    padding: 4px 8px;
+    border-radius: 6px;
+    transition: all 0.2s ease;
+    flex-shrink: 0;
+    line-height: 1;
+    margin-right: 8px;
+}
+
+.song-detail-youtube-play-btn:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #22c55e;
+    transform: scale(1.1);
+    text-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
+}
+
+.song-detail-youtube-play-btn:active {
+    transform: scale(1.0);
 }
 
 .song-detail-separator {

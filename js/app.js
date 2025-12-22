@@ -10,7 +10,8 @@ class App {
             (songId, skipTableSelection) => this.navigateToSong(songId, skipTableSelection),
             () => this.loadAndRender(), // Refresh table when song is updated
             this.chordModal, // Pass chordModal for chord button
-            (songId) => this.handleToggleFavorite(songId) // Pass favorite toggle handler
+            (songId) => this.handleToggleFavorite(songId), // Pass favorite toggle handler
+            (songId) => this.handlePlayYouTube(songId) // Pass YouTube play handler
         );
         this.chordDetectorOverlay = new ChordDetectorOverlay();
         this.currentFilter = 'all';
@@ -667,11 +668,11 @@ class App {
         // Re-render table
         this.loadAndRender();
 
-        // Open the detail modal with the new empty song
+        // Open the detail modal with the new empty song and auto-focus artist field
         setTimeout(() => {
             const song = this.songManager.getSongById(newSong.id);
             if (song) {
-                this.songDetailModal.show(song);
+                this.songDetailModal.show(song, true); // true = auto-edit artist field
             }
         }, 50);
     }
@@ -1040,13 +1041,28 @@ class App {
         const toggleBtn = document.getElementById('toggleViewBtn');
         const table = document.getElementById('songsTable');
         if (toggleBtn && table) {
+            const iconSpan = toggleBtn.querySelector('.icon');
+            if (iconSpan) {
+                if (this.viewMode === 'simple') {
+                    iconSpan.textContent = '📊';
+                    toggleBtn.title = 'Volledig overzicht';
+                } else {
+                    iconSpan.textContent = '📋';
+                    toggleBtn.title = 'Simpel overzicht';
+                }
+            } else {
+                // Fallback for if structure is not yet set up
+                if (this.viewMode === 'simple') {
+                    toggleBtn.textContent = '📊';
+                    toggleBtn.title = 'Volledig overzicht';
+                } else {
+                    toggleBtn.textContent = '📋';
+                    toggleBtn.title = 'Simpel overzicht';
+                }
+            }
             if (this.viewMode === 'simple') {
-                toggleBtn.textContent = '📊';
-                toggleBtn.title = 'Volledig overzicht';
                 table.classList.add('simple-view');
             } else {
-                toggleBtn.textContent = '📋';
-                toggleBtn.title = 'Simpel overzicht';
                 table.classList.remove('simple-view');
             }
         }
