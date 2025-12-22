@@ -2640,19 +2640,27 @@ td:has(.row-edit-input.input-focused) {
     flex: 1;
     color: white;
     display: flex;
-    align-items: baseline;
+    align-items: center;
     gap: 10px;
     flex-wrap: wrap;
     min-width: 0;
 }
 
-.song-detail-favorite-btn {
+/* Action buttons group (Play, Edit URL, Favorite) */
+.song-detail-action-buttons {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.song-detail-action-btn {
     background: transparent;
     border: none;
     color: rgba(255, 255, 255, 0.7);
-    font-size: 1.5em;
+    font-size: 1em;
     cursor: pointer;
-    padding: 4px 8px;
+    padding: 4px 6px;
     border-radius: 6px;
     transition: all 0.2s ease;
     flex-shrink: 0;
@@ -2662,180 +2670,74 @@ td:has(.row-edit-input.input-focused) {
     justify-content: center;
 }
 
-.song-detail-favorite-btn.with-label {
+.song-detail-action-btn.with-label {
     flex-direction: column;
-    padding: 4px 6px;
     gap: 2px;
-    min-width: 60px;
-    height: auto;
-    min-height: 50px;
+    width: 55px;
+    height: 45px;
+    box-sizing: border-box;
 }
 
-.song-detail-favorite-btn .icon {
-    font-size: 1.2em;
+.song-detail-action-btn .icon {
+    font-size: 24px;
     line-height: 1;
-    width: 1.2em;
-    height: 1.2em;
+    width: 24px;
+    height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
-.song-detail-favorite-btn .label {
-    font-size: 0.55em;
+.song-detail-action-btn .icon.youtube-icon svg {
+    width: 28px;
+    height: 20px;
+    display: block;
+}
+
+.song-detail-action-btn .label {
+    font-size: 10px;
     font-weight: 500;
     line-height: 1;
     text-transform: lowercase;
+    color: rgba(255, 255, 255, 0.7);
 }
 
-.song-detail-favorite-btn:hover {
+.song-detail-action-btn:hover {
     background: rgba(255, 255, 255, 0.1);
     color: rgba(255, 255, 255, 0.9);
-    transform: scale(1.1);
+    transform: scale(1.05);
 }
 
-.song-detail-favorite-btn.favorite-active {
+.song-detail-action-btn:hover .label {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.song-detail-action-btn.favorite-active {
     color: #fbbf24;
     text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);
 }
 
-.song-detail-favorite-btn.favorite-active:hover {
+.song-detail-action-btn.favorite-active:hover {
     color: #f59e0b;
     text-shadow: 0 0 15px rgba(251, 191, 36, 0.7);
 }
 
-.song-detail-youtube-btn {
-    background: transparent;
-    border: none;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 1.5em;
-    cursor: pointer;
-    padding: 4px 8px;
-    border-radius: 6px;
-    transition: all 0.2s ease;
-    flex-shrink: 0;
-    line-height: 1;
-    margin-right: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.song-detail-youtube-btn.with-label {
-    flex-direction: column;
-    padding: 4px 6px;
-    gap: 2px;
-    min-width: 60px;
-    height: auto;
-    min-height: 50px;
-}
-
-.song-detail-youtube-btn .icon {
-    font-size: 1.2em;
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.song-detail-youtube-btn .icon.youtube-icon svg {
-    width: 1.2em;
-    height: 1.2em;
-    display: block;
-    max-width: 1.2em;
-    max-height: 1.2em;
-}
-
-.song-detail-youtube-btn .label {
-    font-size: 0.55em;
-    font-weight: 500;
-    line-height: 1;
-    text-transform: lowercase;
-    color: rgba(255, 255, 255, 0.7);
-}
-
-.song-detail-youtube-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: rgba(255, 255, 255, 0.9);
-    transform: scale(1.1);
-}
-
-.song-detail-youtube-btn:hover .label {
-    color: rgba(255, 255, 255, 0.9);
-}
-
-.song-detail-youtube-btn.youtube-active {
+.song-detail-action-btn.youtube-active {
     color: #ef4444;
     text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
 }
 
-.song-detail-youtube-btn.youtube-active .label {
+.song-detail-action-btn.youtube-active .label {
     color: rgba(255, 255, 255, 0.7);
 }
 
-.song-detail-youtube-btn.youtube-active:hover {
+.song-detail-action-btn.youtube-active:hover {
     color: #dc2626;
     text-shadow: 0 0 15px rgba(239, 68, 68, 0.7);
 }
 
-.song-detail-youtube-play-btn {
-    background: transparent;
-    border: none;
-    color: rgba(255, 255, 255, 0.7);
-    font-size: 1.5em;
-    cursor: pointer;
-    padding: 4px 8px;
-    border-radius: 6px;
-    transition: all 0.2s ease;
-    flex-shrink: 0;
-    line-height: 1;
-    margin-right: 8px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.song-detail-youtube-play-btn.with-label {
-    flex-direction: column;
-    padding: 4px 6px;
-    gap: 2px;
-    min-width: 60px;
-    height: auto;
-    min-height: 50px;
-}
-
-.song-detail-youtube-play-btn .icon {
-    font-size: 1.2em;
-    line-height: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.song-detail-youtube-play-btn .icon.youtube-icon svg {
-    width: 1.2em;
-    height: 1.2em;
-    display: block;
-    max-width: 1.2em;
-    max-height: 1.2em;
-}
-
-.song-detail-youtube-play-btn .label {
-    font-size: 0.55em;
-    font-weight: 500;
-    line-height: 1;
-    text-transform: lowercase;
-}
-
-.song-detail-youtube-play-btn:hover {
-    background: rgba(255, 255, 255, 0.1);
-    color: #22c55e;
-    transform: scale(1.1);
-    text-shadow: 0 0 10px rgba(34, 197, 94, 0.5);
-}
-
-.song-detail-youtube-play-btn:active {
-    transform: scale(1.0);
+.song-detail-action-btn.hidden {
+    display: none;
 }
 
 .song-detail-separator {
@@ -2902,8 +2804,6 @@ td:has(.row-edit-input.input-focused) {
     font-style: italic;
     pointer-events: none;
 }
-    min-height: 1.5em;
-}
 
 .song-detail-title:hover {
     background: rgba(255, 255, 255, 0.1);
@@ -2937,27 +2837,26 @@ td:has(.row-edit-input.input-focused) {
 
 .song-detail-nav-btn.with-label {
     flex-direction: column;
-    width: auto;
-    height: auto;
-    min-width: 60px;
-    min-height: 50px;
+    width: 75px;
+    height: 60px;
     border-radius: 8px;
     padding: 4px 6px;
     gap: 2px;
+    box-sizing: border-box;
 }
 
 .song-detail-nav-btn .icon {
-    font-size: 1.2em;
+    font-size: 20px;
     line-height: 1;
-    width: 1.2em;
-    height: 1.2em;
+    width: 20px;
+    height: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .song-detail-nav-btn .label {
-    font-size: 0.55em;
+    font-size: 11px;
     font-weight: 500;
     line-height: 1;
     text-transform: lowercase;
@@ -2999,27 +2898,26 @@ td:has(.row-edit-input.input-focused) {
 
 .song-detail-close.with-label {
     flex-direction: column;
-    width: auto;
-    height: auto;
-    min-width: 60px;
-    min-height: 50px;
+    width: 75px;
+    height: 60px;
     border-radius: 8px;
     padding: 4px 6px;
     gap: 2px;
+    box-sizing: border-box;
 }
 
 .song-detail-close .icon {
-    font-size: 1.2em;
+    font-size: 20px;
     line-height: 1;
-    width: 1.2em;
-    height: 1.2em;
+    width: 20px;
+    height: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
 }
 
 .song-detail-close .label {
-    font-size: 0.55em;
+    font-size: 11px;
     font-weight: 500;
     line-height: 1;
     text-transform: lowercase;

@@ -227,28 +227,30 @@
                     <h2 id="songDetailArtist" class="song-detail-artist editable-field" data-field="artist" contenteditable="false"></h2>
                     <span class="song-detail-separator">-</span>
                     <h1 id="songDetailTitle" class="song-detail-title editable-field" data-field="title" contenteditable="false"></h1>
-                    <button id="songDetailYouTubePlayBtn" class="song-detail-youtube-play-btn with-label hidden" title="Play YouTube video">
-                        <span class="icon youtube-icon">
-                            <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
-                                <path d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55 C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19 C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.63-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#FF0000"/>
-                                <path d="M 45,24 27,14 27,34" fill="#fff"/>
-                            </svg>
-                        </span>
-                        <span class="label">Play</span>
-                    </button>
-                    <button id="songDetailYouTubeBtn" class="song-detail-youtube-btn with-label" title="Edit YouTube URL">
-                        <span class="icon youtube-icon">
-                            <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
-                                <path d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55 C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19 C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.63-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#FF0000"/>
-                                <path d="M 45,24 27,14 27,34" fill="#fff"/>
-                            </svg>
-                        </span>
-                        <span class="label">Add URL</span>
-                    </button>
-                    <button id="songDetailFavoriteBtn" class="song-detail-favorite-btn with-label" title="Add to favorites">
-                        <span class="icon">☆</span>
-                        <span class="label">Favorite</span>
-                    </button>
+                    <div class="song-detail-action-buttons">
+                        <button id="songDetailYouTubePlayBtn" class="song-detail-action-btn with-label hidden" title="Play YouTube video">
+                            <span class="icon youtube-icon">
+                                <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                                    <path d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55 C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19 C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.63-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#FF0000"/>
+                                    <path d="M 45,24 27,14 27,34" fill="#fff"/>
+                                </svg>
+                            </span>
+                            <span class="label">Play</span>
+                        </button>
+                        <button id="songDetailYouTubeBtn" class="song-detail-action-btn with-label" title="Edit YouTube URL">
+                            <span class="icon youtube-icon">
+                                <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                                    <path d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55 C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19 C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.63-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#FF0000"/>
+                                    <path d="M 45,24 27,14 27,34" fill="#fff"/>
+                                </svg>
+                            </span>
+                            <span class="label">Add URL</span>
+                        </button>
+                        <button id="songDetailFavoriteBtn" class="song-detail-action-btn with-label" title="Add to favorites">
+                            <span class="icon">☆</span>
+                            <span class="label">Favorite</span>
+                        </button>
+                    </div>
                 </div>
                 <div class="song-detail-header-right">
                     <button class="song-detail-nav-btn song-detail-next with-label" id="songDetailNext" title="Next song">
