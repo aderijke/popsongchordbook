@@ -92,6 +92,7 @@ header::before {
     max-width: 1400px;
     margin-left: auto;
     margin-right: auto;
+    transition: margin-bottom 0.3s ease;
 }
 
 .toggle-header-bar-btn {
@@ -166,6 +167,7 @@ header h1 {
     text-shadow: 0 2px 10px rgba(102, 126, 234, 0.1);
     margin: 0;
     text-align: center;
+    transition: font-size 0.3s ease;
 }
 
 .header-subtitle {
@@ -176,6 +178,24 @@ header h1 {
     margin: 0;
     text-align: center;
     letter-spacing: 0.01em;
+    transition: opacity 0.3s ease, height 0.3s ease, margin 0.3s ease;
+    overflow: hidden;
+}
+
+/* When header bar is collapsed, make title smaller and hide subtitle */
+.header-top.header-bar-collapsed {
+    margin-bottom: 5px; /* Reduce space between title and table */
+}
+
+.header-top.header-bar-collapsed h1 {
+    font-size: 1.2em;
+}
+
+.header-top.header-bar-collapsed .header-subtitle {
+    opacity: 0;
+    height: 0;
+    margin: 0;
+    overflow: hidden;
 }
 
 .search-section {
@@ -204,6 +224,23 @@ header h1 {
     overflow: hidden;
     max-height: 1000px;
     position: relative;
+}
+
+/* Remove gap between filters-section and right-section */
+.header-bar > .filters-section + .right-section {
+    margin-left: -15px !important; /* Negative margin to remove gap from header-bar gap */
+    padding-left: 0 !important; /* Remove any padding */
+}
+
+/* Ensure search container has no right margin/padding */
+.filters-section .search-section-container {
+    margin-right: 0 !important;
+    padding-right: 0 !important;
+}
+
+.filters-section .search-section-container .search-input-wrapper {
+    margin-right: 0 !important;
+    padding-right: 0 !important;
 }
 
 .header-bar.collapsed {
@@ -245,6 +282,11 @@ header h1 {
     opacity: 0.5;
 }
 
+/* Remove spacing after search field - buttons should connect directly */
+.filters-section:not(:last-child)::after {
+    display: none;
+}
+
 /* Remove separator for search section */
 .search-section-container::after {
     display: none;
@@ -270,6 +312,7 @@ header h1 {
     align-items: center;
     gap: 12px;
     min-width: 0;
+    margin-right: 0; /* Remove margin after filters section */
 }
 
 .filter-buttons {
@@ -284,11 +327,14 @@ header h1 {
     flex: 1 1 auto;
     min-width: 120px;
     max-width: 240px;
+    margin-right: 0; /* Remove margin after search field */
 }
 
 .search-section-container .search-input-wrapper {
     width: 100%;
     max-width: 100%;
+    margin-right: 0 !important;
+    padding-right: 0 !important;
 }
 
 /* Right Section: Setlist & Actions */
@@ -1875,6 +1921,11 @@ td:has(.row-edit-input.input-focused) {
     transform: rotate(90deg);
 }
 
+/* Auth modal - hide close button (login is required) */
+.auth-modal .modal-close {
+    display: none !important;
+}
+
 .modal-body {
     padding: 25px;
 }
@@ -3300,10 +3351,10 @@ td:has(.row-edit-input.input-focused) {
 
 
 .chord-detector-overlay.minimized {
-    min-width: 60px;
-    max-width: 60px;
-    width: 60px;
-    height: 60px;
+    min-width: 30px;
+    max-width: 30px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     background: transparent;
     box-shadow: none;
@@ -3322,8 +3373,8 @@ td:has(.row-edit-input.input-focused) {
     margin: 0 !important;
     gap: 0 !important;
     min-height: 0 !important;
-    max-height: 60px !important;
-    height: 60px !important;
+    max-height: 30px !important;
+    height: 30px !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -3331,9 +3382,10 @@ td:has(.row-edit-input.input-focused) {
 
 .chord-detector-overlay.minimized .chord-detector-toggle-btn {
     position: relative !important;
-    width: 60px !important;
-    height: 60px !important;
+    width: 30px !important;
+    height: 30px !important;
     margin: 0 !important;
+    cursor: move; /* Show move cursor when minimized */
 }
 
 .chord-detector-content {
@@ -3579,10 +3631,10 @@ td:has(.row-edit-input.input-focused) {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border: none;
     color: white;
-    width: 60px;
-    height: 60px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
-    font-size: 24px;
+    font-size: 12px;
     cursor: pointer;
     display: flex;
     align-items: center;

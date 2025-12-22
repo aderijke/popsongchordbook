@@ -38,6 +38,20 @@ class ChordDetectorOverlay {
         this.isDragging = false;
         this.dragOffset = { x: 0, y: 0 };
         
+        // Button dragging state (for minimized icon)
+        this.isButtonDragging = false;
+        this.isButtonDragActive = false; // Flag to track if drag session is active
+        this.buttonDragStartX = 0;
+        this.buttonDragStartY = 0;
+        this.buttonStartLeft = 0;
+        this.buttonStartTop = 0;
+        this.buttonClickStartTime = 0;
+        this.buttonHasMoved = false;
+        this.buttonMouseMoveHandler = null;
+        this.buttonMouseUpHandler = null;
+        this.buttonTouchMoveHandler = null;
+        this.buttonTouchEndHandler = null;
+        
         // Start minimized by default
         if (this.overlay) {
             this.overlay.classList.add('minimized');
@@ -60,11 +74,159 @@ class ChordDetectorOverlay {
     
     setupEventListeners() {
         if (this.toggleButton) {
+            // For minimized state, make button draggable
+            this.toggleButton.addEventListener('mousedown', (e) => {
+                if (!this.isMinimized) return;
+                this.isButtonDragActive = true;
+                this.buttonClickStartTime = Date.now();
+                this.buttonHasMoved = false;
+                this.buttonDragStartX = e.clientX;
+                this.buttonDragStartY = e.clientY;
+                const rect = this.overlay.getBoundingClientRect();
+                this.buttonStartLeft = rect.left;
+                this.buttonStartTop = rect.top;
+                this.isButtonDragging = false;
+
+                // Add event listeners only when drag starts
+                this.buttonMouseMoveHandler = (e) => {
+                    if (!this.isButtonDragActive || !this.isMinimized || !this.toggleButton) return;
+                    const dx = Math.abs(e.clientX - this.buttonDragStartX);
+                    const dy = Math.abs(e.clientY - this.buttonDragStartY);
+                    
+                    if (dx > 5 || dy > 5) {
+                        this.buttonHasMoved = true;
+                        if (!this.isButtonDragging) {
+                            this.isButtonDragging = true;
+                            this.overlay.style.transition = 'none';
+                            document.body.style.userSelect = 'none';
+                        }
+                        
+                        const newX = this.buttonStartLeft + (e.clientX - this.buttonDragStartX);
+                        const newY = this.buttonStartTop + (e.clientY - this.buttonDragStartY);
+                        
+                        const maxX = window.innerWidth - this.overlay.offsetWidth;
+                        const maxY = window.innerHeight - this.overlay.offsetHeight;
+                        
+                        const constrainedX = Math.max(0, Math.min(newX, maxX));
+                        const constrainedY = Math.max(0, Math.min(newY, maxY));
+                        
+                        this.overlay.style.left = constrainedX + 'px';
+                        this.overlay.style.top = constrainedY + 'px';
+                        this.overlay.style.right = 'auto';
+                    }
+                };
+
+                this.buttonMouseUpHandler = () => {
+                    if (!this.isButtonDragActive) return;
+                    this.isButtonDragActive = false;
+                    
+                    if (this.isButtonDragging) {
+                        this.isButtonDragging = false;
+                        this.overlay.style.transition = '';
+                        document.body.style.userSelect = '';
+                        this.savePosition();
+                    }
+                    
+                    // Remove event listeners
+                    document.removeEventListener('mousemove', this.buttonMouseMoveHandler);
+                    document.removeEventListener('mouseup', this.buttonMouseUpHandler);
+                    this.buttonMouseMoveHandler = null;
+                    this.buttonMouseUpHandler = null;
+                    
+                    this.buttonHasMoved = false;
+                };
+
+                document.addEventListener('mousemove', this.buttonMouseMoveHandler);
+                document.addEventListener('mouseup', this.buttonMouseUpHandler);
+            });
+
+            // Touch events for iPad
+            this.toggleButton.addEventListener('touchstart', (e) => {
+                if (!this.isMinimized) return;
+                this.isButtonDragActive = true;
+                this.buttonClickStartTime = Date.now();
+                this.buttonHasMoved = false;
+                const touch = e.touches[0];
+                this.buttonDragStartX = touch.clientX;
+                this.buttonDragStartY = touch.clientY;
+                const rect = this.overlay.getBoundingClientRect();
+                this.buttonStartLeft = rect.left;
+                this.buttonStartTop = rect.top;
+                this.isButtonDragging = false;
+
+                // Add event listeners only when drag starts
+                this.buttonTouchMoveHandler = (e) => {
+                    if (!this.isButtonDragActive || !this.isMinimized || !this.toggleButton) return;
+                    const touch = e.touches[0];
+                    const dx = Math.abs(touch.clientX - this.buttonDragStartX);
+                    const dy = Math.abs(touch.clientY - this.buttonDragStartY);
+                    
+                    if (dx > 5 || dy > 5) {
+                        this.buttonHasMoved = true;
+                        e.preventDefault();
+                        if (!this.isButtonDragging) {
+                            this.isButtonDragging = true;
+                            this.overlay.style.transition = 'none';
+                            document.body.style.userSelect = 'none';
+                        }
+                        
+                        const newX = this.buttonStartLeft + (touch.clientX - this.buttonDragStartX);
+                        const newY = this.buttonStartTop + (touch.clientY - this.buttonDragStartY);
+                        
+                        const maxX = window.innerWidth - this.overlay.offsetWidth;
+                        const maxY = window.innerHeight - this.overlay.offsetHeight;
+                        
+                        const constrainedX = Math.max(0, Math.min(newX, maxX));
+                        const constrainedY = Math.max(0, Math.min(newY, maxY));
+                        
+                        this.overlay.style.left = constrainedX + 'px';
+                        this.overlay.style.top = constrainedY + 'px';
+                        this.overlay.style.right = 'auto';
+                    }
+                };
+
+                this.buttonTouchEndHandler = () => {
+                    if (!this.isButtonDragActive) return;
+                    this.isButtonDragActive = false;
+                    
+                    if (this.isButtonDragging) {
+                        this.isButtonDragging = false;
+                        this.overlay.style.transition = '';
+                        document.body.style.userSelect = '';
+                        this.savePosition();
+                    }
+                    
+                    // Remove event listeners
+                    document.removeEventListener('touchmove', this.buttonTouchMoveHandler);
+                    document.removeEventListener('touchend', this.buttonTouchEndHandler);
+                    this.buttonTouchMoveHandler = null;
+                    this.buttonTouchEndHandler = null;
+                    
+                    // Only toggle if it was a click, not a drag
+                    if (!this.buttonHasMoved && Date.now() - this.buttonClickStartTime < 300) {
+                        this.toggleMinimize();
+                    }
+                    this.buttonHasMoved = false;
+                };
+
+                document.addEventListener('touchmove', this.buttonTouchMoveHandler, { passive: false });
+                document.addEventListener('touchend', this.buttonTouchEndHandler);
+            }, { passive: false });
+
             this.toggleButton.addEventListener('click', (e) => {
+                // If minimized and we moved, don't toggle (handled in touchend)
+                if (this.isMinimized && this.buttonHasMoved) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    return;
+                }
                 // If minimized, expand first, otherwise toggle listening
                 if (this.isMinimized) {
                     e.stopPropagation();
-                    this.toggleMinimize();
+                    // Only toggle if it wasn't a drag (check time and movement)
+                    if (!this.buttonHasMoved && Date.now() - this.buttonClickStartTime < 300) {
+                        this.toggleMinimize();
+                    }
                 } else {
                     this.toggleListening();
                 }

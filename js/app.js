@@ -235,6 +235,7 @@ class App {
         const toggleBtn = document.getElementById('toggleHeaderBar');
         const toggleBtnCollapsed = document.getElementById('toggleHeaderBarCollapsed');
         const headerBar = document.getElementById('headerBar');
+        const headerTop = document.querySelector('.header-top');
         
         if (!toggleBtn || !toggleBtnCollapsed || !headerBar) return;
         
@@ -242,6 +243,7 @@ class App {
         const isCollapsed = localStorage.getItem('headerBarCollapsed') === 'true';
         if (isCollapsed) {
             headerBar.classList.add('collapsed');
+            if (headerTop) headerTop.classList.add('header-bar-collapsed');
             toggleBtn.style.display = 'none';
             toggleBtnCollapsed.style.display = 'flex';
         } else {
@@ -254,11 +256,13 @@ class App {
             
             if (isCurrentlyCollapsed) {
                 headerBar.classList.remove('collapsed');
+                if (headerTop) headerTop.classList.remove('header-bar-collapsed');
                 toggleBtn.style.display = 'flex';
                 toggleBtnCollapsed.style.display = 'none';
                 localStorage.setItem('headerBarCollapsed', 'false');
             } else {
                 headerBar.classList.add('collapsed');
+                if (headerTop) headerTop.classList.add('header-bar-collapsed');
                 toggleBtn.style.display = 'none';
                 toggleBtnCollapsed.style.display = 'flex';
                 localStorage.setItem('headerBarCollapsed', 'true');

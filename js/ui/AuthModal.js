@@ -5,6 +5,7 @@ class AuthModal {
         this.onAuthSuccess = onAuthSuccess;
         this.modal = document.getElementById('authModal');
         this.isLoginMode = true; // true = login, false = create account
+        this.allowHide = false; // Prevent closing modal - login is required
         
         // Login elements
         this.loginEmailInput = document.getElementById('authLoginEmail');
@@ -75,11 +76,13 @@ class AuthModal {
             });
         }
 
-        // Close button
+        // Close button - disabled for auth modal (login is required)
+        // Do not allow closing the modal - user must login or create account
         if (this.closeBtn) {
-            this.closeBtn.addEventListener('click', () => {
-                this.hide();
-            });
+            // Hide the close button
+            this.closeBtn.style.display = 'none';
+            // Remove any existing click handlers
+            this.closeBtn.removeEventListener('click', this.hide);
         }
 
         // Close on backdrop click
@@ -113,7 +116,13 @@ class AuthModal {
         if (!this.modal) return;
         
         this.isLoginMode = loginMode;
+        this.allowHide = false; // Prevent hiding
         this.modal.classList.remove('hidden');
+        
+        // Hide close button
+        if (this.closeBtn) {
+            this.closeBtn.style.display = 'none';
+        }
         
         // Reset forms
         this.clearErrors();
@@ -137,8 +146,12 @@ class AuthModal {
     }
 
     hide() {
-        if (this.modal) {
+        // Auth modal cannot be hidden - login is required
+        // Only hide if explicitly allowed (e.g., after successful login)
+        // This method is kept for internal use but won't work for user-initiated closes
+        if (this.modal && this.allowHide) {
             this.modal.classList.add('hidden');
+            this.allowHide = false;
         }
     }
 
@@ -198,6 +211,7 @@ class AuthModal {
             
             if (result.success) {
                 this.clearErrors();
+                this.allowHide = true; // Allow hiding after successful login
                 this.hide();
                 if (this.onAuthSuccess) {
                     this.onAuthSuccess(result.user);
@@ -253,6 +267,7 @@ class AuthModal {
             
             if (result.success) {
                 this.clearErrors();
+                this.allowHide = true; // Allow hiding after successful account creation
                 this.hide();
                 if (this.onAuthSuccess) {
                     this.onAuthSuccess(result.user);
