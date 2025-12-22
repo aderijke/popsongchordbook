@@ -141,6 +141,11 @@ header::before {
     font-size: 0.9em;
 }
 
+.profile-btn .song-count {
+    font-weight: 600;
+    opacity: 0.8;
+}
+
 .toggle-header-bar-btn {
     background: rgba(255, 255, 255, 0.95);
     border: 2px solid var(--border-color);
@@ -4418,17 +4423,21 @@ td:has(.row-edit-input.input-focused) {
 
 .piano-chord-list {
     display: flex;
-    flex-direction: column;
-    gap: 25px;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 20px;
 }
 
 /* Individual Chord Card */
 .piano-chord-card {
     background: #f8fafc;
     border-radius: 16px;
-    padding: 20px;
+    padding: 15px;
     border: 1px solid var(--border-color);
     transition: all 0.2s ease;
+    flex: 0 0 calc(33.333% - 14px);
+    min-width: 250px;
+    max-width: 300px;
 }
 
 .piano-chord-card:hover {
@@ -4436,11 +4445,11 @@ td:has(.row-edit-input.input-focused) {
 }
 
 .chord-card-header {
-    margin-bottom: 15px;
+    margin-bottom: 12px;
 }
 
 .chord-card-header .chord-name {
-    font-size: 1.8em;
+    font-size: 1.4em;
     font-weight: 800;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     -webkit-background-clip: text;
@@ -4451,11 +4460,11 @@ td:has(.row-edit-input.input-focused) {
 /* Piano Keyboard Styles */
 .piano-keyboard {
     position: relative;
-    height: 180px;
-    margin: 15px 0;
+    height: 140px;
+    margin: 12px 0;
     background: linear-gradient(180deg, #1a1a2e 0%, #16213e 100%);
     border-radius: 12px;
-    padding: 15px 10px 10px;
+    padding: 12px 8px 8px;
     box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.3);
     overflow: hidden;
 }
@@ -4545,10 +4554,10 @@ td:has(.row-edit-input.input-focused) {
 
 /* Chord notes info */
 .chord-notes-info {
-    margin-top: 12px;
-    padding-top: 12px;
+    margin-top: 10px;
+    padding-top: 10px;
     border-top: 1px solid var(--border-color);
-    font-size: 0.9em;
+    font-size: 0.85em;
     color: var(--text-light);
 }
 
@@ -4604,10 +4613,13 @@ td:has(.row-edit-input.input-focused) {
     
     .piano-chord-card {
         padding: 15px;
+        flex: 0 0 calc(50% - 10px);
+        min-width: 200px;
+        max-width: 100%;
     }
     
     .chord-card-header .chord-name {
-        font-size: 1.5em;
+        font-size: 1.3em;
     }
     
     .piano-keyboard {
@@ -4640,11 +4652,17 @@ td:has(.row-edit-input.input-focused) {
     }
     
     .piano-keyboard {
-        height: 130px;
+        height: 120px;
+    }
+    
+    .piano-chord-card {
+        flex: 0 0 100%;
+        min-width: 100%;
+        max-width: 100%;
     }
     
     .chord-card-header .chord-name {
-        font-size: 1.3em;
+        font-size: 1.2em;
     }
     
     .piano-chord-btn {

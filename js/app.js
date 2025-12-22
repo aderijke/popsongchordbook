@@ -149,6 +149,16 @@ class App {
                 this.profileModal.show();
             });
         }
+        // Update song count initially
+        this.updateProfileSongCount();
+    }
+
+    updateProfileSongCount() {
+        const countElement = document.getElementById('profileSongCount');
+        if (countElement && this.songManager) {
+            const songCount = this.songManager.getAllSongs().length;
+            countElement.textContent = `(${songCount})`;
+        }
     }
 
     async checkAndMigrateData(user) {
@@ -247,6 +257,7 @@ class App {
         // Setup songs sync
         this.songManager.onSongsChanged = () => {
             this.loadAndRender();
+            this.updateProfileSongCount();
         };
         this.songManager.enableSync(userId);
 
@@ -338,6 +349,9 @@ class App {
         
         // Apply view mode after rendering
         this.updateViewMode();
+        
+        // Update profile song count
+        this.updateProfileSongCount();
         
         // Restore selected row if it still exists (but don't open modal)
         if (currentSelectedId && this.tableRenderer) {
