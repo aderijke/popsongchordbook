@@ -6,6 +6,8 @@ class ProfileModal {
         this.modal = document.getElementById('profileModal');
         
         // Profile elements
+        this.usernameInput = document.getElementById('profileUsername');
+        this.updateUsernameBtn = document.getElementById('profileUpdateUsernameBtn');
         this.emailDisplay = document.getElementById('profileEmail');
         this.currentPasswordInput = document.getElementById('profileCurrentPassword');
         this.newPasswordInput = document.getElementById('profileNewPassword');
@@ -20,6 +22,13 @@ class ProfileModal {
     }
 
     setupEventListeners() {
+        // Update username
+        if (this.updateUsernameBtn) {
+            this.updateUsernameBtn.addEventListener('click', () => {
+                this.handleUpdateUsername();
+            });
+        }
+
         // Change password form
         const changePasswordForm = document.getElementById('profileChangePasswordForm');
         if (changePasswordForm) {
@@ -73,8 +82,13 @@ class ProfileModal {
         if (!this.modal) return;
         
         const user = this.firebaseManager.getCurrentUser();
-        if (user && this.emailDisplay) {
-            this.emailDisplay.textContent = user.email || 'Geen e-mailadres';
+        if (user) {
+            if (this.emailDisplay) {
+                this.emailDisplay.textContent = user.email || 'Geen e-mailadres';
+            }
+            if (this.usernameInput) {
+                this.usernameInput.value = user.displayName || '';
+            }
         }
         
         // Reset form
@@ -99,6 +113,41 @@ class ProfileModal {
         this.clearErrors();
         this.clearSuccess();
         this.resetForm();
+    }
+
+    async handleUpdateUsername() {
+        const newUsername = this.usernameInput?.value.trim();
+        
+        if (!newUsername) {
+            alert('Voer een gebruikersnaam in.');
+            return;
+        }
+
+        if (this.updateUsernameBtn) {
+            this.updateUsernameBtn.disabled = true;
+            this.updateUsernameBtn.textContent = '...';
+        }
+
+        try {
+            const result = await this.firebaseManager.updateUsername(newUsername);
+            if (result.success) {
+                alert('Gebruikersnaam succesvol bijgewerkt!');
+                // The app should automatically update the display through some listener or callback
+                if (this.onAuthSuccess) {
+                    this.onAuthSuccess(result.user);
+                }
+            } else {
+                alert('Fout bij bijwerken gebruikersnaam: ' + (result.error || 'Onbekende fout'));
+            }
+        } catch (error) {
+            console.error('Update username error:', error);
+            alert('Er is een fout opgetreden.');
+        } finally {
+            if (this.updateUsernameBtn) {
+                this.updateUsernameBtn.disabled = false;
+                this.updateUsernameBtn.textContent = 'Opslaan';
+            }
+        }
     }
 
     async handleChangePassword() {

@@ -157,6 +157,7 @@ class TableRenderer {
         // Always check fresh data from songManager
         const currentSong = this.songManager.getSongById(song.id);
         const hasYouTubeUrl = currentSong && currentSong.youtubeUrl && currentSong.youtubeUrl.trim();
+        const hasExternalUrl = currentSong && currentSong.externalUrl && currentSong.externalUrl.trim();
         
         const youtubeBtn = document.createElement('button');
         youtubeBtn.className = 'youtube-btn';
@@ -176,6 +177,26 @@ class TableRenderer {
             }
         });
         actionsCell.appendChild(youtubeBtn);
+        
+        // External URL button
+        const externalBtn = document.createElement('button');
+        externalBtn.className = 'external-url-btn';
+        externalBtn.textContent = '🌐';
+        externalBtn.title = 'Open external website';
+        
+        if (!hasExternalUrl) {
+            externalBtn.style.display = 'none';
+        }
+        
+        externalBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            let url = currentSong.externalUrl;
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'https://' + url;
+            }
+            window.open(url, '_blank');
+        });
+        actionsCell.appendChild(externalBtn);
         
         row.appendChild(actionsCell);
 

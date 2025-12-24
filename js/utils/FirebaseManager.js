@@ -54,7 +54,7 @@ class FirebaseManager {
 
     // Authentication Methods
 
-    async signUp(email, password) {
+    async signUp(email, password, username = null) {
         if (!this.initialized) {
             await this.initialize();
         }
@@ -62,9 +62,20 @@ class FirebaseManager {
         try {
             const userCredential = await this.auth.createUserWithEmailAndPassword(email, password);
             this.currentUser = userCredential.user;
+            
+            // Set display name if provided
+            if (username && this.currentUser) {
+                await this.currentUser.updateProfile({
+                    displayName: username
+                });
+                // Reload user to get updated profile
+                await this.currentUser.reload();
+                this.currentUser = this.auth.currentUser;
+            }
+
             return {
                 success: true,
-                user: userCredential.user
+                user: this.currentUser
             };
         } catch (error) {
             console.error('Sign up error:', error);
@@ -137,6 +148,32 @@ class FirebaseManager {
             return { success: true };
         } catch (error) {
             console.error('Sign out error:', error);
+            return {
+                success: false,
+                error: error.message
+            };
+        }
+    }
+
+    async updateUsername(newUsername) {
+        if (!this.initialized) {
+            return { success: false, error: 'Firebase not initialized' };
+        }
+
+        if (!this.currentUser) {
+            return { success: false, error: 'Geen gebruiker ingelogd' };
+        }
+
+        try {
+            await this.currentUser.updateProfile({
+                displayName: newUsername
+            });
+            // Reload user to get updated profile
+            await this.currentUser.reload();
+            this.currentUser = this.auth.currentUser;
+            return { success: true, user: this.currentUser };
+        } catch (error) {
+            console.error('Update username error:', error);
             return {
                 success: false,
                 error: error.message

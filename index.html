@@ -172,6 +172,10 @@
                 <!-- Create Account Form -->
                 <form id="authCreateForm" class="auth-form hidden">
                     <div class="auth-form-group">
+                        <label for="authCreateUsername">Gebruikersnaam</label>
+                        <input type="text" id="authCreateUsername" class="auth-input" placeholder="Jouw naam" required autocomplete="username">
+                    </div>
+                    <div class="auth-form-group">
                         <label for="authCreateEmail">E-mailadres</label>
                         <input type="email" id="authCreateEmail" class="auth-input" placeholder="jouw@email.com" required autocomplete="email">
                     </div>
@@ -203,6 +207,13 @@
             </div>
             <div class="modal-body">
                 <div class="profile-info-section">
+                    <div class="auth-form-group">
+                        <label for="profileUsername">Gebruikersnaam</label>
+                        <div class="profile-username-edit-group">
+                            <input type="text" id="profileUsername" class="auth-input" placeholder="Jouw naam">
+                            <button id="profileUpdateUsernameBtn" class="profile-update-btn">Opslaan</button>
+                        </div>
+                    </div>
                     <div class="auth-form-group">
                         <label>E-mailadres</label>
                         <div class="profile-email-display" id="profileEmail">-</div>
@@ -340,14 +351,18 @@
                             </span>
                             <span class="label">Play</span>
                         </button>
-                        <button id="songDetailYouTubeBtn" class="song-detail-action-btn with-label" title="Edit YouTube URL">
+                        <button id="songDetailYouTubeBtn" class="song-detail-action-btn with-label" title="Edit URLs">
                             <span class="icon youtube-icon">
                                 <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
                                     <path d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55 C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19 C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.63-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#FF0000"/>
                                     <path d="M 45,24 27,14 27,34" fill="#fff"/>
                                 </svg>
                             </span>
-                            <span class="label">Add URL</span>
+                            <span class="label">URLs</span>
+                        </button>
+                        <button id="songDetailExternalUrlBtn" class="song-detail-action-btn with-label hidden" title="Open external website">
+                            <span class="icon">🌐</span>
+                            <span class="label">Website</span>
                         </button>
                         <button id="songDetailFavoriteBtn" class="song-detail-action-btn with-label" title="Add to favorites">
                             <span class="icon">☆</span>
@@ -409,11 +424,18 @@
     <div id="youtubeUrlModal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>YouTube URL</h3>
+                <h3>YouTube & Externe URL</h3>
                 <button class="modal-close" id="youtubeUrlModalClose">&times;</button>
             </div>
             <div class="modal-body">
-                <input type="url" id="youtubeUrlInput" placeholder="https://www.youtube.com/watch?v=..." />
+                <div class="url-input-group">
+                    <label for="youtubeUrlInput">YouTube URL</label>
+                    <input type="url" id="youtubeUrlInput" placeholder="https://www.youtube.com/watch?v=..." />
+                </div>
+                <div class="url-input-group" style="margin-top: 15px;">
+                    <label for="externalUrlInput">Externe Website URL</label>
+                    <input type="url" id="externalUrlInput" placeholder="https://..." />
+                </div>
                 <div class="modal-actions">
                     <button id="youtubeUrlSaveBtn" class="modal-submit-btn">Save</button>
                     <button id="youtubeUrlCancelBtn" class="modal-cancel-btn">Cancel</button>

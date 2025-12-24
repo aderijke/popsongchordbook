@@ -14,6 +14,7 @@ class AuthModal {
         this.loginErrorMsg = document.getElementById('authLoginError');
         
         // Create account elements
+        this.createUsernameInput = document.getElementById('authCreateUsername');
         this.createEmailInput = document.getElementById('authCreateEmail');
         this.createPasswordInput = document.getElementById('authCreatePassword');
         this.createConfirmPasswordInput = document.getElementById('authCreateConfirmPassword');
@@ -228,11 +229,17 @@ class AuthModal {
     }
 
     async handleCreateAccount() {
+        const username = this.createUsernameInput?.value.trim();
         const email = this.createEmailInput?.value.trim();
         const password = this.createPasswordInput?.value;
         const confirmPassword = this.createConfirmPasswordInput?.value;
 
         // Validation
+        if (!username) {
+            this.showCreateError('Voer een gebruikersnaam in.');
+            return;
+        }
+
         if (!email) {
             this.showCreateError('Voer een e-mailadres in.');
             return;
@@ -263,7 +270,7 @@ class AuthModal {
         this.clearErrors();
 
         try {
-            const result = await this.firebaseManager.signUp(email, password);
+            const result = await this.firebaseManager.signUp(email, password, username);
             
             if (result.success) {
                 this.clearErrors();
@@ -334,6 +341,9 @@ class AuthModal {
                 this.createBtn.textContent = 'Account aanmaken';
             }
         }
+        if (this.createUsernameInput) {
+            this.createUsernameInput.disabled = loading;
+        }
         if (this.createEmailInput) {
             this.createEmailInput.disabled = loading;
         }
@@ -351,6 +361,9 @@ class AuthModal {
         }
         if (this.loginPasswordInput) {
             this.loginPasswordInput.value = '';
+        }
+        if (this.createUsernameInput) {
+            this.createUsernameInput.value = '';
         }
         if (this.createEmailInput) {
             this.createEmailInput.value = '';

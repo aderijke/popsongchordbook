@@ -1357,8 +1357,8 @@ td:has(.row-edit-input.input-focused) {
     border: 2px solid var(--secondary-color);
     border-radius: 6px;
     color: white;
-    font-size: 1em;
-    padding: 4px 8px;
+    font-size: 0.9em;
+    padding: 2px 6px;
     cursor: pointer;
     transition: all 0.2s ease;
     display: flex;
@@ -1366,8 +1366,8 @@ td:has(.row-edit-input.input-focused) {
     justify-content: center;
     flex-shrink: 0;
     line-height: 1;
-    min-width: 32px;
-    height: 28px;
+    min-width: 28px;
+    height: 24px;
 }
 
 .chord-modal-btn-detail:hover {
@@ -1440,6 +1440,35 @@ td:has(.row-edit-input.input-focused) {
 .youtube-btn:active {
     transform: translateY(0);
     background: rgba(34, 197, 94, 0.2);
+}
+
+.external-url-btn {
+    background: rgba(59, 130, 246, 0.1);
+    color: #3b82f6;
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    padding: 3px 6px;
+    font-size: 0.8em;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    opacity: 0.8;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+.external-url-btn:hover {
+    background: rgba(59, 130, 246, 0.15);
+    border-color: rgba(59, 130, 246, 0.5);
+    opacity: 1;
+    transform: translateY(-1px);
+}
+
+.external-url-btn:active {
+    transform: translateY(0);
+    background: rgba(59, 130, 246, 0.2);
 }
 
 .youtube-url-cell {
@@ -2062,6 +2091,40 @@ td:has(.row-edit-input.input-focused) {
 }
 
 /* Profile modal specific styles */
+.profile-username-edit-group {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.profile-update-btn {
+    background: var(--bg-gradient);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 8px;
+    font-size: 0.9em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+}
+
+.profile-update-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(99, 102, 241, 0.2);
+}
+
+.profile-update-btn:active {
+    transform: translateY(0);
+}
+
+.profile-update-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+}
+
 .profile-info-section {
     margin-bottom: 25px;
     padding-bottom: 25px;
@@ -2949,7 +3012,7 @@ td:has(.row-edit-input.input-focused) {
 
 .song-detail-header {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    padding: clamp(12px, 2.5vh, 25px) clamp(15px, 3vw, 35px);
+    padding: clamp(8px, 1.8vh, 18px) clamp(15px, 3vw, 35px);
     border-radius: 20px 20px 0 0;
     display: flex;
     justify-content: space-between;
@@ -3257,10 +3320,10 @@ td:has(.row-edit-input.input-focused) {
 }
 
 .song-detail-body {
-    padding: clamp(10px, 2vh, 25px) clamp(12px, 2.5vw, 35px);
+    padding: clamp(8px, 1.5vh, 18px) clamp(12px, 2.5vw, 35px);
     display: flex;
     flex-direction: column;
-    gap: clamp(6px, 1.2vh, 15px);
+    gap: clamp(4px, 1vh, 10px);
     flex: 1;
     overflow-y: auto;
     overflow-x: hidden;
@@ -3272,7 +3335,7 @@ td:has(.row-edit-input.input-focused) {
     background: white;
     border: 2px solid var(--border-color);
     border-radius: 12px;
-    padding: clamp(8px, 1.5vh, 20px);
+    padding: clamp(6px, 1vh, 12px);
     transition: all 0.3s ease;
 }
 
@@ -3287,10 +3350,10 @@ td:has(.row-edit-input.input-focused) {
 }
 
 .chord-section-title {
-    font-size: clamp(0.75em, 2vw, 1.1em);
+    font-size: clamp(0.7em, 1.5vw, 0.85em);
     font-weight: 700;
     color: var(--primary-color);
-    margin: 0 0 clamp(4px, 1vh, 12px) 0;
+    margin: 0 0 clamp(2px, 0.5vh, 6px) 0;
     text-transform: uppercase;
     letter-spacing: 1px;
     display: flex;
@@ -3447,17 +3510,17 @@ td:has(.row-edit-input.input-focused) {
     }
     
     .song-detail-body {
-        padding: 18px 20px;
-        gap: 12px;
+        padding: 12px 20px;
+        gap: 8px;
     }
     
     .song-chord-section {
-        padding: 15px;
+        padding: 10px;
     }
     
     .chord-section-title {
-        font-size: 0.95em;
-        margin-bottom: 10px;
+        font-size: 0.85em;
+        margin-bottom: 6px;
     }
     
     .chord-section-content {
@@ -3523,17 +3586,17 @@ td:has(.row-edit-input.input-focused) {
     }
     
     .song-detail-body {
-        padding: 18px 15px;
-        gap: 15px;
+        padding: 12px 15px;
+        gap: 8px;
     }
     
     .song-chord-section {
-        padding: 18px;
+        padding: 10px;
     }
     
     .chord-section-title {
-        font-size: 1.05em;
-        margin-bottom: 12px;
+        font-size: 0.85em;
+        margin-bottom: 6px;
     }
     
     .chord-section-content {
@@ -3574,17 +3637,17 @@ td:has(.row-edit-input.input-focused) {
     }
     
     .song-detail-body {
-        padding: 15px 12px;
-        gap: 12px;
+        padding: 10px 12px;
+        gap: 6px;
     }
     
     .song-chord-section {
-        padding: 15px;
+        padding: 8px;
     }
     
     .chord-section-title {
-        font-size: 1em;
-        margin-bottom: 10px;
+        font-size: 0.8em;
+        margin-bottom: 4px;
     }
     
     .chord-section-content {
@@ -4308,10 +4371,10 @@ td:has(.row-edit-input.input-focused) {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     color: white;
     border: none;
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
-    font-size: 1.2em;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    font-size: 1em;
     cursor: pointer;
     display: flex;
     align-items: center;

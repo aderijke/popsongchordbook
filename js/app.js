@@ -14,7 +14,7 @@ class App {
         this.chordModal = new ChordModal();
         this.songDetailModal = new SongDetailModal(
             this.songManager,
-            (songId, skipTableSelection) => this.navigateToSong(songId, skipTableSelection),
+            (songId) => this.navigateToSong(songId),
             () => this.loadAndRender(), // Refresh table when song is updated
             this.chordModal, // Pass chordModal for chord button
             (songId) => this.handleToggleFavorite(songId), // Pass favorite toggle handler
@@ -86,6 +86,9 @@ class App {
         
         // Setup profile modal
         this.profileModal = new ProfileModal(this.firebaseManager, () => this.handleSignOut());
+        this.profileModal.onAuthSuccess = (user) => {
+            this.updateProfileLabel(user);
+        };
         this.setupProfile();
         
         // Setup UI components
@@ -117,6 +120,7 @@ class App {
             await this.checkAndMigrateData(user);
             await this.initializeApp();
         }
+        this.updateProfileLabel(user);
     }
 
     handleAuthFailure() {
@@ -124,6 +128,7 @@ class App {
         // Disable sync
         this.songManager.disableSync();
         this.setlistManager.disableSync();
+        this.updateProfileLabel(null);
         // Show login modal
         if (this.authModal) {
             this.authModal.show(true);
@@ -135,6 +140,7 @@ class App {
         // Disable sync
         this.songManager.disableSync();
         this.setlistManager.disableSync();
+        this.updateProfileLabel(null);
         // Show login modal
         if (this.authModal) {
             this.authModal.show(true);
@@ -148,16 +154,25 @@ class App {
                 this.profileModal.show();
             });
         }
-        // Update song count initially
+        // Update profile label and song count
+        this.updateProfileLabel(this.firebaseManager.getCurrentUser());
         this.updateProfileSongCount();
     }
 
-    updateProfileSongCount() {
-        const countElement = document.getElementById('profileSongCount');
-        if (countElement && this.songManager) {
-            const songCount = this.songManager.getAllSongs().length;
-            countElement.textContent = `(${songCount})`;
+    updateProfileLabel(user) {
+        const labelElement = document.querySelector('#profileBtn .label');
+        if (labelElement) {
+            const songCountHtml = `<span id="profileSongCount" class="song-count">(${this.songManager ? this.songManager.getAllSongs().length : 0})</span>`;
+            if (user && user.displayName) {
+                labelElement.innerHTML = `${user.displayName} ${songCountHtml}`;
+            } else {
+                labelElement.innerHTML = `Profiel ${songCountHtml}`;
+            }
         }
+    }
+
+    updateProfileSongCount() {
+        this.updateProfileLabel(this.firebaseManager.getCurrentUser());
     }
 
     async checkAndMigrateData(user) {
@@ -872,14 +887,14 @@ class App {
         }
     }
 
-    navigateToSong(songId, skipTableSelection = false) {
+    navigateToSong(songId) {
         const song = this.songManager.getSongById(songId);
         if (song) {
-            this.songDetailModal.show(song);
-            // Also select the row in the table, but only if not called from navigation
-            if (this.tableRenderer && !skipTableSelection) {
+            // Also select the row in the table to keep in sync
+            if (this.tableRenderer) {
                 this.tableRenderer.selectRow(songId, true);
             }
+            this.songDetailModal.show(song);
         }
     }
 
@@ -932,6 +947,10 @@ class App {
         setTimeout(() => {
             const song = this.songManager.getSongById(newSong.id);
             if (song) {
+                // Select the row in the table first so loadAndRender doesn't close the modal
+                if (this.tableRenderer) {
+                    this.tableRenderer.selectRow(song.id, true); // true = skip callback
+                }
                 this.songDetailModal.show(song, true); // true = auto-edit artist field
             }
         }, 50);

@@ -108,7 +108,8 @@ class SongManager {
         return songs.map(song => ({
             ...song,
             favorite: song.favorite || false,
-            youtubeUrl: song.youtubeUrl || ''
+            youtubeUrl: song.youtubeUrl || '',
+            externalUrl: song.externalUrl || ''
         }));
     }
 
@@ -163,7 +164,8 @@ class SongManager {
             preChorus: song.preChorus || '',
             bridge: song.bridge || '',
             favorite: song.favorite || false,
-            youtubeUrl: song.youtubeUrl || ''
+            youtubeUrl: song.youtubeUrl || '',
+            externalUrl: song.externalUrl || ''
         };
         this.songs.push(newSong);
         await this.saveSongs();
@@ -202,7 +204,8 @@ class SongManager {
             preChorus: song.preChorus || '',
             bridge: song.bridge || '',
             favorite: song.favorite || false,
-            youtubeUrl: song.youtubeUrl || ''
+            youtubeUrl: song.youtubeUrl || '',
+            externalUrl: song.externalUrl || ''
         }));
 
         // Update nextId to avoid conflicts

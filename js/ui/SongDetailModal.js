@@ -19,8 +19,10 @@ class SongDetailModal {
         this.favoriteBtn = document.getElementById('songDetailFavoriteBtn');
         this.youtubeBtn = document.getElementById('songDetailYouTubeBtn');
         this.youtubePlayBtn = document.getElementById('songDetailYouTubePlayBtn');
+        this.externalUrlBtn = document.getElementById('songDetailExternalUrlBtn');
         this.youtubeUrlModal = document.getElementById('youtubeUrlModal');
         this.youtubeUrlInput = document.getElementById('youtubeUrlInput');
+        this.externalUrlInput = document.getElementById('externalUrlInput');
         this.youtubeUrlSaveBtn = document.getElementById('youtubeUrlSaveBtn');
         this.youtubeUrlCancelBtn = document.getElementById('youtubeUrlCancelBtn');
         this.youtubeUrlModalClose = document.getElementById('youtubeUrlModalClose');
@@ -62,7 +64,9 @@ class SongDetailModal {
         this.nextBtn.addEventListener('click', () => this.navigateNext());
         
         if (this.saveBtn) {
-            this.saveBtn.addEventListener('click', () => this.saveChanges());
+            this.saveBtn.addEventListener('click', async () => {
+                await this.saveChanges(true);
+            });
         }
         
         if (this.favoriteBtn) {
@@ -87,6 +91,14 @@ class SongDetailModal {
                 if (this.onPlayYouTube && this.currentSongId) {
                     this.onPlayYouTube(this.currentSongId);
                 }
+            });
+        }
+
+        // Setup External URL button
+        if (this.externalUrlBtn) {
+            this.externalUrlBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.openExternalUrl();
             });
         }
         
@@ -125,11 +137,22 @@ class SongDetailModal {
                     }
                 });
             }
+            if (this.externalUrlInput) {
+                this.externalUrlInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        this.saveYouTubeUrl();
+                    } else if (e.key === 'Escape') {
+                        e.preventDefault();
+                        this.closeYouTubeUrlModal();
+                    }
+                });
+            }
         }
         
-        this.modal.addEventListener('click', (e) => {
+        this.modal.addEventListener('click', async (e) => {
             if (e.target === this.modal) {
-                this.hide();
+                await this.hide();
             }
         });
         
@@ -137,7 +160,7 @@ class SongDetailModal {
         this.setupEditableFields();
         
         // Keyboard navigation
-        document.addEventListener('keydown', (e) => {
+        document.addEventListener('keydown', async (e) => {
             if (!this.modal.classList.contains('hidden')) {
                 if (e.key === 'Escape') {
                     // If editing, exit edit mode; otherwise close modal
@@ -146,7 +169,7 @@ class SongDetailModal {
                         activeElement.setAttribute('contenteditable', 'false');
                         activeElement.blur();
                     } else {
-                        this.hide();
+                        await this.hide();
                     }
                 } else if (e.key === 'ArrowLeft' && !e.target.hasAttribute('contenteditable')) {
                     this.navigatePrevious();
@@ -155,7 +178,7 @@ class SongDetailModal {
                 } else if ((e.key === 's' || e.key === 'S') && (e.ctrlKey || e.metaKey)) {
                     e.preventDefault();
                     if (this.hasUnsavedChanges) {
-                        this.saveChanges();
+                        await this.saveChanges(false);
                     }
                 }
             }
@@ -593,8 +616,11 @@ class SongDetailModal {
         }
     }
     
-    saveChanges() {
-        if (!this.currentSongId || !this.hasUnsavedChanges) return;
+    async saveChanges(shouldClose = false) {
+        if (!this.currentSongId || !this.hasUnsavedChanges) {
+            if (shouldClose) await this.hide();
+            return;
+        }
         
         const updates = {};
         
@@ -619,12 +645,7 @@ class SongDetailModal {
         }
         
         // Update song
-        this.songManager.updateSong(this.currentSongId, updates);
-        
-        // Notify parent to refresh table
-        if (this.onUpdate) {
-            this.onUpdate();
-        }
+        await this.songManager.updateSong(this.currentSongId, updates);
         
         // Update originalSongData to current saved values so they become the new baseline
         const savedSong = this.songManager.getSongById(this.currentSongId);
@@ -637,19 +658,9 @@ class SongDetailModal {
                 chorus: savedSong.chorus || '',
                 bridge: savedSong.bridge || ''
             };
-        } else {
-            // Fallback: use the updates we just saved
-            this.originalSongData = {
-                artist: updates.artist !== undefined ? updates.artist : (this.originalSongData?.artist || ''),
-                title: updates.title !== undefined ? updates.title : (this.originalSongData?.title || ''),
-                verse: updates.verse !== undefined ? updates.verse : (this.originalSongData?.verse || ''),
-                preChorus: updates.preChorus !== undefined ? updates.preChorus : (this.originalSongData?.preChorus || ''),
-                chorus: updates.chorus !== undefined ? updates.chorus : (this.originalSongData?.chorus || ''),
-                bridge: updates.bridge !== undefined ? updates.bridge : (this.originalSongData?.bridge || '')
-            };
         }
         
-        // Reset change tracking
+        // Reset change tracking BEFORE calling onUpdate or hide
         this.hasUnsavedChanges = false;
         
         // Hide save button
@@ -670,6 +681,15 @@ class SongDetailModal {
                 }
             }
         });
+
+        if (shouldClose) {
+            await this.hide();
+        }
+
+        // Notify parent to refresh table
+        if (this.onUpdate) {
+            this.onUpdate();
+        }
     }
 
     navigatePrevious() {
@@ -679,7 +699,7 @@ class SongDetailModal {
         if (currentIndex > 0) {
             const previousSong = this.allSongs[currentIndex - 1];
             if (this.onNavigate) {
-                this.onNavigate(previousSong.id, true);
+                this.onNavigate(previousSong.id);
             }
         }
     }
@@ -691,21 +711,21 @@ class SongDetailModal {
         if (currentIndex < this.allSongs.length - 1) {
             const nextSong = this.allSongs[currentIndex + 1];
             if (this.onNavigate) {
-                this.onNavigate(nextSong.id, true);
+                this.onNavigate(nextSong.id);
             }
         }
     }
 
-    show(song, autoEditArtist = false) {
+    async show(song, autoEditArtist = false) {
         if (!song) {
-            this.hide();
+            await this.hide();
             return;
         }
 
         // Save any unsaved changes before switching songs
         if (this.hasUnsavedChanges && this.currentSongId) {
             if (confirm('You have unsaved changes. Do you want to save them first?')) {
-                this.saveChanges();
+                await this.saveChanges();
             } else {
                 // Discard changes and reload original data
                 this.discardChanges();
@@ -764,12 +784,17 @@ class SongDetailModal {
         
         // Update YouTube button
         if (this.youtubeBtn) {
-            this.updateYouTubeButton(song.youtubeUrl || '');
+            this.updateYouTubeButton(song.youtubeUrl || '', song.externalUrl || '');
         }
         
         // Update YouTube Play button visibility
         if (this.youtubePlayBtn) {
             this.updateYouTubePlayButton(song.youtubeUrl || '');
+        }
+
+        // Update External URL button visibility
+        if (this.externalUrlBtn) {
+            this.updateExternalUrlButton(song.externalUrl || '');
         }
 
         // Hide save button
@@ -901,15 +926,18 @@ class SongDetailModal {
         const song = this.songManager.getSongById(this.currentSongId);
         if (!song) return;
         
-        // Set current URL in input
+        // Set current URLs in inputs
         if (this.youtubeUrlInput) {
             this.youtubeUrlInput.value = song.youtubeUrl || '';
+        }
+        if (this.externalUrlInput) {
+            this.externalUrlInput.value = song.externalUrl || '';
         }
         
         // Show modal
         this.youtubeUrlModal.classList.remove('hidden');
         
-        // Focus input
+        // Focus first input
         setTimeout(() => {
             if (this.youtubeUrlInput) {
                 this.youtubeUrlInput.focus();
@@ -925,6 +953,9 @@ class SongDetailModal {
         if (this.youtubeUrlInput) {
             this.youtubeUrlInput.value = '';
         }
+        if (this.externalUrlInput) {
+            this.externalUrlInput.value = '';
+        }
     }
 
     saveYouTubeUrl() {
@@ -932,18 +963,19 @@ class SongDetailModal {
             return;
         }
         
-        if (!this.youtubeUrlInput) {
-            return;
-        }
-        
-        const url = this.youtubeUrlInput.value.trim();
+        const youtubeUrl = this.youtubeUrlInput ? this.youtubeUrlInput.value.trim() : '';
+        const externalUrl = this.externalUrlInput ? this.externalUrlInput.value.trim() : '';
         
         // Update song
-        this.songManager.updateSong(this.currentSongId, { youtubeUrl: url });
+        this.songManager.updateSong(this.currentSongId, { 
+            youtubeUrl: youtubeUrl,
+            externalUrl: externalUrl
+        });
         
-        // Update button state
-        this.updateYouTubeButton(url);
-        this.updateYouTubePlayButton(url);
+        // Update buttons state
+        this.updateYouTubeButton(youtubeUrl, externalUrl);
+        this.updateYouTubePlayButton(youtubeUrl);
+        this.updateExternalUrlButton(externalUrl);
         
         // Close modal first
         this.closeYouTubeUrlModal();
@@ -954,22 +986,23 @@ class SongDetailModal {
         }
     }
 
-    updateYouTubeButton(youtubeUrl) {
+    updateYouTubeButton(youtubeUrl, externalUrl) {
         if (!this.youtubeBtn) return;
         
         const labelSpan = this.youtubeBtn.querySelector('.label');
+        const hasAnyUrl = (youtubeUrl && youtubeUrl.trim()) || (externalUrl && externalUrl.trim());
         
-        if (youtubeUrl && youtubeUrl.trim()) {
+        if (hasAnyUrl) {
             this.youtubeBtn.classList.add('youtube-active');
-            this.youtubeBtn.title = 'Edit YouTube URL';
+            this.youtubeBtn.title = 'Edit URLs';
             if (labelSpan) {
-                labelSpan.textContent = 'Edit URL';
+                labelSpan.textContent = 'URLs';
             }
         } else {
             this.youtubeBtn.classList.remove('youtube-active');
-            this.youtubeBtn.title = 'Add YouTube URL';
+            this.youtubeBtn.title = 'Add URLs';
             if (labelSpan) {
-                labelSpan.textContent = 'Add URL';
+                labelSpan.textContent = 'URLs';
             }
         }
     }
@@ -981,6 +1014,29 @@ class SongDetailModal {
             this.youtubePlayBtn.classList.remove('hidden');
         } else {
             this.youtubePlayBtn.classList.add('hidden');
+        }
+    }
+
+    updateExternalUrlButton(externalUrl) {
+        if (!this.externalUrlBtn) return;
+        
+        if (externalUrl && externalUrl.trim()) {
+            this.externalUrlBtn.classList.remove('hidden');
+        } else {
+            this.externalUrlBtn.classList.add('hidden');
+        }
+    }
+
+    openExternalUrl() {
+        if (!this.currentSongId) return;
+        
+        const song = this.songManager.getSongById(this.currentSongId);
+        if (song && song.externalUrl) {
+            let url = song.externalUrl;
+            if (!url.startsWith('http://') && !url.startsWith('https://')) {
+                url = 'https://' + url;
+            }
+            window.open(url, '_blank');
         }
     }
 
@@ -1051,11 +1107,11 @@ class SongDetailModal {
         });
     }
     
-    hide() {
+    async hide() {
         // Check for unsaved changes before closing
         if (this.hasUnsavedChanges) {
             if (confirm('You have unsaved changes. Do you want to save them first?')) {
-                this.saveChanges();
+                await this.saveChanges();
             } else {
                 this.discardChanges();
             }
