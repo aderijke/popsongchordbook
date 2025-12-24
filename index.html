@@ -19,9 +19,9 @@
                     <p class="header-subtitle">Your interactive playalong songbook</p>
                 </div>
                 <div class="header-top-actions">
-                    <button id="profileBtn" class="profile-btn with-label" title="Profiel">
+                    <button id="profileBtn" class="profile-btn with-label" title="Profile">
                         <span class="icon">👤</span>
-                        <span class="label">Profiel <span id="profileSongCount" class="song-count">(0)</span></span>
+                        <span class="label">Profile <span id="profileSongCount" class="song-count">(0)</span></span>
                     </button>
                     <button id="toggleHeaderBarCollapsed" class="toggle-header-bar-btn collapsed-position" title="Show button bar">▲</button>
                 </div>
@@ -38,7 +38,7 @@
                     </div>
                     <div class="search-section-container">
                         <div class="search-input-wrapper">
-                            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Search by artist or title..." autocomplete="off">
+                            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Artist or title..." autocomplete="off" spellcheck="false">
                             <button id="clearSearchBtn" class="clear-search-btn hidden" title="Clear search field">×</button>
                         </div>
                     </div>
@@ -48,6 +48,42 @@
                 <div class="header-section right-section">
                     <!-- Setlist Management -->
                     <div class="setlist-group">
+                        <div id="chordDetectorOverlay" class="chord-detector-overlay minimized">
+                            <div class="chord-detector-content">
+                                <div class="chord-detector-header">
+                                    <h3>Chord Detection</h3>
+                                    <div class="chord-detector-header-buttons">
+                                        <button id="chordDetectorMinimize" class="chord-detector-minimize-btn" title="Minimize">🔻</button>
+                                    </div>
+                                </div>
+                                <div class="chord-detector-body">
+                                    <div class="chord-display">
+                                        <div id="detectedChord" class="detected-chord-display">--</div>
+                                        <div id="chordDetectorStatus" class="chord-detector-status">Not active</div>
+                                        <div class="audio-level-container">
+                                            <div class="audio-level-label">Sound:</div>
+                                            <div class="audio-level-bar">
+                                                <div id="audioLevelIndicator" class="audio-level-indicator"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button id="chordDetectorToggle" class="chord-detector-toggle-btn" title="Start detection">🎤</button>
+                                    <select id="microphoneSelect" class="microphone-select" title="Choose microphone"></select>
+                                    
+                                    <!-- Chord History -->
+                                    <div class="chord-history-section">
+                                        <div class="chord-history-header">
+                                            <span>History</span>
+                                            <div class="chord-history-actions">
+                                                <button id="copyChordHistory" class="copy-history-btn" title="Copy to clipboard">📋</button>
+                                                <button id="clearChordHistory" class="clear-history-btn" title="Clear history">🗑️</button>
+                                            </div>
+                                        </div>
+                                        <div id="chordHistory" class="chord-history-list"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                         <span class="section-label">Setlist:</span>
                         <div class="setlist-controls">
                             <select id="setlistSelect" class="setlist-select">
@@ -132,7 +168,7 @@
                         <th class="chorus-column">Chorus</th>
                         <th>Pre-Chorus</th>
                         <th>Bridge</th>
-                        <th class="actions-column"></th>
+                        <th class="actions-column">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="songsTableBody">
@@ -147,51 +183,51 @@
     <div id="authModal" class="modal auth-modal hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <h3 id="authModalTitle">Inloggen</h3>
+                <h3 id="authModalTitle">Login</h3>
                 <button class="modal-close" id="authModalClose">&times;</button>
             </div>
             <div class="modal-body">
                 <!-- Login Form -->
                 <form id="authLoginForm" class="auth-form">
                     <div class="auth-form-group">
-                        <label for="authLoginEmail">E-mailadres</label>
-                        <input type="email" id="authLoginEmail" class="auth-input" placeholder="jouw@email.com" required autocomplete="email">
+                        <label for="authLoginEmail">Email address</label>
+                        <input type="email" id="authLoginEmail" class="auth-input" placeholder="your@email.com" required autocomplete="email" spellcheck="false">
                     </div>
                     <div class="auth-form-group">
-                        <label for="authLoginPassword">Wachtwoord</label>
-                        <input type="password" id="authLoginPassword" class="auth-input" placeholder="••••••" required autocomplete="current-password">
+                        <label for="authLoginPassword">Password</label>
+                        <input type="password" id="authLoginPassword" class="auth-input" placeholder="••••••" required autocomplete="current-password" spellcheck="false">
                     </div>
                     <div id="authLoginError" class="auth-error hidden"></div>
-                    <button type="submit" id="authLoginBtn" class="modal-submit-btn auth-submit-btn">Inloggen</button>
+                    <button type="submit" id="authLoginBtn" class="modal-submit-btn auth-submit-btn">Login</button>
                     <div class="auth-toggle">
-                        <span>Nog geen account?</span>
-                        <button type="button" id="authToggleToCreate" class="auth-toggle-link">Maak een account aan</button>
+                        <span>No account yet?</span>
+                        <button type="button" id="authToggleToCreate" class="auth-toggle-link">Create an account</button>
                     </div>
                 </form>
 
                 <!-- Create Account Form -->
                 <form id="authCreateForm" class="auth-form hidden">
                     <div class="auth-form-group">
-                        <label for="authCreateUsername">Gebruikersnaam</label>
-                        <input type="text" id="authCreateUsername" class="auth-input" placeholder="Jouw naam" required autocomplete="username">
+                        <label for="authCreateUsername">Username</label>
+                        <input type="text" id="authCreateUsername" class="auth-input" placeholder="Your name" required autocomplete="username" spellcheck="false">
                     </div>
                     <div class="auth-form-group">
-                        <label for="authCreateEmail">E-mailadres</label>
-                        <input type="email" id="authCreateEmail" class="auth-input" placeholder="jouw@email.com" required autocomplete="email">
+                        <label for="authCreateEmail">Email address</label>
+                        <input type="email" id="authCreateEmail" class="auth-input" placeholder="your@email.com" required autocomplete="email" spellcheck="false">
                     </div>
                     <div class="auth-form-group">
-                        <label for="authCreatePassword">Wachtwoord</label>
-                        <input type="password" id="authCreatePassword" class="auth-input" placeholder="Minimaal 6 karakters" required autocomplete="new-password">
+                        <label for="authCreatePassword">Password</label>
+                        <input type="password" id="authCreatePassword" class="auth-input" placeholder="Minimum 6 characters" required autocomplete="new-password" spellcheck="false">
                     </div>
                     <div class="auth-form-group">
-                        <label for="authCreateConfirmPassword">Bevestig wachtwoord</label>
-                        <input type="password" id="authCreateConfirmPassword" class="auth-input" placeholder="Herhaal wachtwoord" required autocomplete="new-password">
+                        <label for="authCreateConfirmPassword">Confirm password</label>
+                        <input type="password" id="authCreateConfirmPassword" class="auth-input" placeholder="Repeat password" required autocomplete="new-password" spellcheck="false">
                     </div>
                     <div id="authCreateError" class="auth-error hidden"></div>
-                    <button type="submit" id="authCreateBtn" class="modal-submit-btn auth-submit-btn">Account aanmaken</button>
+                    <button type="submit" id="authCreateBtn" class="modal-submit-btn auth-submit-btn">Create account</button>
                     <div class="auth-toggle">
-                        <span>Al een account?</span>
-                        <button type="button" id="authToggleToLogin" class="auth-toggle-link">Inloggen</button>
+                        <span>Already have an account?</span>
+                        <button type="button" id="authToggleToLogin" class="auth-toggle-link">Login</button>
                     </div>
                 </form>
             </div>
@@ -202,47 +238,47 @@
     <div id="profileModal" class="modal auth-modal hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>Profiel</h3>
+                <h3>Profile</h3>
                 <button class="modal-close" id="profileModalClose">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="profile-info-section">
                     <div class="auth-form-group">
-                        <label for="profileUsername">Gebruikersnaam</label>
+                        <label for="profileUsername">Username</label>
                         <div class="profile-username-edit-group">
-                            <input type="text" id="profileUsername" class="auth-input" placeholder="Jouw naam">
-                            <button id="profileUpdateUsernameBtn" class="profile-update-btn">Opslaan</button>
+                            <input type="text" id="profileUsername" class="auth-input" placeholder="Your name" spellcheck="false">
+                            <button id="profileUpdateUsernameBtn" class="profile-update-btn">Save</button>
                         </div>
                     </div>
                     <div class="auth-form-group">
-                        <label>E-mailadres</label>
+                        <label>Email address</label>
                         <div class="profile-email-display" id="profileEmail">-</div>
                     </div>
                 </div>
                 
                 <div class="profile-password-section">
-                    <h4>Wachtwoord wijzigen</h4>
+                    <h4>Change Password</h4>
                     <form id="profileChangePasswordForm" class="auth-form">
                         <div class="auth-form-group">
-                            <label for="profileCurrentPassword">Huidig wachtwoord</label>
-                            <input type="password" id="profileCurrentPassword" class="auth-input" placeholder="••••••" required autocomplete="current-password">
+                            <label for="profileCurrentPassword">Current password</label>
+                            <input type="password" id="profileCurrentPassword" class="auth-input" placeholder="••••••" required autocomplete="current-password" spellcheck="false">
                         </div>
                         <div class="auth-form-group">
-                            <label for="profileNewPassword">Nieuw wachtwoord</label>
-                            <input type="password" id="profileNewPassword" class="auth-input" placeholder="Minimaal 6 karakters" required autocomplete="new-password">
+                            <label for="profileNewPassword">New password</label>
+                            <input type="password" id="profileNewPassword" class="auth-input" placeholder="Minimum 6 characters" required autocomplete="new-password" spellcheck="false">
                         </div>
                         <div class="auth-form-group">
-                            <label for="profileConfirmPassword">Bevestig nieuw wachtwoord</label>
-                            <input type="password" id="profileConfirmPassword" class="auth-input" placeholder="Herhaal nieuw wachtwoord" required autocomplete="new-password">
+                            <label for="profileConfirmPassword">Confirm new password</label>
+                            <input type="password" id="profileConfirmPassword" class="auth-input" placeholder="Repeat new password" required autocomplete="new-password" spellcheck="false">
                         </div>
                         <div id="profileChangePasswordError" class="auth-error hidden"></div>
                         <div id="profileChangePasswordSuccess" class="auth-success hidden"></div>
-                        <button type="submit" id="profileChangePasswordBtn" class="modal-submit-btn auth-submit-btn">Wachtwoord wijzigen</button>
+                        <button type="submit" id="profileChangePasswordBtn" class="modal-submit-btn auth-submit-btn">Change password</button>
                     </form>
                 </div>
                 
                 <div class="profile-actions-section">
-                    <button id="profileLogoutBtn" class="modal-cancel-btn logout-btn">Uitloggen</button>
+                    <button id="profileLogoutBtn" class="modal-cancel-btn logout-btn">Logout</button>
                 </div>
             </div>
         </div>
@@ -282,7 +318,7 @@
                 </div>
                 <div class="chord-input-section">
                     <label>Or type chords yourself:</label>
-                    <input type="text" id="chordCustomInput" placeholder="E.g.: C G Am F" />
+                    <input type="text" id="chordCustomInput" placeholder="E.g.: C G Am F" spellcheck="false" />
                     <button id="chordAddCustom" class="chord-add-btn">Add</button>
                 </div>
             </div>
@@ -297,7 +333,7 @@
                 <button class="modal-close" id="setlistModalClose">&times;</button>
             </div>
             <div class="modal-body">
-                <input type="text" id="setlistNameInput" placeholder="Setlist name..." />
+                <input type="text" id="setlistNameInput" placeholder="Setlist name..." spellcheck="false" />
                 <button id="setlistCreateBtn" class="modal-submit-btn">Create</button>
             </div>
         </div>
@@ -338,9 +374,9 @@
                     <span class="label">Previous</span>
                 </button>
                 <div class="song-detail-title-section">
-                    <h2 id="songDetailArtist" class="song-detail-artist editable-field" data-field="artist" contenteditable="false"></h2>
+                    <h2 id="songDetailArtist" class="song-detail-artist editable-field" data-field="artist" contenteditable="false" spellcheck="false"></h2>
                     <span class="song-detail-separator">-</span>
-                    <h1 id="songDetailTitle" class="song-detail-title editable-field" data-field="title" contenteditable="false"></h1>
+                    <h1 id="songDetailTitle" class="song-detail-title editable-field" data-field="title" contenteditable="false" spellcheck="false"></h1>
                     <div class="song-detail-action-buttons">
                         <button id="songDetailYouTubePlayBtn" class="song-detail-action-btn with-label hidden" title="Play YouTube video">
                             <span class="icon youtube-icon">
@@ -387,28 +423,28 @@
                         <h3 class="chord-section-title">Verse</h3>
                         <button class="piano-chord-btn" data-section="verse" title="Show piano chords">🎹</button>
                     </div>
-                    <div class="chord-section-content editable-field" data-field="verse" id="verseContent" contenteditable="false"></div>
+                    <div class="chord-section-content editable-field" data-field="verse" id="verseContent" contenteditable="false" spellcheck="false"></div>
                 </div>
                 <div class="song-chord-section chorus-section" id="chorusSection">
                     <div class="chord-section-header">
                         <h3 class="chord-section-title">Chorus</h3>
                         <button class="piano-chord-btn" data-section="chorus" title="Show piano chords">🎹</button>
                     </div>
-                    <div class="chord-section-content editable-field" data-field="chorus" id="chorusContent" contenteditable="false"></div>
+                    <div class="chord-section-content editable-field" data-field="chorus" id="chorusContent" contenteditable="false" spellcheck="false"></div>
                 </div>
                 <div class="song-chord-section" id="preChorusSection">
                     <div class="chord-section-header">
                         <h3 class="chord-section-title">Pre-Chorus</h3>
                         <button class="piano-chord-btn" data-section="preChorus" title="Show piano chords">🎹</button>
                     </div>
-                    <div class="chord-section-content editable-field" data-field="preChorus" id="preChorusContent" contenteditable="false"></div>
+                    <div class="chord-section-content editable-field" data-field="preChorus" id="preChorusContent" contenteditable="false" spellcheck="false"></div>
                 </div>
                 <div class="song-chord-section" id="bridgeSection">
                     <div class="chord-section-header">
                         <h3 class="chord-section-title">Bridge</h3>
                         <button class="piano-chord-btn" data-section="bridge" title="Show piano chords">🎹</button>
                     </div>
-                    <div class="chord-section-content editable-field" data-field="bridge" id="bridgeContent" contenteditable="false"></div>
+                    <div class="chord-section-content editable-field" data-field="bridge" id="bridgeContent" contenteditable="false" spellcheck="false"></div>
                 </div>
                 <div class="song-detail-actions">
                     <button id="songDetailSaveBtn" class="song-detail-save-btn with-label hidden">
@@ -424,17 +460,17 @@
     <div id="youtubeUrlModal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>YouTube & Externe URL</h3>
+                <h3>YouTube & External URL</h3>
                 <button class="modal-close" id="youtubeUrlModalClose">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="url-input-group">
                     <label for="youtubeUrlInput">YouTube URL</label>
-                    <input type="url" id="youtubeUrlInput" placeholder="https://www.youtube.com/watch?v=..." />
+                    <input type="url" id="youtubeUrlInput" placeholder="https://www.youtube.com/watch?v=..." spellcheck="false" />
                 </div>
                 <div class="url-input-group" style="margin-top: 15px;">
-                    <label for="externalUrlInput">Externe Website URL</label>
-                    <input type="url" id="externalUrlInput" placeholder="https://..." />
+                    <label for="externalUrlInput">External Website URL</label>
+                    <input type="url" id="externalUrlInput" placeholder="https://..." spellcheck="false" />
                 </div>
                 <div class="modal-actions">
                     <button id="youtubeUrlSaveBtn" class="modal-submit-btn">Save</button>
@@ -457,44 +493,6 @@
             <div class="youtube-mini-player-body">
                 <div id="youtubePlayerContainer" class="youtube-player-container">
                     <!-- YouTube iframe will be inserted here -->
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Chord Detector Overlay -->
-    <div id="chordDetectorOverlay" class="chord-detector-overlay">
-        <div class="chord-detector-content">
-            <div class="chord-detector-header">
-                <h3>Chord Detection</h3>
-                <div class="chord-detector-header-buttons">
-                    <button id="chordDetectorMinimize" class="chord-detector-minimize-btn" title="Minimize">🔻</button>
-                </div>
-            </div>
-            <div class="chord-detector-body">
-                <div class="chord-display">
-                    <div id="detectedChord" class="detected-chord-display">--</div>
-                    <div id="chordDetectorStatus" class="chord-detector-status">Not active</div>
-                    <div class="audio-level-container">
-                        <div class="audio-level-label">Sound:</div>
-                        <div class="audio-level-bar">
-                            <div id="audioLevelIndicator" class="audio-level-indicator"></div>
-                        </div>
-                    </div>
-                </div>
-                <button id="chordDetectorToggle" class="chord-detector-toggle-btn" title="Start detection">🎤</button>
-                <select id="microphoneSelect" class="microphone-select" title="Choose microphone"></select>
-                
-                <!-- Chord History -->
-                <div class="chord-history-section">
-                    <div class="chord-history-header">
-                        <span>History</span>
-                        <div class="chord-history-actions">
-                            <button id="copyChordHistory" class="copy-history-btn" title="Copy to clipboard">📋</button>
-                            <button id="clearChordHistory" class="clear-history-btn" title="Clear history">🗑️</button>
-                        </div>
-                    </div>
-                    <div id="chordHistory" class="chord-history-list"></div>
                 </div>
             </div>
         </div>

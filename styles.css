@@ -21,6 +21,17 @@
     box-sizing: border-box;
 }
 
+/* Disable spellcheck for all input and contenteditable elements */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="url"],
+[contenteditable="true"],
+[contenteditable="false"] {
+    -webkit-user-modify: read-write-plaintext-only;
+    user-modify: read-write-plaintext-only;
+}
+
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
     color: var(--text-color);
@@ -376,8 +387,8 @@ header h1 {
 /* Search Section Container - now part of filters section */
 .search-section-container {
     flex: 1 1 auto;
-    min-width: 120px;
-    max-width: 240px;
+    min-width: 150px;
+    max-width: 300px;
     margin-right: 0; /* Remove margin after search field */
 }
 
@@ -3673,18 +3684,70 @@ td:has(.row-edit-input.input-focused) {
     transition: left 0s, top 0s, min-width 0.3s ease, max-width 0.3s ease, border-radius 0.3s ease;
     font-family: 'Inter', sans-serif;
     overflow: visible;
-    /* Ensure body is visible by default */
 }
 
-
+/* Temporarily hide chord detector button - remove or comment out this rule to show it again */
 .chord-detector-overlay.minimized {
-    min-width: 30px;
-    max-width: 30px;
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
+    display: none !important;
+}
+
+/* Original styling - uncomment when showing the button again
+.chord-detector-overlay.minimized {
+    position: relative !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+    margin: 0;
+    z-index: 10;
+    min-width: 38px;
+    max-width: 38px;
+    width: 38px;
+    height: 38px;
     background: transparent;
     box-shadow: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+*/
+
+.chord-detector-overlay.minimized .chord-detector-toggle-btn {
+    width: 38px;
+    height: 38px;
+    min-width: 38px;
+    margin: 0;
+    cursor: pointer;
+    background: var(--bg-gradient);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2em;
+    line-height: 1;
+    box-shadow: var(--card-shadow);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+/* Ensure no inner elements are visible if they were added */
+.chord-detector-overlay.minimized .chord-detector-toggle-btn span {
+    display: none;
+}
+
+.chord-detector-overlay.minimized .chord-detector-toggle-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--card-shadow-hover);
+}
+
+.chord-detector-overlay.minimized .chord-detector-toggle-btn:active {
+    transform: translateY(0);
 }
 
 .chord-detector-overlay.minimized .chord-detector-header {

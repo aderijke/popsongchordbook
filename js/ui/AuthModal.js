@@ -184,22 +184,22 @@ class AuthModal {
 
         // Validation
         if (!email) {
-            this.showLoginError('Voer een e-mailadres in.');
+            this.showLoginError('Please enter an email address.');
             return;
         }
 
         if (!this.isValidEmail(email)) {
-            this.showLoginError('Voer een geldig e-mailadres in.');
+            this.showLoginError('Please enter a valid email address.');
             return;
         }
 
         if (!password) {
-            this.showLoginError('Voer een wachtwoord in.');
+            this.showLoginError('Please enter a password.');
             return;
         }
 
         if (password.length < 6) {
-            this.showLoginError('Wachtwoord moet minimaal 6 karakters lang zijn.');
+            this.showLoginError('Password must be at least 6 characters long.');
             return;
         }
 
@@ -218,11 +218,11 @@ class AuthModal {
                     this.onAuthSuccess(result.user);
                 }
             } else {
-                this.showLoginError(result.error || 'Inloggen mislukt.');
+                this.showLoginError(result.error || 'Login failed.');
             }
         } catch (error) {
             console.error('Login error:', error);
-            this.showLoginError('Er is een fout opgetreden. Probeer het opnieuw.');
+            this.showLoginError('An error occurred. Please try again.');
         } finally {
             this.setLoginLoading(false);
         }
@@ -236,32 +236,32 @@ class AuthModal {
 
         // Validation
         if (!username) {
-            this.showCreateError('Voer een gebruikersnaam in.');
+            this.showCreateError('Please enter a username.');
             return;
         }
 
         if (!email) {
-            this.showCreateError('Voer een e-mailadres in.');
+            this.showCreateError('Please enter an email address.');
             return;
         }
 
         if (!this.isValidEmail(email)) {
-            this.showCreateError('Voer een geldig e-mailadres in.');
+            this.showCreateError('Please enter a valid email address.');
             return;
         }
 
         if (!password) {
-            this.showCreateError('Voer een wachtwoord in.');
+            this.showCreateError('Please enter a password.');
             return;
         }
 
         if (password.length < 6) {
-            this.showCreateError('Wachtwoord moet minimaal 6 karakters lang zijn.');
+            this.showCreateError('Password must be at least 6 characters long.');
             return;
         }
 
         if (password !== confirmPassword) {
-            this.showCreateError('Wachtwoorden komen niet overeen.');
+            this.showCreateError('Passwords do not match.');
             return;
         }
 
@@ -280,11 +280,11 @@ class AuthModal {
                     this.onAuthSuccess(result.user);
                 }
             } else {
-                this.showCreateError(result.error || 'Account aanmaken mislukt.');
+                this.showCreateError(result.error || 'Account creation failed.');
             }
         } catch (error) {
             console.error('Create account error:', error);
-            this.showCreateError('Er is een fout opgetreden. Probeer het opnieuw.');
+            this.showCreateError('An error occurred. Please try again.');
         } finally {
             this.setCreateLoading(false);
         }
@@ -319,9 +319,9 @@ class AuthModal {
         if (this.loginBtn) {
             this.loginBtn.disabled = loading;
             if (loading) {
-                this.loginBtn.textContent = 'Inloggen...';
+                this.loginBtn.textContent = 'Logging in...';
             } else {
-                this.loginBtn.textContent = 'Inloggen';
+                this.loginBtn.textContent = 'Login';
             }
         }
         if (this.loginEmailInput) {
@@ -336,9 +336,9 @@ class AuthModal {
         if (this.createBtn) {
             this.createBtn.disabled = loading;
             if (loading) {
-                this.createBtn.textContent = 'Account aanmaken...';
+                this.createBtn.textContent = 'Creating account...';
             } else {
-                this.createBtn.textContent = 'Account aanmaken';
+                this.createBtn.textContent = 'Create account';
             }
         }
         if (this.createUsernameInput) {

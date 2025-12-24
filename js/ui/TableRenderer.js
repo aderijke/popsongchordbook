@@ -260,6 +260,7 @@ class TableRenderer {
                 input.className = 'row-edit-input';
                 input.dataset.field = field;
                 input.dataset.songId = songId;
+                input.spellcheck = false;
                 inputs.push(input);
                 
                 // Make input wider on focus to show all content
@@ -349,6 +350,7 @@ class TableRenderer {
                 input.className = 'row-edit-input';
                 input.dataset.field = field;
                 input.dataset.songId = songId;
+                input.spellcheck = false;
                 inputs.push(input);
 
                 // Make input wider on focus to show all content
@@ -544,6 +546,7 @@ class TableRenderer {
         input.type = 'text';
         input.value = currentValue;
         input.className = 'edit-input';
+        input.spellcheck = false;
 
         // Define field order for tab navigation
         const fieldOrder = ['artist', 'title', 'verse', 'chorus', 'preChorus', 'bridge'];

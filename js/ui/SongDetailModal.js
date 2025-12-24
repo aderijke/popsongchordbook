@@ -371,7 +371,7 @@ class SongDetailModal {
         if (!currentValue && (currentField === 'artist' || currentField === 'title')) {
             if (currentField === 'artist') {
                 currentElement.classList.add('empty-field');
-                currentElement.dataset.placeholder = 'Artiest';
+                currentElement.dataset.placeholder = 'Artist';
                 currentElement.textContent = '';
             } else if (currentField === 'title') {
                 currentElement.classList.add('empty-field');
@@ -438,6 +438,7 @@ class SongDetailModal {
         
         // Enable editing
         element.setAttribute('contenteditable', 'true');
+        element.setAttribute('spellcheck', 'false');
         element.classList.add('editing');
         
         // Add chord button for chord fields (verse, preChorus, chorus, bridge)
@@ -453,9 +454,30 @@ class SongDetailModal {
         }
         
         // Focus and select text
+        // Use longer timeout for iPad/iOS to ensure keyboard appears
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+        const timeout = isIOS ? 300 : 50;
+        
         setTimeout(() => {
             try {
                 element.focus();
+                
+                // For iPad/iOS: trigger a click event to ensure keyboard appears
+                // This is necessary because iOS requires user interaction to show keyboard
+                if (isIOS) {
+                    // Simulate a click event to trigger keyboard on iOS/iPad
+                    const clickEvent = new MouseEvent('click', {
+                        bubbles: true,
+                        cancelable: true,
+                        view: window
+                    });
+                    element.dispatchEvent(clickEvent);
+                    
+                    // Try focus again after click event
+                    setTimeout(() => {
+                        element.focus();
+                    }, 50);
+                }
                 
                 // Select all text if it's a single line field (artist, title)
                 // Also handle placeholder text
@@ -463,6 +485,13 @@ class SongDetailModal {
                     // If element is empty, don't select anything (just focus for editing)
                     if (element.textContent.trim() === '') {
                         // Just focus, cursor will be at start
+                        // For iOS: place cursor at start explicitly
+                        const range = document.createRange();
+                        range.setStart(element, 0);
+                        range.setEnd(element, 0);
+                        const selection = window.getSelection();
+                        selection.removeAllRanges();
+                        selection.addRange(range);
                     } else {
                         const range = document.createRange();
                         range.selectNodeContents(element);
@@ -482,7 +511,7 @@ class SongDetailModal {
             } catch (error) {
                 console.warn('Error focusing element:', error);
             }
-        }, 50);
+        }, timeout);
     }
     
     addChordButton(element, fieldName) {
@@ -755,7 +784,7 @@ class SongDetailModal {
             // Add placeholder styling if empty
             if (!artistText.trim()) {
                 this.artistElement.classList.add('empty-field');
-                this.artistElement.dataset.placeholder = 'Artiest';
+                this.artistElement.dataset.placeholder = 'Artist';
             } else {
                 this.artistElement.classList.remove('empty-field');
                 this.artistElement.removeAttribute('data-placeholder');
@@ -1053,7 +1082,7 @@ class SongDetailModal {
             this.artistElement.textContent = artistText;
             if (!artistText.trim()) {
                 this.artistElement.classList.add('empty-field');
-                this.artistElement.dataset.placeholder = 'Artiest';
+                this.artistElement.dataset.placeholder = 'Artist';
             } else {
                 this.artistElement.classList.remove('empty-field');
                 this.artistElement.removeAttribute('data-placeholder');
