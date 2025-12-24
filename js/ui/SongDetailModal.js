@@ -1137,12 +1137,53 @@ class SongDetailModal {
     }
     
     async hide() {
+        const songIdToCheck = this.currentSongId;
+        const originalDataSnapshot = this.originalSongData ? { ...this.originalSongData } : null;
+        
         // Check for unsaved changes before closing
         if (this.hasUnsavedChanges) {
             if (confirm('You have unsaved changes. Do you want to save them first?')) {
                 await this.saveChanges();
             } else {
                 this.discardChanges();
+                
+                // If this was a new empty song and user cancelled, delete it
+                if (songIdToCheck && originalDataSnapshot) {
+                    const isSongEmpty = !originalDataSnapshot.artist?.trim() && 
+                                       !originalDataSnapshot.title?.trim() && 
+                                       !originalDataSnapshot.verse?.trim() && 
+                                       !originalDataSnapshot.chorus?.trim() && 
+                                       !originalDataSnapshot.preChorus?.trim() && 
+                                       !originalDataSnapshot.bridge?.trim();
+                    
+                    if (isSongEmpty) {
+                        // Delete the empty song
+                        await this.songManager.deleteSong(songIdToCheck);
+                        // Notify parent to refresh table
+                        if (this.onUpdate) {
+                            this.onUpdate();
+                        }
+                    }
+                }
+            }
+        } else {
+            // Even if no changes were made, check if it's an empty new song
+            if (songIdToCheck && originalDataSnapshot) {
+                const isSongEmpty = !originalDataSnapshot.artist?.trim() && 
+                                   !originalDataSnapshot.title?.trim() && 
+                                   !originalDataSnapshot.verse?.trim() && 
+                                   !originalDataSnapshot.chorus?.trim() && 
+                                   !originalDataSnapshot.preChorus?.trim() && 
+                                   !originalDataSnapshot.bridge?.trim();
+                
+                if (isSongEmpty) {
+                    // Delete the empty song
+                    await this.songManager.deleteSong(songIdToCheck);
+                    // Notify parent to refresh table
+                    if (this.onUpdate) {
+                        this.onUpdate();
+                    }
+                }
             }
         }
         
