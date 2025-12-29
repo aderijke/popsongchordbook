@@ -49,6 +49,7 @@ class SongDetailModal {
         };
         this.hasUnsavedChanges = false;
         this.originalSongData = null;
+        this.isRandomMode = false;
         
         // Initialize Piano Chord Overlay
         this.pianoChordOverlay = new PianoChordOverlay();
@@ -785,6 +786,7 @@ class SongDetailModal {
     }
 
     navigatePrevious() {
+        if (this.isRandomMode) return;
         if (!this.currentSongId || this.allSongs.length === 0) return;
         
         const currentIndex = this.allSongs.findIndex(song => song.id === this.currentSongId);
@@ -799,6 +801,24 @@ class SongDetailModal {
     navigateNext() {
         if (!this.currentSongId || this.allSongs.length === 0) return;
         
+        if (this.isRandomMode) {
+            // Pick a random song that is not the current one
+            let randomIndex;
+            if (this.allSongs.length > 1) {
+                do {
+                    randomIndex = Math.floor(Math.random() * this.allSongs.length);
+                } while (this.allSongs[randomIndex].id === this.currentSongId);
+            } else {
+                randomIndex = 0;
+            }
+            
+            const randomSong = this.allSongs[randomIndex];
+            if (this.onNavigate) {
+                this.onNavigate(randomSong.id, true);
+            }
+            return;
+        }
+
         const currentIndex = this.allSongs.findIndex(song => song.id === this.currentSongId);
         if (currentIndex < this.allSongs.length - 1) {
             const nextSong = this.allSongs[currentIndex + 1];
@@ -808,7 +828,7 @@ class SongDetailModal {
         }
     }
 
-    async show(song, autoEditArtist = false) {
+    async show(song, autoEditArtist = false, isRandomMode = false) {
         if (!song) {
             await this.hide();
             return;
@@ -826,6 +846,7 @@ class SongDetailModal {
 
         this.currentSongId = song.id;
         this.hasUnsavedChanges = false;
+        this.isRandomMode = isRandomMode;
         
         // Set originalSongData immediately when showing a song, before any user interaction
         this.originalSongData = {
@@ -985,6 +1006,43 @@ class SongDetailModal {
     }
 
     updateNavigationButtons() {
+        if (this.isRandomMode) {
+            // Random mode: Hide Previous, change Next to Random
+            if (this.prevBtn) {
+                this.prevBtn.classList.add('hidden');
+            }
+            if (this.nextBtn) {
+                this.nextBtn.classList.remove('hidden');
+                this.nextBtn.style.opacity = '1';
+                this.nextBtn.style.cursor = 'pointer';
+                this.nextBtn.disabled = false;
+                this.nextBtn.title = 'Open another random song';
+                
+                const iconSpan = this.nextBtn.querySelector('.icon');
+                const labelSpan = this.nextBtn.querySelector('.label');
+                if (iconSpan) iconSpan.textContent = '🎲';
+                if (labelSpan) labelSpan.textContent = 'Random';
+            }
+            return;
+        }
+
+        // Normal mode: Show Previous and Next with standard labels
+        if (this.prevBtn) {
+            this.prevBtn.classList.remove('hidden');
+            const prevIconSpan = this.prevBtn.querySelector('.icon');
+            const prevLabelSpan = this.prevBtn.querySelector('.label');
+            if (prevIconSpan) prevIconSpan.textContent = '‹';
+            if (prevLabelSpan) prevLabelSpan.textContent = 'Previous';
+        }
+        if (this.nextBtn) {
+            this.nextBtn.classList.remove('hidden');
+            const nextIconSpan = this.nextBtn.querySelector('.icon');
+            const nextLabelSpan = this.nextBtn.querySelector('.label');
+            if (nextIconSpan) nextIconSpan.textContent = '›';
+            if (nextLabelSpan) nextLabelSpan.textContent = 'Next';
+            this.nextBtn.title = 'Next song';
+        }
+
         if (!this.currentSongId || this.allSongs.length === 0) {
             this.prevBtn.style.opacity = '0.5';
             this.prevBtn.style.cursor = 'not-allowed';

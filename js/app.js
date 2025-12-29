@@ -15,7 +15,7 @@ class App {
         this.chordModal = new ChordModal();
         this.songDetailModal = new SongDetailModal(
             this.songManager,
-            (songId) => this.navigateToSong(songId),
+            (songId, isRandomMode = false) => this.navigateToSong(songId, isRandomMode),
             () => this.loadAndRender(), // Refresh table when song is updated
             this.chordModal, // Pass chordModal for chord button
             (songId) => this.handleToggleFavorite(songId), // Pass favorite toggle handler
@@ -1096,20 +1096,20 @@ class App {
     handleRowSelect(songId) {
         // Open song detail modal when a row is selected
         if (songId) {
-            this.navigateToSong(songId);
+            this.navigateToSong(songId, false);
         } else {
             this.songDetailModal.hide();
         }
     }
 
-    navigateToSong(songId) {
+    navigateToSong(songId, isRandomMode = false) {
         const song = this.songManager.getSongById(songId);
         if (song) {
             // Also select the row in the table to keep in sync
             if (this.tableRenderer) {
                 this.tableRenderer.selectRow(songId, true);
             }
-            this.songDetailModal.show(song);
+            this.songDetailModal.show(song, false, isRandomMode);
         }
     }
 
@@ -1145,13 +1145,13 @@ class App {
     openRandomSong() {
         const songsToChooseFrom = this.currentSongsList || this.songManager.getAllSongs();
         if (songsToChooseFrom.length === 0) {
-            alert('Geen nummers gevonden om uit te kiezen.');
+            alert('No songs found to choose from.');
             return;
         }
 
         const randomIndex = Math.floor(Math.random() * songsToChooseFrom.length);
         const randomSong = songsToChooseFrom[randomIndex];
-        this.navigateToSong(randomSong.id);
+        this.navigateToSong(randomSong.id, true);
     }
 
     openAddSongsToSetlistModal() {
