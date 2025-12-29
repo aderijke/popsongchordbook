@@ -1747,12 +1747,18 @@ td:has(.row-edit-input.input-focused) {
         align-items: center;
         gap: 12px;
         position: relative;
+        padding-top: 10px;
     }
     
     .header-top-actions {
-        position: static;
+        position: absolute;
+        right: 0;
+        top: 0;
         transform: none;
-        justify-content: center;
+    }
+
+    .header-title-group {
+        padding: 0 45px; /* Voorkom overlap met knoppen rechtsboven */
     }
     
     header h1 {
