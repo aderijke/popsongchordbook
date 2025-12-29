@@ -192,10 +192,10 @@ class ChordProgressionEditor {
                         <div class="progression-drop-zone" id="progressionDropZone">
                             <div class="progression-blocks" id="progressionBlocks"></div>
                             <div class="drop-placeholder" id="dropPlaceholder">
-                                <span>Drop chords here or click above to add</span>
+                                <span>Double-tap or drag chords here to add</span>
                             </div>
                         </div>
-                        <div class="progression-hint">Tip: Click a chord to hear it, drag to add • Drag blocks to reorder • Click × to remove</div>
+                        <div class="progression-hint">Tip: Tap to hear • Double-tap or drag down to add • Drag blocks to reorder • Tap × to remove</div>
                     </div>
                 </div>
                 <div class="chord-progression-footer">
@@ -615,6 +615,17 @@ class ChordProgressionEditor {
             }
         });
         
+        // Double-click to add chord (desktop)
+        block.addEventListener('dblclick', (e) => {
+            e.preventDefault();
+            this.addProgressionBlock(chordName);
+            this.playChord(chordName);
+            
+            // Visual feedback
+            block.classList.add('added');
+            setTimeout(() => block.classList.remove('added'), 300);
+        });
+        
         // Drag start
         block.addEventListener('dragstart', (e) => {
             e.dataTransfer.setData('text/plain', chordName);
@@ -627,7 +638,7 @@ class ChordProgressionEditor {
             block.classList.remove('dragging');
         });
         
-        // Touch support for mobile devices
+        // Touch support for mobile devices (includes double-tap)
         this.addTouchDragSupport(block, chordName);
         
         return block;
@@ -640,6 +651,8 @@ class ChordProgressionEditor {
         let dragClone = null;
         let lastTouchX = 0;
         let lastTouchY = 0;
+        let lastTapTime = 0;
+        const doubleTapDelay = 300; // ms between taps for double-tap
         
         block.addEventListener('touchstart', (e) => {
             touchStartX = e.touches[0].clientX;
@@ -720,10 +733,31 @@ class ChordProgressionEditor {
                 }
                 dragClone = null;
             } else if (!isDragging) {
-                // It was a tap, not a drag - play the chord
-                this.playChord(chordName);
-                block.classList.add('playing');
-                setTimeout(() => block.classList.remove('playing'), 200);
+                // Check for double-tap
+                const now = Date.now();
+                const timeSinceLastTap = now - lastTapTime;
+                
+                if (timeSinceLastTap < doubleTapDelay && timeSinceLastTap > 0) {
+                    // Double-tap detected - add chord to progression
+                    e.preventDefault();
+                    this.addProgressionBlock(chordName);
+                    this.playChord(chordName);
+                    
+                    // Visual feedback
+                    block.classList.add('added');
+                    setTimeout(() => block.classList.remove('added'), 300);
+                    
+                    // Reset tap time to prevent triple-tap
+                    lastTapTime = 0;
+                } else {
+                    // Single tap - play the chord
+                    this.playChord(chordName);
+                    block.classList.add('playing');
+                    setTimeout(() => block.classList.remove('playing'), 200);
+                    
+                    // Store tap time for double-tap detection
+                    lastTapTime = now;
+                }
             }
             
             isDragging = false;

@@ -5420,10 +5420,20 @@ td:has(.row-edit-input.input-focused) {
     animation: chordPulse 0.2s ease-out;
 }
 
+.chord-block.added {
+    animation: chordAdded 0.3s ease-out;
+}
+
 @keyframes chordPulse {
     0% { transform: scale(1); }
     50% { transform: scale(1.1); box-shadow: 0 0 20px rgba(102, 126, 234, 0.6); }
     100% { transform: scale(1); }
+}
+
+@keyframes chordAdded {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.15); box-shadow: 0 0 25px rgba(34, 197, 94, 0.7); }
+    100% { transform: scale(1); box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3); }
 }
 
 .chord-block.dragging {
