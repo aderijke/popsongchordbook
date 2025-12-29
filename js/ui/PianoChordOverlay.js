@@ -386,14 +386,6 @@ class PianoChordOverlay {
                 }
             }
             
-            // Add note label for highlighted keys
-            if (highlightedNotes.includes(key.note)) {
-                const label = document.createElement('span');
-                label.className = 'key-label';
-                label.textContent = key.name;
-                keyEl.appendChild(label);
-            }
-            
             whiteKeysContainer.appendChild(keyEl);
         });
         
@@ -416,12 +408,6 @@ class PianoChordOverlay {
                 if (key.note % 12 === chord.rootSemitone) {
                     keyEl.classList.add('root');
                 }
-                
-                // Add note label for highlighted keys
-                const label = document.createElement('span');
-                label.className = 'key-label';
-                label.textContent = key.name;
-                keyEl.appendChild(label);
             }
             
             blackKeysContainer.appendChild(keyEl);
@@ -448,27 +434,10 @@ class PianoChordOverlay {
         // Piano keyboard
         const keyboard = this.createPianoKeyboard(chord, chord.notes);
         
-        // Notes info
-        const notesInfo = document.createElement('div');
-        notesInfo.className = 'chord-notes-info';
-        const noteNames = this.getNotesAsNames(chord.notes);
-        
-        notesInfo.innerHTML = `<span class="notes-label">Keys:</span> <span class="notes-list">${noteNames.join(' - ')}</span>`;
-        
         card.appendChild(header);
         card.appendChild(keyboard);
-        card.appendChild(notesInfo);
         
         return card;
-    }
-    
-    getNotesAsNames(notes) {
-        const noteNames = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
-        return notes.map(note => {
-            const octave = Math.floor(note / 12) + 4;
-            const noteName = noteNames[note % 12];
-            return noteName + octave;
-        });
     }
     
     show(sectionName, chordText) {

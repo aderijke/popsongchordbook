@@ -545,6 +545,18 @@ header h1 {
     color: #7c3aed;
 }
 
+.random-song-btn {
+    background: rgba(16, 185, 129, 0.08);
+    color: #059669;
+    border-color: rgba(16, 185, 129, 0.4);
+}
+
+.random-song-btn:hover {
+    background: rgba(16, 185, 129, 0.12);
+    border-color: #10b981;
+    color: #047857;
+}
+
 .setlist-controls {
     display: flex;
     gap: 8px;
@@ -4838,44 +4850,6 @@ td:has(.row-edit-input.input-focused) {
     box-shadow: 0 4px 15px rgba(236, 72, 153, 0.6), inset 0 -2px 4px rgba(0, 0, 0, 0.1);
 }
 
-.key-label {
-    font-size: 0.65em;
-    font-weight: 700;
-    padding-bottom: 8px;
-    color: white;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
-}
-
-.white-key .key-label {
-    color: white;
-}
-
-.black-key .key-label {
-    color: white;
-    padding-bottom: 5px;
-    font-size: 0.55em;
-}
-
-/* Chord notes info */
-.chord-notes-info {
-    margin-top: 10px;
-    padding-top: 10px;
-    border-top: 1px solid var(--border-color);
-    font-size: 0.85em;
-    color: var(--text-light);
-}
-
-.notes-label {
-    font-weight: 600;
-    color: var(--text-color);
-}
-
-.notes-list {
-    font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
-    color: var(--secondary-color);
-    font-weight: 500;
-}
-
 /* No chords message */
 .no-chords-message {
     text-align: center;
@@ -4933,14 +4907,6 @@ td:has(.row-edit-input.input-focused) {
     
     .black-key {
         width: 6%;
-    }
-    
-    .key-label {
-        font-size: 0.55em;
-    }
-    
-    .black-key .key-label {
-        font-size: 0.5em;
     }
 }
 

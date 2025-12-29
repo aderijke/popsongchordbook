@@ -102,6 +102,7 @@ class App {
         // Setup UI components
         this.setupSorting();
         this.setupAddSongButton();
+        this.setupRandomSongButton();
         this.setupFilters();
         this.setupSearch();
         this.setupSetlists();
@@ -1130,6 +1131,27 @@ class App {
                 }
             });
         }
+    }
+
+    setupRandomSongButton() {
+        const randomBtn = document.getElementById('randomSongBtn');
+        if (randomBtn) {
+            randomBtn.addEventListener('click', () => {
+                this.openRandomSong();
+            });
+        }
+    }
+
+    openRandomSong() {
+        const songsToChooseFrom = this.currentSongsList || this.songManager.getAllSongs();
+        if (songsToChooseFrom.length === 0) {
+            alert('Geen nummers gevonden om uit te kiezen.');
+            return;
+        }
+
+        const randomIndex = Math.floor(Math.random() * songsToChooseFrom.length);
+        const randomSong = songsToChooseFrom[randomIndex];
+        this.navigateToSong(randomSong.id);
     }
 
     openAddSongsToSetlistModal() {
