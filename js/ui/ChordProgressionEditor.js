@@ -634,26 +634,41 @@ class ChordProgressionEditor {
     }
     
     addTouchDragSupport(block, chordName) {
+        let touchStartX = 0;
         let touchStartY = 0;
         let isDragging = false;
         let dragClone = null;
+        let lastTouchX = 0;
+        let lastTouchY = 0;
         
         block.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
             touchStartY = e.touches[0].clientY;
+            lastTouchX = touchStartX;
+            lastTouchY = touchStartY;
             isDragging = false;
         }, { passive: true });
         
         block.addEventListener('touchmove', (e) => {
+            const touchX = e.touches[0].clientX;
             const touchY = e.touches[0].clientY;
             const deltaY = touchY - touchStartY;
+            const deltaX = Math.abs(touchX - touchStartX);
             
-            // Start drag if moved down significantly
-            if (deltaY > 20 && !isDragging) {
+            // Store last touch position for touchend
+            lastTouchX = touchX;
+            lastTouchY = touchY;
+            
+            // Start drag if moved down significantly (and not too much horizontally)
+            if (deltaY > 15 && !isDragging) {
                 isDragging = true;
                 
                 // Create visual clone
                 dragClone = block.cloneNode(true);
                 dragClone.className = 'chord-block drag-clone';
+                dragClone.style.position = 'fixed';
+                dragClone.style.zIndex = '10003';
+                dragClone.style.pointerEvents = 'none';
                 document.body.appendChild(dragClone);
                 
                 // Highlight drop zone
@@ -663,8 +678,8 @@ class ChordProgressionEditor {
             
             if (isDragging && dragClone) {
                 e.preventDefault();
-                dragClone.style.left = e.touches[0].clientX - 30 + 'px';
-                dragClone.style.top = e.touches[0].clientY - 20 + 'px';
+                dragClone.style.left = (touchX - 30) + 'px';
+                dragClone.style.top = (touchY - 20) + 'px';
             }
         }, { passive: false });
         
@@ -673,15 +688,25 @@ class ChordProgressionEditor {
             dropZone.classList.remove('drag-over');
             
             if (isDragging && dragClone) {
-                // Check if dropped over progression area
-                const dropZoneRect = dropZone.getBoundingClientRect();
-                const touch = e.changedTouches[0];
+                // Use stored last touch position (more reliable on iOS)
+                const touchX = lastTouchX;
+                const touchY = lastTouchY;
                 
-                if (touch.clientX >= dropZoneRect.left && 
-                    touch.clientX <= dropZoneRect.right &&
-                    touch.clientY >= dropZoneRect.top && 
-                    touch.clientY <= dropZoneRect.bottom) {
-                    
+                // Hide clone temporarily to check element underneath
+                dragClone.style.display = 'none';
+                
+                // Use elementFromPoint to find what's under the touch
+                const elementUnder = document.elementFromPoint(touchX, touchY);
+                
+                // Check if we're over the drop zone or its children
+                const isOverDropZone = elementUnder && (
+                    elementUnder.id === 'progressionDropZone' ||
+                    elementUnder.id === 'progressionBlocks' ||
+                    elementUnder.id === 'dropPlaceholder' ||
+                    elementUnder.closest('#progressionDropZone')
+                );
+                
+                if (isOverDropZone) {
                     // Add chord as block
                     this.addProgressionBlock(chordName);
                     
@@ -690,7 +715,9 @@ class ChordProgressionEditor {
                 }
                 
                 // Remove clone
-                document.body.removeChild(dragClone);
+                if (dragClone.parentNode) {
+                    dragClone.parentNode.removeChild(dragClone);
+                }
                 dragClone = null;
             } else if (!isDragging) {
                 // It was a tap, not a drag - play the chord
@@ -699,6 +726,18 @@ class ChordProgressionEditor {
                 setTimeout(() => block.classList.remove('playing'), 200);
             }
             
+            isDragging = false;
+        });
+        
+        // Also handle touchcancel
+        block.addEventListener('touchcancel', () => {
+            const dropZone = this.overlay.querySelector('#progressionDropZone');
+            dropZone.classList.remove('drag-over');
+            
+            if (dragClone && dragClone.parentNode) {
+                dragClone.parentNode.removeChild(dragClone);
+            }
+            dragClone = null;
             isDragging = false;
         });
     }
