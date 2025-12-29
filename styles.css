@@ -3840,20 +3840,45 @@ td:has(.row-edit-input.input-focused) {
     }
     
     .song-detail-header {
-        padding: 8px 10px;
+        padding: 10px 12px;
         border-radius: 12px 12px 0 0;
-        flex-direction: row;
-        align-items: center;
-        gap: 5px;
+        flex-wrap: wrap; /* Toestaan dat elementen naar de volgende regel gaan */
         justify-content: space-between;
+        align-items: center;
+        gap: 10px;
     }
     
-    .song-detail-header-right,
-    .song-detail-action-buttons {
-        gap: 4px;
+    .song-detail-title-section {
+        width: 100%;
+        order: -1; /* Zorg dat de titel bovenaan staat */
+        justify-content: center;
+        text-align: center;
+        flex: none;
+        padding-bottom: 8px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
 
-    /* Hide all labels in detail header to save space */
+    .song-detail-artist {
+        font-size: 0.9em;
+        white-space: normal;
+        overflow: visible;
+    }
+    
+    .song-detail-title {
+        font-size: 1.1em;
+        white-space: normal;
+        overflow: visible;
+    }
+
+    /* Knoppen op de tweede regel */
+    .song-detail-prev { order: 0; }
+    .song-detail-action-buttons { order: 1; flex: 1; justify-content: center; display: flex; gap: 8px; }
+    .song-detail-header-right { order: 2; display: flex; gap: 8px; }
+
+    /* Verberg labels en maak knoppen compact */
     .song-detail-header .label {
         display: none !important;
     }
@@ -3861,32 +3886,12 @@ td:has(.row-edit-input.input-focused) {
     .song-detail-nav-btn.with-label,
     .song-detail-close.with-label,
     .song-detail-action-btn.with-label {
-        width: 32px;
-        height: 32px;
+        width: 38px;
+        height: 38px;
         padding: 0;
         border-radius: 50%;
         justify-content: center;
-    }
-
-    .song-detail-title-section {
-        gap: 4px;
-        flex-wrap: nowrap !important;
-        min-width: 0;
-        flex: 1;
-    }
-
-    .song-detail-artist {
-        font-size: 0.85em;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-    
-    .song-detail-title {
-        font-size: 1em;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        flex: none;
     }
     
     .song-detail-body {
