@@ -21,7 +21,12 @@ class App {
             (songId) => this.handlePlayYouTube(songId) // Pass YouTube play handler
         );
         this.chordDetectorOverlay = new ChordDetectorOverlay();
-        this.currentFilter = 'all';
+        this.currentFilter = {
+            favorites: false,
+            key: '',
+            withYouTube: false,
+            withoutYouTube: false
+        };
         this.currentSetlistId = null;
         this.searchTerm = '';
         this.viewMode = 'full'; // 'simple' or 'full'
@@ -335,7 +340,24 @@ class App {
             this.songDetailModal.hide();
         }
         
-        let allSongs = this.songManager.getFilteredSongs(this.currentFilter);
+        let allSongs = this.songManager.getAllSongs();
+        
+        // Apply filters
+        if (this.currentFilter.favorites) {
+            allSongs = allSongs.filter(song => song.favorite === true);
+        }
+        
+        if (this.currentFilter.key && this.currentFilter.key.trim() !== '') {
+            allSongs = allSongs.filter(song => song.key && song.key.trim().toLowerCase() === this.currentFilter.key.trim().toLowerCase());
+        }
+        
+        if (this.currentFilter.withYouTube) {
+            allSongs = allSongs.filter(song => song.youtubeUrl && song.youtubeUrl.trim() !== '');
+        }
+        
+        if (this.currentFilter.withoutYouTube) {
+            allSongs = allSongs.filter(song => !song.youtubeUrl || song.youtubeUrl.trim() === '');
+        }
         
         // Apply setlist filter if a setlist is selected
         if (this.currentSetlistId) {
@@ -367,6 +389,9 @@ class App {
         // Update profile song count
         this.updateProfileSongCount();
         
+        // Update filter button state
+        this.updateFilterButtonState();
+        
         // Restore selected row if it still exists (but don't open modal)
         if (currentSelectedId && this.tableRenderer) {
             // Check if the song still exists in the filtered list
@@ -387,22 +412,142 @@ class App {
     }
 
     setupFilters() {
-        const filterAll = document.getElementById('filterAll');
-        const filterFavorites = document.getElementById('filterFavorites');
+        const filterBtn = document.getElementById('filterBtn');
+        const filterModal = document.getElementById('filterModal');
+        const filterModalClose = document.getElementById('filterModalClose');
+        const applyFiltersBtn = document.getElementById('applyFiltersBtn');
+        const clearAllFiltersBtn = document.getElementById('clearAllFiltersBtn');
+        const filterFavoritesCheckbox = document.getElementById('filterFavoritesCheckbox');
+        const filterKeySelect = document.getElementById('filterKeySelect');
+        const filterWithYouTubeCheckbox = document.getElementById('filterWithYouTubeCheckbox');
+        const filterWithoutYouTubeCheckbox = document.getElementById('filterWithoutYouTubeCheckbox');
         
-        filterAll.addEventListener('click', () => {
-            this.currentFilter = 'all';
-            filterAll.classList.add('active');
-            filterFavorites.classList.remove('active');
-            this.loadAndRender();
+        // Open filter modal
+        filterBtn.addEventListener('click', () => {
+            this.populateKeySelect();
+            this.updateFilterModalState();
+            filterModal.classList.remove('hidden');
         });
         
-        filterFavorites.addEventListener('click', () => {
-            this.currentFilter = 'favorites';
-            filterFavorites.classList.add('active');
-            filterAll.classList.remove('active');
-            this.loadAndRender();
+        // Close filter modal
+        filterModalClose.addEventListener('click', () => {
+            filterModal.classList.add('hidden');
         });
+        
+        filterModal.addEventListener('click', (e) => {
+            if (e.target === filterModal) {
+                filterModal.classList.add('hidden');
+            }
+        });
+        
+        // Apply filters
+        applyFiltersBtn.addEventListener('click', () => {
+            this.currentFilter = {
+                favorites: filterFavoritesCheckbox.checked,
+                key: filterKeySelect.value || '',
+                withYouTube: filterWithYouTubeCheckbox.checked,
+                withoutYouTube: filterWithoutYouTubeCheckbox.checked
+            };
+            this.loadAndRender();
+            filterModal.classList.add('hidden');
+            this.updateFilterButtonState();
+        });
+        
+        // Clear all filters
+        clearAllFiltersBtn.addEventListener('click', () => {
+            filterFavoritesCheckbox.checked = false;
+            filterKeySelect.value = '';
+            filterWithYouTubeCheckbox.checked = false;
+            filterWithoutYouTubeCheckbox.checked = false;
+            this.currentFilter = {
+                favorites: false,
+                key: '',
+                withYouTube: false,
+                withoutYouTube: false
+            };
+            this.loadAndRender();
+            this.updateFilterButtonState();
+        });
+        
+        // Prevent both YouTube checkboxes from being checked at the same time
+        filterWithYouTubeCheckbox.addEventListener('change', () => {
+            if (filterWithYouTubeCheckbox.checked) {
+                filterWithoutYouTubeCheckbox.checked = false;
+            }
+        });
+        
+        filterWithoutYouTubeCheckbox.addEventListener('change', () => {
+            if (filterWithoutYouTubeCheckbox.checked) {
+                filterWithYouTubeCheckbox.checked = false;
+            }
+        });
+        
+        // Update filter button state on load
+        this.updateFilterButtonState();
+    }
+    
+    populateKeySelect() {
+        const filterKeySelect = document.getElementById('filterKeySelect');
+        if (!filterKeySelect) return;
+        
+        // Get all unique keys from songs
+        const allSongs = this.songManager.getAllSongs();
+        const keys = [...new Set(allSongs.map(song => song.key).filter(key => key && key.trim() !== ''))];
+        keys.sort();
+        
+        // Save current selection
+        const currentValue = filterKeySelect.value;
+        
+        // Clear and populate
+        filterKeySelect.innerHTML = '<option value="">Alle toonsoorten</option>';
+        keys.forEach(key => {
+            const option = document.createElement('option');
+            option.value = key;
+            option.textContent = key;
+            filterKeySelect.appendChild(option);
+        });
+        
+        // Restore selection
+        if (currentValue) {
+            filterKeySelect.value = currentValue;
+        }
+    }
+    
+    updateFilterModalState() {
+        const filterFavoritesCheckbox = document.getElementById('filterFavoritesCheckbox');
+        const filterKeySelect = document.getElementById('filterKeySelect');
+        const filterWithYouTubeCheckbox = document.getElementById('filterWithYouTubeCheckbox');
+        const filterWithoutYouTubeCheckbox = document.getElementById('filterWithoutYouTubeCheckbox');
+        
+        if (filterFavoritesCheckbox) {
+            filterFavoritesCheckbox.checked = this.currentFilter.favorites;
+        }
+        if (filterKeySelect) {
+            filterKeySelect.value = this.currentFilter.key || '';
+        }
+        if (filterWithYouTubeCheckbox) {
+            filterWithYouTubeCheckbox.checked = this.currentFilter.withYouTube;
+        }
+        if (filterWithoutYouTubeCheckbox) {
+            filterWithoutYouTubeCheckbox.checked = this.currentFilter.withoutYouTube;
+        }
+    }
+    
+    updateFilterButtonState() {
+        const filterBtn = document.getElementById('filterBtn');
+        if (!filterBtn) return;
+        
+        // Check if any filter is active
+        const hasActiveFilters = this.currentFilter.favorites || 
+                                 this.currentFilter.key !== '' || 
+                                 this.currentFilter.withYouTube || 
+                                 this.currentFilter.withoutYouTube;
+        
+        if (hasActiveFilters) {
+            filterBtn.classList.add('active');
+        } else {
+            filterBtn.classList.remove('active');
+        }
     }
 
     setupSearch() {
@@ -844,7 +989,26 @@ class App {
                     ? currentSort.direction 
                     : 'asc';
 
-                let songsToSort = this.songManager.getFilteredSongs(this.currentFilter);
+                // Get filtered songs (same logic as loadAndRender)
+                let songsToSort = this.songManager.getAllSongs();
+                
+                // Apply filters
+                if (this.currentFilter.favorites) {
+                    songsToSort = songsToSort.filter(song => song.favorite === true);
+                }
+                
+                if (this.currentFilter.key && this.currentFilter.key.trim() !== '') {
+                    songsToSort = songsToSort.filter(song => song.key && song.key.trim().toLowerCase() === this.currentFilter.key.trim().toLowerCase());
+                }
+                
+                if (this.currentFilter.withYouTube) {
+                    songsToSort = songsToSort.filter(song => song.youtubeUrl && song.youtubeUrl.trim() !== '');
+                }
+                
+                if (this.currentFilter.withoutYouTube) {
+                    songsToSort = songsToSort.filter(song => !song.youtubeUrl || song.youtubeUrl.trim() === '');
+                }
+                
                 // Apply setlist filter if active
                 if (this.currentSetlistId) {
                     const setlist = this.setlistManager.getSetlist(this.currentSetlistId);
@@ -852,6 +1016,17 @@ class App {
                         songsToSort = songsToSort.filter(song => setlist.songIds.includes(song.id));
                     }
                 }
+                
+                // Apply search filter
+                if (this.searchTerm && this.searchTerm.trim() !== '') {
+                    const searchLower = this.searchTerm.toLowerCase().trim();
+                    songsToSort = songsToSort.filter(song => {
+                        const artistMatch = song.artist && song.artist.toLowerCase().includes(searchLower);
+                        const titleMatch = song.title && song.title.toLowerCase().includes(searchLower);
+                        return artistMatch || titleMatch;
+                    });
+                }
+                
                 const { sorted, direction } = this.sorter.sort(
                     songsToSort,
                     column,

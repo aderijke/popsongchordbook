@@ -33,8 +33,10 @@
                 <div class="header-section filters-section">
                     <span class="section-label">Filter:</span>
                     <div class="filter-buttons">
-                        <button id="filterAll" class="filter-btn active">All</button>
-                        <button id="filterFavorites" class="filter-btn">⭐ Favorites</button>
+                        <button id="filterBtn" class="filter-btn with-label" title="Filters">
+                            <span class="icon">🔍</span>
+                            <span class="label">Filters</span>
+                        </button>
                     </div>
                     <div class="search-section-container">
                         <div class="search-input-wrapper">
@@ -474,6 +476,50 @@
                 <div class="modal-actions">
                     <button id="youtubeUrlSaveBtn" class="modal-submit-btn">Save</button>
                     <button id="youtubeUrlCancelBtn" class="modal-cancel-btn">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Filter Modal -->
+    <div id="filterModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Filters</h3>
+                <button class="modal-close" id="filterModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="filter-option-group">
+                    <label class="filter-checkbox-label">
+                        <input type="checkbox" id="filterFavoritesCheckbox" class="filter-checkbox">
+                        <span>⭐ Alleen favorieten</span>
+                    </label>
+                </div>
+                
+                <div class="filter-option-group">
+                    <label for="filterKeySelect" class="filter-label">Toonsoort:</label>
+                    <select id="filterKeySelect" class="filter-select">
+                        <option value="">Alle toonsoorten</option>
+                    </select>
+                </div>
+                
+                <div class="filter-option-group">
+                    <label class="filter-checkbox-label">
+                        <input type="checkbox" id="filterWithYouTubeCheckbox" class="filter-checkbox">
+                        <span>Alleen nummers met YouTube link</span>
+                    </label>
+                </div>
+                
+                <div class="filter-option-group">
+                    <label class="filter-checkbox-label">
+                        <input type="checkbox" id="filterWithoutYouTubeCheckbox" class="filter-checkbox">
+                        <span>Alleen nummers zonder YouTube link</span>
+                    </label>
+                </div>
+                
+                <div class="modal-actions">
+                    <button id="clearAllFiltersBtn" class="modal-cancel-btn">Wis alle filters</button>
+                    <button id="applyFiltersBtn" class="modal-submit-btn">Toepassen</button>
                 </div>
             </div>
         </div>
