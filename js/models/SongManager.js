@@ -109,7 +109,8 @@ class SongManager {
             ...song,
             favorite: song.favorite || false,
             youtubeUrl: song.youtubeUrl || '',
-            externalUrl: song.externalUrl || ''
+            externalUrl: song.externalUrl || '',
+            key: song.key || ''
         }));
     }
 
@@ -165,7 +166,8 @@ class SongManager {
             bridge: song.bridge || '',
             favorite: song.favorite || false,
             youtubeUrl: song.youtubeUrl || '',
-            externalUrl: song.externalUrl || ''
+            externalUrl: song.externalUrl || '',
+            key: song.key || ''
         };
         this.songs.push(newSong);
         await this.saveSongs();
@@ -205,7 +207,8 @@ class SongManager {
             bridge: song.bridge || '',
             favorite: song.favorite || false,
             youtubeUrl: song.youtubeUrl || '',
-            externalUrl: song.externalUrl || ''
+            externalUrl: song.externalUrl || '',
+            key: song.key || ''
         }));
 
         // Update nextId to avoid conflicts

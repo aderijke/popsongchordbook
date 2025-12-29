@@ -21,6 +21,7 @@ class SongDetailModal {
         this.youtubePlayBtn = document.getElementById('songDetailYouTubePlayBtn');
         this.externalUrlBtn = document.getElementById('songDetailExternalUrlBtn');
         this.youtubeUrlModal = document.getElementById('youtubeUrlModal');
+        this.songKeyInput = document.getElementById('songKeyInput');
         this.youtubeUrlInput = document.getElementById('youtubeUrlInput');
         this.externalUrlInput = document.getElementById('externalUrlInput');
         this.youtubeUrlSaveBtn = document.getElementById('youtubeUrlSaveBtn');
@@ -148,6 +149,17 @@ class SongDetailModal {
                     }
                 });
             }
+            if (this.songKeyInput) {
+                this.songKeyInput.addEventListener('keydown', (e) => {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        this.saveYouTubeUrl();
+                    } else if (e.key === 'Escape') {
+                        e.preventDefault();
+                        this.closeYouTubeUrlModal();
+                    }
+                });
+            }
         }
         
         this.modal.addEventListener('click', async (e) => {
@@ -260,6 +272,10 @@ class SongDetailModal {
         if (this.titleElement) {
             this.titleElement.addEventListener('click', (e) => {
                 e.stopPropagation();
+                // When entering edit mode, show only title without key
+                const originalTitle = this.titleElement.dataset.originalTitle || this.titleElement.textContent.replace(/\s*\([^)]*\)\s*$/, '');
+                this.titleElement.textContent = originalTitle;
+                this.titleElement.dataset.originalTitle = originalTitle;
                 this.enterEditMode(this.titleElement);
             });
             this.titleElement.addEventListener('blur', (e) => {
@@ -273,6 +289,22 @@ class SongDetailModal {
                 
                 // Update placeholder state
                 const titleText = this.titleElement.textContent || '';
+                // Store the edited title
+                this.titleElement.dataset.originalTitle = titleText;
+                
+                // Get key from current song to display with title
+                if (this.currentSongId) {
+                    const song = this.songManager.getSongById(this.currentSongId);
+                    const keyText = song ? (song.key || '') : '';
+                    let displayText = titleText;
+                    if (keyText.trim()) {
+                        displayText = `${titleText} (${keyText})`;
+                    }
+                    this.titleElement.textContent = displayText;
+                } else {
+                    this.titleElement.textContent = titleText;
+                }
+                
                 if (!titleText.trim()) {
                     this.titleElement.classList.add('empty-field');
                     this.titleElement.dataset.placeholder = 'Song Title';
@@ -609,9 +641,11 @@ class SongDetailModal {
         }
         
         // Check current values - use textContent directly (not trimmed) to detect all changes including spaces
+        // For title, use originalTitle from dataset (without key) or extract from textContent
+        const titleText = this.titleElement ? (this.titleElement.dataset.originalTitle || this.titleElement.textContent.replace(/\s*\([^)]*\)\s*$/, '')) : '';
         const currentData = {
             artist: this.artistElement ? this.artistElement.textContent : '',
-            title: this.titleElement ? this.titleElement.textContent : '',
+            title: titleText,
             verse: this.sections.verse?.content ? this.sections.verse.content.textContent : '',
             preChorus: this.sections.preChorus?.content ? this.sections.preChorus.content.textContent : '',
             chorus: this.sections.chorus?.content ? this.sections.chorus.content.textContent : '',
@@ -658,7 +692,9 @@ class SongDetailModal {
             updates.artist = this.artistElement.textContent.trim();
         }
         if (this.titleElement) {
-            updates.title = this.titleElement.textContent.trim();
+            // Get title from originalTitle dataset (without key) or from textContent
+            const originalTitle = this.titleElement.dataset.originalTitle || this.titleElement.textContent.replace(/\s*\([^)]*\)\s*$/, '');
+            updates.title = originalTitle.trim();
         }
         if (this.sections.verse?.content) {
             updates.verse = this.sections.verse.content.textContent.trim();
@@ -792,7 +828,15 @@ class SongDetailModal {
         }
         if (this.titleElement) {
             const titleText = song.title || '';
-            this.titleElement.textContent = titleText;
+            const keyText = song.key || '';
+            // Display title with key in parentheses if key exists
+            let displayText = titleText;
+            if (keyText.trim()) {
+                displayText = `${titleText} (${keyText})`;
+            }
+            this.titleElement.textContent = displayText;
+            // Store original title without key for editing
+            this.titleElement.dataset.originalTitle = titleText;
             this.titleElement.setAttribute('contenteditable', 'false');
             this.titleElement.classList.remove('editing');
             
@@ -800,6 +844,8 @@ class SongDetailModal {
             if (!titleText.trim()) {
                 this.titleElement.classList.add('empty-field');
                 this.titleElement.dataset.placeholder = 'Song Title';
+                // Clear display text if title is empty
+                this.titleElement.textContent = '';
             } else {
                 this.titleElement.classList.remove('empty-field');
                 this.titleElement.removeAttribute('data-placeholder');
@@ -955,7 +1001,10 @@ class SongDetailModal {
         const song = this.songManager.getSongById(this.currentSongId);
         if (!song) return;
         
-        // Set current URLs in inputs
+        // Set current values in inputs
+        if (this.songKeyInput) {
+            this.songKeyInput.value = song.key || '';
+        }
         if (this.youtubeUrlInput) {
             this.youtubeUrlInput.value = song.youtubeUrl || '';
         }
@@ -966,11 +1015,11 @@ class SongDetailModal {
         // Show modal
         this.youtubeUrlModal.classList.remove('hidden');
         
-        // Focus first input
+        // Focus first input (key input)
         setTimeout(() => {
-            if (this.youtubeUrlInput) {
-                this.youtubeUrlInput.focus();
-                this.youtubeUrlInput.select();
+            if (this.songKeyInput) {
+                this.songKeyInput.focus();
+                this.songKeyInput.select();
             }
         }, 100);
     }
@@ -978,6 +1027,9 @@ class SongDetailModal {
     closeYouTubeUrlModal() {
         if (this.youtubeUrlModal) {
             this.youtubeUrlModal.classList.add('hidden');
+        }
+        if (this.songKeyInput) {
+            this.songKeyInput.value = '';
         }
         if (this.youtubeUrlInput) {
             this.youtubeUrlInput.value = '';
@@ -992,14 +1044,19 @@ class SongDetailModal {
             return;
         }
         
+        const key = this.songKeyInput ? this.songKeyInput.value.trim() : '';
         const youtubeUrl = this.youtubeUrlInput ? this.youtubeUrlInput.value.trim() : '';
         const externalUrl = this.externalUrlInput ? this.externalUrlInput.value.trim() : '';
         
         // Update song
         this.songManager.updateSong(this.currentSongId, { 
+            key: key,
             youtubeUrl: youtubeUrl,
             externalUrl: externalUrl
         });
+        
+        // Update title display with key
+        this.updateTitleWithKey();
         
         // Update buttons state
         this.updateYouTubeButton(youtubeUrl, externalUrl);
@@ -1014,6 +1071,24 @@ class SongDetailModal {
             this.onUpdate();
         }
     }
+    
+    updateTitleWithKey() {
+        if (!this.titleElement || !this.currentSongId) return;
+        
+        const song = this.songManager.getSongById(this.currentSongId);
+        if (!song) return;
+        
+        const titleText = song.title || '';
+        const keyText = song.key || '';
+        // Display title with key in parentheses if key exists
+        let displayText = titleText;
+        if (keyText.trim()) {
+            displayText = `${titleText} (${keyText})`;
+        }
+        this.titleElement.textContent = displayText;
+        // Store original title without key for editing
+        this.titleElement.dataset.originalTitle = titleText;
+    }
 
     updateYouTubeButton(youtubeUrl, externalUrl) {
         if (!this.youtubeBtn) return;
@@ -1023,15 +1098,15 @@ class SongDetailModal {
         
         if (hasAnyUrl) {
             this.youtubeBtn.classList.add('youtube-active');
-            this.youtubeBtn.title = 'Edit URLs';
+            this.youtubeBtn.title = 'Edit song details';
             if (labelSpan) {
-                labelSpan.textContent = 'URLs';
+                labelSpan.textContent = 'Details';
             }
         } else {
             this.youtubeBtn.classList.remove('youtube-active');
-            this.youtubeBtn.title = 'Add URLs';
+            this.youtubeBtn.title = 'Edit song details';
             if (labelSpan) {
-                labelSpan.textContent = 'URLs';
+                labelSpan.textContent = 'Details';
             }
         }
     }
