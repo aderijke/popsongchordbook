@@ -3842,11 +3842,32 @@ td:has(.row-edit-input.input-focused) {
     .song-detail-header {
         padding: 15px 12px;
         border-radius: 12px 12px 0 0;
+        flex-direction: column; /* Stapel elementen in portrait */
+        align-items: stretch;
+        gap: 12px;
     }
     
+    .song-detail-header > * {
+        width: 100%;
+        justify-content: center;
+    }
+
     .song-detail-title-section {
+        order: -1; /* Titel bovenaan */
         gap: 6px;
-        flex-wrap: nowrap !important;
+        flex-wrap: wrap !important;
+        justify-content: center;
+        text-align: center;
+    }
+
+    .song-detail-header-right {
+        order: 1; /* Sluitknop en navigatie onderaan */
+        justify-content: space-between;
+    }
+    
+    .song-detail-action-buttons {
+        order: 0; /* Actieknoppen in het midden */
+        justify-content: center;
     }
     
     .song-detail-artist {
