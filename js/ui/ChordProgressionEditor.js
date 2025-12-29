@@ -604,10 +604,20 @@ class ChordProgressionEditor {
             block.appendChild(label);
         }
         
-        // Click to play (with delay to detect double-click)
+        // Prevent duplicate adds with a flag
+        let isAddingChord = false;
+        let lastTouchTime = 0;
+        
+        // Click to play (with delay to detect double-click) - desktop only
         let clickTimeout = null;
         
         block.addEventListener('click', (e) => {
+            // Skip click events that came from touch (prevent double-firing on mobile)
+            if (Date.now() - lastTouchTime < 500) {
+                e.preventDefault();
+                return;
+            }
+            
             if (!e.defaultPrevented) {
                 // Clear any pending single-click action
                 if (clickTimeout) {
@@ -627,8 +637,14 @@ class ChordProgressionEditor {
             }
         });
         
-        // Double-click to add chord (desktop)
+        // Double-click to add chord (desktop only)
         block.addEventListener('dblclick', (e) => {
+            // Skip if this came from touch
+            if (Date.now() - lastTouchTime < 500) {
+                e.preventDefault();
+                return;
+            }
+            
             e.preventDefault();
             
             // Cancel the pending single-click
@@ -637,6 +653,11 @@ class ChordProgressionEditor {
                 clickTimeout = null;
             }
             
+            // Prevent duplicate adds
+            if (isAddingChord) return;
+            isAddingChord = true;
+            setTimeout(() => { isAddingChord = false; }, 400);
+            
             this.addProgressionBlock(chordName);
             this.playChord(chordName);
             
@@ -644,6 +665,11 @@ class ChordProgressionEditor {
             block.classList.add('added');
             setTimeout(() => block.classList.remove('added'), 300);
         });
+        
+        // Store lastTouchTime for click/dblclick prevention
+        block.addEventListener('touchstart', () => {
+            lastTouchTime = Date.now();
+        }, { passive: true });
         
         // Drag start
         block.addEventListener('dragstart', (e) => {
@@ -672,6 +698,7 @@ class ChordProgressionEditor {
         let lastTouchY = 0;
         let lastTapTime = 0;
         let singleTapTimeout = null;
+        let isAddingChord = false;
         const doubleTapDelay = 300; // ms between taps for double-tap
         
         block.addEventListener('touchstart', (e) => {
@@ -769,6 +796,14 @@ class ChordProgressionEditor {
                         clearTimeout(singleTapTimeout);
                         singleTapTimeout = null;
                     }
+                    
+                    // Prevent duplicate adds
+                    if (isAddingChord) {
+                        lastTapTime = 0;
+                        return;
+                    }
+                    isAddingChord = true;
+                    setTimeout(() => { isAddingChord = false; }, 400);
                     
                     e.preventDefault();
                     this.addProgressionBlock(chordName);
