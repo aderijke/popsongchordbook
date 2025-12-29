@@ -544,7 +544,7 @@ class App {
             }
             // Change button to text when in setlist mode
             if (addSongBtn) {
-                addSongBtn.textContent = 'Add songs';
+                addSongBtn.innerHTML = '<span class="icon">+</span><span class="label">Add</span>';
                 addSongBtn.title = 'Add songs to setlist';
             }
             // Hide export, import, and delete all buttons
@@ -563,7 +563,7 @@ class App {
             }
             // Change button back to icon
             if (addSongBtn) {
-                addSongBtn.textContent = '➕';
+                addSongBtn.innerHTML = '<span class="icon">+</span><span class="label">Add</span>';
                 addSongBtn.title = 'Add New Song';
             }
             // Show export, import, and delete all buttons
