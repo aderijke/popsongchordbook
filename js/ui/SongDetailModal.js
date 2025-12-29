@@ -54,8 +54,12 @@ class SongDetailModal {
         // Initialize Piano Chord Overlay
         this.pianoChordOverlay = new PianoChordOverlay();
         
+        // Initialize Chord Progression Editor
+        this.chordProgressionEditor = new ChordProgressionEditor();
+        
         this.setupEventListeners();
         this.setupPianoButtons();
+        this.setupChordEditorButtons();
     }
 
     formatKeyText(keyText) {
@@ -248,6 +252,54 @@ class SongDetailModal {
                     const sectionName = sectionNames[sectionKey] || sectionKey;
                     
                     this.pianoChordOverlay.show(sectionName, chordText);
+                }
+            });
+        });
+    }
+    
+    setupChordEditorButtons() {
+        // Setup chord progression editor buttons for each section
+        const editorButtons = this.modal.querySelectorAll('.chord-editor-btn');
+        
+        editorButtons.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                e.preventDefault();
+                
+                const sectionKey = btn.dataset.section;
+                const section = this.sections[sectionKey];
+                
+                if (section && section.content && this.chordProgressionEditor) {
+                    const sectionNames = {
+                        'verse': 'Verse',
+                        'chorus': 'Chorus',
+                        'preChorus': 'Pre-Chorus',
+                        'bridge': 'Bridge'
+                    };
+                    const sectionName = sectionNames[sectionKey] || sectionKey;
+                    
+                    // Get song key (explicit or detected)
+                    let songKey = '';
+                    if (this.currentSongId) {
+                        const song = this.songManager.getSongById(this.currentSongId);
+                        if (song) {
+                            songKey = song.key || '';
+                            // If no explicit key, try to detect it
+                            if (!songKey.trim() && this.keyDetector) {
+                                songKey = this.keyDetector.detectFromSong(song) || '';
+                            }
+                        }
+                    }
+                    
+                    this.chordProgressionEditor.show(
+                        sectionName, 
+                        section.content, 
+                        songKey,
+                        (progression) => {
+                            // Callback when chords are added
+                            this.checkForChanges();
+                        }
+                    );
                 }
             });
         });

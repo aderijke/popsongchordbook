@@ -194,16 +194,20 @@ class PianoChordOverlay {
         if (!text) return [];
         
         // Common chord pattern: matches chords like C, Am, F#m7, Bb, Gsus4, etc.
-        const chordPattern = /\b([A-Ga-g][#b]?(?:m|min|maj|dim|aug|sus|add)?[0-9]?(?:sus[24]?|add[29]|maj[79]?|min[79]?|dim[79]?|aug)?[0-9]?(?:\/[A-Ga-g][#b]?)?)\b/g;
+        // Note: We use (?![#b]) at the end instead of \b because # and b are not word characters,
+        // so \b doesn't work correctly after accidentals (e.g., D# would only match D)
+        const chordPattern = /(?:^|[\s,|(\[])([A-Ga-g][#b]?(?:m|min|maj|dim|aug|sus|add)?[0-9]?(?:sus[24]?|add[29]|maj[79]?|min[79]?|dim[79]?|aug)?[0-9]?(?:\/[A-Ga-g][#b]?)?)(?=[\s,|)\]:]|$)/g;
         
-        const matches = text.match(chordPattern) || [];
+        // Use matchAll to get capture groups (the chord without leading whitespace)
+        const matches = [...text.matchAll(chordPattern)];
         
         // Remove duplicates while preserving order
         const seen = new Set();
         const uniqueChords = [];
         
-        for (const chord of matches) {
-            const normalized = chord.trim();
+        for (const match of matches) {
+            // match[1] is the captured chord (without leading whitespace/delimiter)
+            const normalized = match[1].trim();
             if (!seen.has(normalized) && this.parseChord(normalized)) {
                 seen.add(normalized);
                 uniqueChords.push(normalized);
@@ -430,7 +434,7 @@ class PianoChordOverlay {
         const card = document.createElement('div');
         card.className = 'piano-chord-card';
         card.style.cursor = 'pointer';
-        card.title = 'Click to play chord';
+        card.title = 'Click top for higher octave, bottom for lower octave';
         
         // Chord name header
         const header = document.createElement('div');
@@ -443,15 +447,55 @@ class PianoChordOverlay {
         // Piano keyboard
         const keyboard = this.createPianoKeyboard(chord, chord.notes);
         
+        // Add octave indicator overlay
+        const octaveHint = document.createElement('div');
+        octaveHint.className = 'octave-hint';
+        octaveHint.innerHTML = `
+            <span class="octave-up">+8ve</span>
+            <span class="octave-normal">●</span>
+            <span class="octave-down">-8ve</span>
+        `;
+        keyboard.appendChild(octaveHint);
+        
         card.appendChild(header);
         card.appendChild(keyboard);
         
-        // Add click handler to play the chord
-        card.addEventListener('click', (e) => {
+        // Add click handler to play the chord with octave based on click position
+        keyboard.addEventListener('click', (e) => {
             e.stopPropagation();
-            this.playChord(chord);
+            
+            // Get click position relative to keyboard
+            const rect = keyboard.getBoundingClientRect();
+            const clickY = e.clientY - rect.top;
+            const keyboardHeight = rect.height;
+            
+            // Determine octave shift based on click position
+            // Top third = +1 octave, middle third = normal, bottom third = -1 octave
+            let octaveShift = 0;
+            if (clickY < keyboardHeight / 3) {
+                octaveShift = 1;  // Higher octave
+            } else if (clickY > (keyboardHeight * 2) / 3) {
+                octaveShift = -1; // Lower octave
+            }
+            
+            this.playChord(chord, octaveShift);
             
             // Visual feedback
+            card.classList.add('playing');
+            if (octaveShift > 0) {
+                card.classList.add('octave-up-playing');
+            } else if (octaveShift < 0) {
+                card.classList.add('octave-down-playing');
+            }
+            setTimeout(() => {
+                card.classList.remove('playing', 'octave-up-playing', 'octave-down-playing');
+            }, 300);
+        });
+        
+        // Prevent header clicks from triggering keyboard click
+        header.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.playChord(chord, 0);
             card.classList.add('playing');
             setTimeout(() => {
                 card.classList.remove('playing');
@@ -461,7 +505,7 @@ class PianoChordOverlay {
         return card;
     }
     
-    async playChord(chord) {
+    async playChord(chord, octaveShift = 0) {
         // Initialize audio on first interaction (required by browsers)
         if (!this.isAudioInitialized) {
             try {
@@ -473,9 +517,11 @@ class PianoChordOverlay {
             }
         }
         
-        // Play the chord notes
+        // Play the chord notes with octave shift
         if (chord && chord.notes && chord.notes.length > 0) {
-            this.audioPlayer.playChord(chord.notes, 2.0, 0.6, 0.03);
+            // Apply octave shift (12 semitones per octave)
+            const shiftedNotes = chord.notes.map(note => note + (octaveShift * 12));
+            this.audioPlayer.playChord(shiftedNotes, 2.0, 0.6, 0.03);
         }
     }
     
