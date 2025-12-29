@@ -604,20 +604,39 @@ class ChordProgressionEditor {
             block.appendChild(label);
         }
         
-        // Click to play
+        // Click to play (with delay to detect double-click)
+        let clickTimeout = null;
+        
         block.addEventListener('click', (e) => {
             if (!e.defaultPrevented) {
-                this.playChord(chordName);
+                // Clear any pending single-click action
+                if (clickTimeout) {
+                    clearTimeout(clickTimeout);
+                    clickTimeout = null;
+                }
                 
-                // Visual feedback
-                block.classList.add('playing');
-                setTimeout(() => block.classList.remove('playing'), 200);
+                // Delay single-click to wait for potential double-click
+                clickTimeout = setTimeout(() => {
+                    this.playChord(chordName);
+                    
+                    // Visual feedback
+                    block.classList.add('playing');
+                    setTimeout(() => block.classList.remove('playing'), 200);
+                    clickTimeout = null;
+                }, 250);
             }
         });
         
         // Double-click to add chord (desktop)
         block.addEventListener('dblclick', (e) => {
             e.preventDefault();
+            
+            // Cancel the pending single-click
+            if (clickTimeout) {
+                clearTimeout(clickTimeout);
+                clickTimeout = null;
+            }
+            
             this.addProgressionBlock(chordName);
             this.playChord(chordName);
             
@@ -652,6 +671,7 @@ class ChordProgressionEditor {
         let lastTouchX = 0;
         let lastTouchY = 0;
         let lastTapTime = 0;
+        let singleTapTimeout = null;
         const doubleTapDelay = 300; // ms between taps for double-tap
         
         block.addEventListener('touchstart', (e) => {
@@ -675,6 +695,12 @@ class ChordProgressionEditor {
             // Start drag if moved down significantly (and not too much horizontally)
             if (deltaY > 15 && !isDragging) {
                 isDragging = true;
+                
+                // Cancel any pending single tap
+                if (singleTapTimeout) {
+                    clearTimeout(singleTapTimeout);
+                    singleTapTimeout = null;
+                }
                 
                 // Create visual clone
                 dragClone = block.cloneNode(true);
@@ -738,7 +764,12 @@ class ChordProgressionEditor {
                 const timeSinceLastTap = now - lastTapTime;
                 
                 if (timeSinceLastTap < doubleTapDelay && timeSinceLastTap > 0) {
-                    // Double-tap detected - add chord to progression
+                    // Double-tap detected - cancel pending single tap and add chord
+                    if (singleTapTimeout) {
+                        clearTimeout(singleTapTimeout);
+                        singleTapTimeout = null;
+                    }
+                    
                     e.preventDefault();
                     this.addProgressionBlock(chordName);
                     this.playChord(chordName);
@@ -750,13 +781,16 @@ class ChordProgressionEditor {
                     // Reset tap time to prevent triple-tap
                     lastTapTime = 0;
                 } else {
-                    // Single tap - play the chord
-                    this.playChord(chordName);
-                    block.classList.add('playing');
-                    setTimeout(() => block.classList.remove('playing'), 200);
-                    
-                    // Store tap time for double-tap detection
+                    // Potential single tap - delay to check for double-tap
                     lastTapTime = now;
+                    
+                    singleTapTimeout = setTimeout(() => {
+                        // Single tap confirmed - play the chord
+                        this.playChord(chordName);
+                        block.classList.add('playing');
+                        setTimeout(() => block.classList.remove('playing'), 200);
+                        singleTapTimeout = null;
+                    }, doubleTapDelay);
                 }
             }
             
@@ -773,6 +807,11 @@ class ChordProgressionEditor {
             }
             dragClone = null;
             isDragging = false;
+            
+            if (singleTapTimeout) {
+                clearTimeout(singleTapTimeout);
+                singleTapTimeout = null;
+            }
         });
     }
     
