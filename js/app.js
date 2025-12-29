@@ -718,7 +718,7 @@ class App {
             }
             // Change button to text when in setlist mode
             if (addSongBtn) {
-                addSongBtn.innerHTML = '<span class="icon">+</span><span class="label">Add</span>';
+                addSongBtn.innerHTML = '<span class="icon material-symbols-rounded">add</span><span class="label">Add</span>';
                 addSongBtn.title = 'Add songs to setlist';
             }
             // Hide export, import, and delete all buttons
@@ -737,7 +737,7 @@ class App {
             }
             // Change button back to icon
             if (addSongBtn) {
-                addSongBtn.innerHTML = '<span class="icon">+</span><span class="label">Add</span>';
+                addSongBtn.innerHTML = '<span class="icon material-symbols-rounded">add</span><span class="label">Add</span>';
                 addSongBtn.title = 'Add New Song';
             }
             // Show export, import, and delete all buttons
@@ -1300,7 +1300,9 @@ class App {
             newMinimizeBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 player.classList.toggle('minimized');
-                newMinimizeBtn.textContent = player.classList.contains('minimized') ? '🔺' : '🔻';
+                newMinimizeBtn.innerHTML = player.classList.contains('minimized') ? 
+                    '<span class="material-symbols-rounded">keyboard_arrow_up</span>' : 
+                    '<span class="material-symbols-rounded">keyboard_arrow_down</span>';
             });
         }
         
@@ -1520,16 +1522,16 @@ class App {
         const iconElement = exportBtn.querySelector('.icon');
         if (iconElement) {
             const originalIcon = iconElement.textContent;
-            iconElement.textContent = '✓';
+            iconElement.textContent = 'check';
             setTimeout(() => {
                 iconElement.textContent = originalIcon;
             }, 2000);
         } else {
             // Fallback for old structure
-            const originalText = exportBtn.textContent;
-            exportBtn.textContent = '✓ Geëxporteerd!';
+            const originalContent = exportBtn.innerHTML;
+            exportBtn.innerHTML = '<span class="material-symbols-rounded">check</span> Geëxporteerd!';
             setTimeout(() => {
-                exportBtn.textContent = originalText;
+                exportBtn.innerHTML = originalContent;
             }, 2000);
         }
     }
@@ -1582,19 +1584,19 @@ class App {
             const iconSpan = toggleBtn.querySelector('.icon');
             if (iconSpan) {
                 if (this.viewMode === 'simple') {
-                    iconSpan.textContent = '📊';
+                    iconSpan.textContent = 'bar_chart';
                     toggleBtn.title = 'Full view';
                 } else {
-                    iconSpan.textContent = '📋';
+                    iconSpan.textContent = 'view_list';
                     toggleBtn.title = 'Simple view';
                 }
             } else {
                 // Fallback for if structure is not yet set up
                 if (this.viewMode === 'simple') {
-                    toggleBtn.textContent = '📊';
+                    toggleBtn.innerHTML = '<span class="material-symbols-rounded">bar_chart</span>';
                     toggleBtn.title = 'Full view';
                 } else {
-                    toggleBtn.textContent = '📋';
+                    toggleBtn.innerHTML = '<span class="material-symbols-rounded">view_list</span>';
                     toggleBtn.title = 'Simple view';
                 }
             }

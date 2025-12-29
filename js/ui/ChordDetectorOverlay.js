@@ -58,7 +58,7 @@ class ChordDetectorOverlay {
             this.isMinimized = true;
             // Update button to show maximize icon (not minimize)
             if (this.minimizeButton) {
-                this.minimizeButton.textContent = '🔺';
+                this.minimizeButton.innerHTML = '<span class="material-symbols-rounded">keyboard_arrow_up</span>';
                 this.minimizeButton.title = 'Maximize';
             }
             // Load saved position
@@ -304,7 +304,7 @@ class ChordDetectorOverlay {
         
         switch (status) {
             case 'listening':
-                statusText = '🎤 Microphone active - play a chord';
+                statusText = 'Microphone active - play a chord';
                 statusClass = 'status-listening';
                 break;
             case 'stopped':
@@ -328,11 +328,11 @@ class ChordDetectorOverlay {
         if (this.toggleButton) {
             if (isActive) {
                 this.toggleButton.classList.add('active');
-                this.toggleButton.textContent = '⏸';
+                this.toggleButton.innerHTML = '<span class="material-symbols-rounded">pause</span>';
                 this.toggleButton.title = 'Stop detection';
             } else {
                 this.toggleButton.classList.remove('active');
-                this.toggleButton.textContent = '🎤';
+                this.toggleButton.innerHTML = '<span class="material-symbols-rounded">mic</span>';
                 this.toggleButton.title = 'Start detection';
             }
         }
@@ -369,13 +369,13 @@ class ChordDetectorOverlay {
         if (this.isMinimized) {
             this.overlay.classList.add('minimized');
             if (this.minimizeButton) {
-                this.minimizeButton.textContent = '🔺';
+                this.minimizeButton.innerHTML = '<span class="material-symbols-rounded">keyboard_arrow_up</span>';
                 this.minimizeButton.title = 'Maximize';
             }
         } else {
             this.overlay.classList.remove('minimized');
             if (this.minimizeButton) {
-                this.minimizeButton.textContent = '🔻';
+                this.minimizeButton.innerHTML = '<span class="material-symbols-rounded">keyboard_arrow_down</span>';
                 this.minimizeButton.title = 'Minimize';
             }
             // Force reflow to ensure smooth animation
@@ -727,7 +727,7 @@ class ChordDetectorOverlay {
             
             const removeBtn = document.createElement('button');
             removeBtn.className = 'remove-chord';
-            removeBtn.textContent = '×';
+            removeBtn.innerHTML = '<span class="material-symbols-rounded">close</span>';
             removeBtn.title = 'Remove chord';
             removeBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -860,12 +860,12 @@ class ChordDetectorOverlay {
             
             // Visual feedback
             if (this.copyHistoryButton) {
-                const originalText = this.copyHistoryButton.textContent;
-                this.copyHistoryButton.textContent = '✓';
+                const originalContent = this.copyHistoryButton.innerHTML;
+                this.copyHistoryButton.innerHTML = '<span class="material-symbols-rounded">check</span>';
                 this.copyHistoryButton.classList.add('copied');
                 
                 setTimeout(() => {
-                    this.copyHistoryButton.textContent = originalText;
+                    this.copyHistoryButton.innerHTML = originalContent;
                     this.copyHistoryButton.classList.remove('copied');
                 }, 1500);
             }
@@ -887,12 +887,12 @@ class ChordDetectorOverlay {
         try {
             document.execCommand('copy');
             if (this.copyHistoryButton) {
-                const originalText = this.copyHistoryButton.textContent;
-                this.copyHistoryButton.textContent = '✓';
+                const originalContent = this.copyHistoryButton.innerHTML;
+                this.copyHistoryButton.innerHTML = '<span class="material-symbols-rounded">check</span>';
                 this.copyHistoryButton.classList.add('copied');
                 
                 setTimeout(() => {
-                    this.copyHistoryButton.textContent = originalText;
+                    this.copyHistoryButton.innerHTML = originalContent;
                     this.copyHistoryButton.classList.remove('copied');
                 }, 1500);
             }

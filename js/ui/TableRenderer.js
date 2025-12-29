@@ -44,7 +44,7 @@ class TableRenderer {
     updateFavoriteButton(songId, isFavorite) {
         const btn = this.tbody.querySelector(`button.favorite-btn[data-song-id="${songId}"]`);
         if (btn) {
-            btn.innerHTML = isFavorite ? '⭐' : '☆';
+            btn.innerHTML = `<span class="material-symbols-rounded">${isFavorite ? 'star' : 'star'}</span>`;
             btn.title = isFavorite ? 'Remove from favorites' : 'Add to favorites';
             btn.dataset.favorite = isFavorite ? 'true' : 'false';
             if (isFavorite) {
@@ -99,7 +99,7 @@ class TableRenderer {
         favoriteCell.className = 'favorite-cell';
         const favoriteBtn = document.createElement('button');
         favoriteBtn.className = 'favorite-btn';
-        favoriteBtn.innerHTML = song.favorite ? '⭐' : '☆';
+        favoriteBtn.innerHTML = `<span class="material-symbols-rounded">star</span>`;
         favoriteBtn.title = song.favorite ? 'Remove from favorites' : 'Add to favorites';
         favoriteBtn.dataset.songId = song.id;
         favoriteBtn.dataset.favorite = song.favorite ? 'true' : 'false';
@@ -142,7 +142,7 @@ class TableRenderer {
         // Delete button first
         const deleteBtn = document.createElement('button');
         deleteBtn.className = 'delete-btn';
-        deleteBtn.textContent = '🗑️';
+        deleteBtn.innerHTML = '<span class="material-symbols-rounded">delete</span>';
         deleteBtn.title = 'Delete';
         deleteBtn.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -162,7 +162,7 @@ class TableRenderer {
         
         const youtubeBtn = document.createElement('button');
         youtubeBtn.className = 'youtube-btn';
-        youtubeBtn.innerHTML = '<svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" width="16" height="16"><path d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55 C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19 C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.63-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#FF0000"/><path d="M 45,24 27,14 27,34" fill="#fff"/></svg>';
+        youtubeBtn.innerHTML = '<span class="material-symbols-rounded" style="font-size: 18px; color: #ff0000;">smart_display</span>';
         youtubeBtn.title = 'Play YouTube';
         youtubeBtn.dataset.songId = song.id;
         
@@ -182,7 +182,7 @@ class TableRenderer {
         // External URL button
         const externalBtn = document.createElement('button');
         externalBtn.className = 'external-url-btn';
-        externalBtn.textContent = '🌐';
+        externalBtn.innerHTML = '<span class="material-symbols-rounded">public</span>';
         externalBtn.title = 'Open external website';
         
         if (!hasExternalUrl) {
@@ -301,7 +301,7 @@ class TableRenderer {
                 const chordBtn = document.createElement('button');
                 chordBtn.type = 'button';
                 chordBtn.className = 'chord-modal-btn';
-                chordBtn.innerHTML = '🎵';
+                chordBtn.innerHTML = '<span class="material-symbols-rounded">music_note</span>';
                 chordBtn.title = 'Add chords';
                 chordBtn.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -327,7 +327,7 @@ class TableRenderer {
                             this.editingRowId = null;
                             const editBtn = row.querySelector('.edit-btn');
                             if (editBtn) {
-                                editBtn.textContent = '✏️';
+                                editBtn.innerHTML = '<span class="material-symbols-rounded">edit</span>';
                                 editBtn.title = 'Edit';
                             }
                             const cancelBtn = row.querySelector('.cancel-btn');
@@ -401,7 +401,7 @@ class TableRenderer {
                             this.editingRowId = null;
                             const editBtn = row.querySelector('.edit-btn');
                             if (editBtn) {
-                                editBtn.textContent = '✏️';
+                                editBtn.innerHTML = '<span class="material-symbols-rounded">edit</span>';
                                 editBtn.title = 'Edit';
                             }
                             const cancelBtn = row.querySelector('.cancel-btn');

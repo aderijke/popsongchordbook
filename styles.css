@@ -46,6 +46,30 @@ body {
     overscroll-behavior-x: none;
 }
 
+.material-symbols-rounded {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    word-wrap: normal;
+    white-space: nowrap;
+    direction: ltr;
+    vertical-align: middle;
+    font-size: 24px;
+}
+
+.favorite-btn.favorite-active .material-symbols-rounded,
+.song-detail-action-btn.favorite-active .material-symbols-rounded,
+.favorite-column .material-symbols-rounded {
+    font-variation-settings: 'FILL' 1;
+    color: #f59e0b;
+}
+
+.favorite-column .material-symbols-rounded {
+    font-size: 1.2em;
+}
+
 html {
     width: 100%;
     margin: 0;
@@ -145,7 +169,7 @@ header::before {
 }
 
 .profile-btn .icon {
-    font-size: 1.1em;
+    font-size: 24px;
 }
 
 .profile-btn .label {
@@ -161,11 +185,10 @@ header::before {
     background: rgba(255, 255, 255, 0.95);
     border: 2px solid var(--border-color);
     color: var(--text-color);
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -174,6 +197,10 @@ header::before {
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
     z-index: 10;
     flex-shrink: 0;
+}
+
+.toggle-header-bar-btn .material-symbols-rounded {
+    font-size: 24px;
 }
 
 .toggle-header-bar-btn.normal-position {
@@ -492,7 +519,7 @@ header h1 {
 }
 
 .import-export-btn .icon {
-    font-size: 1.2em;
+    font-size: 22px;
     line-height: 1;
 }
 
@@ -676,10 +703,8 @@ header h1 {
     background: transparent;
     border: none;
     color: var(--text-light);
-    font-size: 24px;
-    line-height: 1;
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     cursor: pointer;
     display: flex;
@@ -687,7 +712,6 @@ header h1 {
     justify-content: center;
     transition: all 0.2s ease;
     padding: 0;
-    font-weight: 300;
 }
 
 .clear-search-btn:hover {
@@ -774,9 +798,8 @@ header h1 {
 }
 
 .add-song-btn .icon {
-    font-size: 1.4em;
+    font-size: 24px;
     line-height: 1;
-    font-weight: bold;
     color: white;
 }
 
@@ -1394,7 +1417,6 @@ td:has(.row-edit-input.input-focused) {
     border: 2px solid var(--secondary-color);
     border-radius: 6px;
     color: white;
-    font-size: 1.2em;
     padding: 6px 10px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -1403,6 +1425,10 @@ td:has(.row-edit-input.input-focused) {
     justify-content: center;
     flex-shrink: 0;
     line-height: 1;
+}
+
+.chord-modal-btn .material-symbols-rounded {
+    font-size: 24px;
 }
 
 .chord-modal-btn:hover {
@@ -1420,7 +1446,6 @@ td:has(.row-edit-input.input-focused) {
     border: 2px solid var(--secondary-color);
     border-radius: 6px;
     color: white;
-    font-size: 0.9em;
     padding: 2px 6px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -1431,6 +1456,10 @@ td:has(.row-edit-input.input-focused) {
     line-height: 1;
     min-width: 28px;
     height: 24px;
+}
+
+.chord-modal-btn-detail .material-symbols-rounded {
+    font-size: 20px;
 }
 
 .chord-modal-btn-detail:hover {
@@ -1448,13 +1477,18 @@ td:has(.row-edit-input.input-focused) {
     color: #ef4444;
     border: 1px solid rgba(239, 68, 68, 0.3);
     padding: 3px 6px;
-    font-size: 0.8em;
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.2s ease;
-    font-weight: 500;
     opacity: 0.7;
     white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.delete-btn .material-symbols-rounded {
+    font-size: 22px;
 }
 
 .delete-btn:hover {
@@ -1474,7 +1508,6 @@ td:has(.row-edit-input.input-focused) {
     color: #ef4444;
     border: 1px solid rgba(239, 68, 68, 0.3);
     padding: 3px 6px;
-    font-size: 0.8em;
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -1486,16 +1519,14 @@ td:has(.row-edit-input.input-focused) {
     line-height: 1;
 }
 
-.youtube-btn svg {
-    display: block;
-    width: 16px;
-    height: 16px;
+.youtube-btn .material-symbols-rounded {
+    font-size: 22px;
 }
 
 .youtube-btn:hover {
-    background: rgba(34, 197, 94, 0.15);
-    border-color: rgba(34, 197, 94, 0.5);
-    color: #22c55e;
+    background: rgba(239, 68, 68, 0.15);
+    border-color: rgba(239, 68, 68, 0.5);
+    color: #ef4444;
     opacity: 1;
     transform: translateY(-1px);
 }
@@ -1510,7 +1541,6 @@ td:has(.row-edit-input.input-focused) {
     color: #3b82f6;
     border: 1px solid rgba(59, 130, 246, 0.3);
     padding: 3px 6px;
-    font-size: 0.8em;
     border-radius: 4px;
     cursor: pointer;
     transition: all 0.2s ease;
@@ -1520,6 +1550,10 @@ td:has(.row-edit-input.input-focused) {
     align-items: center;
     justify-content: center;
     line-height: 1;
+}
+
+.external-url-btn .material-symbols-rounded {
+    font-size: 22px;
 }
 
 .external-url-btn:hover {
@@ -1697,18 +1731,19 @@ td:has(.row-edit-input.input-focused) {
 .favorite-btn {
     background: transparent;
     border: none;
-    font-size: 1.5em;
     cursor: pointer;
     padding: 5px;
     transition: all 0.2s ease;
     line-height: 1;
     color: #9ca3af;
-    filter: grayscale(1);
+}
+
+.favorite-btn .material-symbols-rounded {
+    font-size: 28px;
 }
 
 .favorite-btn:hover {
     transform: scale(1.2);
-    filter: grayscale(0.5);
 }
 
 .favorite-btn:active {
@@ -1718,14 +1753,11 @@ td:has(.row-edit-input.input-focused) {
 /* Filled star (favorite) - yellow/gold */
 .favorite-btn.favorite-active,
 .favorite-btn[data-favorite="true"] {
-    color: #fbbf24 !important;
-    filter: grayscale(0) !important;
-    text-shadow: 0 0 8px rgba(251, 191, 36, 0.5);
+    color: #f59e0b !important;
 }
 
 .favorite-btn.favorite-active:hover {
-    filter: grayscale(0) brightness(1.1) !important;
-    text-shadow: 0 0 12px rgba(251, 191, 36, 0.7);
+    filter: brightness(1.1) !important;
 }
 
 /* Responsive Design */
@@ -3263,25 +3295,19 @@ td:has(.row-edit-input.input-focused) {
 .song-detail-action-btn.with-label {
     flex-direction: column;
     gap: 2px;
-    width: 55px;
-    height: 45px;
+    width: 60px;
+    height: 50px;
     box-sizing: border-box;
 }
 
 .song-detail-action-btn .icon {
-    font-size: 24px;
+    font-size: 28px;
     line-height: 1;
-    width: 24px;
-    height: 24px;
+    width: 28px;
+    height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
-}
-
-.song-detail-action-btn .icon.youtube-icon svg {
-    width: 28px;
-    height: 20px;
-    display: block;
 }
 
 .song-detail-action-btn .label {
@@ -3313,17 +3339,13 @@ td:has(.row-edit-input.input-focused) {
 }
 
 .song-detail-action-btn.youtube-active {
-    color: #ef4444;
-    text-shadow: 0 0 10px rgba(239, 68, 68, 0.5);
-}
-
-.song-detail-action-btn.youtube-active .label {
-    color: rgba(255, 255, 255, 0.7);
+    color: white;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3);
 }
 
 .song-detail-action-btn.youtube-active:hover {
-    color: #dc2626;
-    text-shadow: 0 0 15px rgba(239, 68, 68, 0.7);
+    color: white;
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .song-detail-action-btn.hidden {
@@ -3451,10 +3473,10 @@ td:has(.row-edit-input.input-focused) {
 }
 
 .song-detail-nav-btn .icon {
-    font-size: 20px;
+    font-size: 24px;
     line-height: 1;
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3512,10 +3534,10 @@ td:has(.row-edit-input.input-focused) {
 }
 
 .song-detail-close .icon {
-    font-size: 20px;
+    font-size: 24px;
     line-height: 1;
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -3679,7 +3701,7 @@ td:has(.row-edit-input.input-focused) {
 }
 
 .song-detail-save-btn .icon {
-    font-size: 1.2em;
+    font-size: 24px;
     line-height: 1;
 }
 
@@ -4109,15 +4131,18 @@ td:has(.row-edit-input.input-focused) {
     background: rgba(255, 255, 255, 0.2);
     border: none;
     color: white;
-    width: 28px;
-    height: 28px;
+    width: 32px;
+    height: 32px;
     border-radius: 6px;
     cursor: pointer;
-    font-size: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: background 0.2s ease, width 0.3s ease, height 0.3s ease, font-size 0.3s ease;
+}
+
+.chord-detector-minimize-btn .material-symbols-rounded {
+    font-size: 20px;
 }
 
 .chord-detector-minimize-btn:hover {
@@ -4268,10 +4293,9 @@ td:has(.row-edit-input.input-focused) {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border: none;
     color: white;
-    width: 30px;
-    height: 30px;
+    width: 36px;
+    height: 36px;
     border-radius: 50%;
-    font-size: 12px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -4280,6 +4304,10 @@ td:has(.row-edit-input.input-focused) {
     transition: all 0.3s ease;
     position: relative;
     z-index: 1001;
+}
+
+.chord-detector-toggle-btn .material-symbols-rounded {
+    font-size: 24px;
 }
 
 .chord-detector-overlay.minimized .chord-detector-toggle-btn {
@@ -4684,7 +4712,6 @@ td:has(.row-edit-input.input-focused) {
     width: 28px;
     height: 28px;
     border-radius: 6px;
-    font-size: 1em;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -4692,6 +4719,10 @@ td:has(.row-edit-input.input-focused) {
     transition: all 0.2s ease;
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
     flex-shrink: 0;
+}
+
+.piano-chord-btn .material-symbols-rounded {
+    font-size: 22px;
 }
 
 .piano-chord-btn:hover {
@@ -5245,14 +5276,17 @@ td:has(.row-edit-input.input-focused) {
     border-radius: 6px;
     width: 28px;
     height: 28px;
-    font-size: 1.1em;
-    font-weight: 700;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
     transition: all 0.2s ease;
     box-shadow: 0 2px 8px rgba(102, 126, 234, 0.3);
+    flex-shrink: 0;
+}
+
+.chord-editor-btn .material-symbols-rounded {
+    font-size: 22px;
 }
 
 .chord-editor-btn:hover {

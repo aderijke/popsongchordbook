@@ -643,7 +643,7 @@ class SongDetailModal {
         const chordBtn = document.createElement('button');
         chordBtn.type = 'button';
         chordBtn.className = 'chord-modal-btn-detail';
-        chordBtn.innerHTML = '🎵';
+        chordBtn.innerHTML = '<span class="material-symbols-rounded">music_note</span>';
         chordBtn.title = 'Add chords';
         chordBtn.style.cursor = 'pointer';
         chordBtn.style.pointerEvents = 'auto';
@@ -1072,7 +1072,7 @@ class SongDetailModal {
                 
                 const iconSpan = this.nextBtn.querySelector('.icon');
                 const labelSpan = this.nextBtn.querySelector('.label');
-                if (iconSpan) iconSpan.textContent = '🎲';
+                if (iconSpan) iconSpan.textContent = 'casino';
                 if (labelSpan) labelSpan.textContent = 'Random';
             }
             return;
@@ -1083,14 +1083,14 @@ class SongDetailModal {
             this.prevBtn.classList.remove('hidden');
             const prevIconSpan = this.prevBtn.querySelector('.icon');
             const prevLabelSpan = this.prevBtn.querySelector('.label');
-            if (prevIconSpan) prevIconSpan.textContent = '‹';
+            if (prevIconSpan) prevIconSpan.textContent = 'chevron_left';
             if (prevLabelSpan) prevLabelSpan.textContent = 'Previous';
         }
         if (this.nextBtn) {
             this.nextBtn.classList.remove('hidden');
             const nextIconSpan = this.nextBtn.querySelector('.icon');
             const nextLabelSpan = this.nextBtn.querySelector('.label');
-            if (nextIconSpan) nextIconSpan.textContent = '›';
+            if (nextIconSpan) nextIconSpan.textContent = 'chevron_right';
             if (nextLabelSpan) nextLabelSpan.textContent = 'Next';
             this.nextBtn.title = 'Next song';
         }
@@ -1143,10 +1143,10 @@ class SongDetailModal {
         if (!this.favoriteBtn) return;
         const iconSpan = this.favoriteBtn.querySelector('.icon');
         if (iconSpan) {
-            iconSpan.textContent = isFavorite ? '⭐' : '☆';
+            iconSpan.textContent = 'star';
         } else {
             // Fallback for if structure is not yet set up
-            this.favoriteBtn.innerHTML = isFavorite ? '⭐' : '☆';
+            this.favoriteBtn.innerHTML = '<span class="material-symbols-rounded">star</span>';
         }
         this.favoriteBtn.title = isFavorite ? 'Remove from favorites' : 'Add to favorites';
         if (isFavorite) {
