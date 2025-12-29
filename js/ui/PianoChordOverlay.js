@@ -11,6 +11,10 @@ class PianoChordOverlay {
         // We'll use octave 4 as base (middle C area)
         this.chordDefinitions = this.initializeChordDefinitions();
         
+        // Initialize piano audio player
+        this.audioPlayer = new PianoAudioPlayer();
+        this.isAudioInitialized = false;
+        
         this.createOverlay();
         this.setupEventListeners();
     }
@@ -425,11 +429,16 @@ class PianoChordOverlay {
         
         const card = document.createElement('div');
         card.className = 'piano-chord-card';
+        card.style.cursor = 'pointer';
+        card.title = 'Click to play chord';
         
         // Chord name header
         const header = document.createElement('div');
         header.className = 'chord-card-header';
-        header.innerHTML = `<span class="chord-name">${chord.displayName}</span>`;
+        header.innerHTML = `
+            <span class="chord-name">${chord.displayName}</span>
+            <span class="play-indicator">🔊</span>
+        `;
         
         // Piano keyboard
         const keyboard = this.createPianoKeyboard(chord, chord.notes);
@@ -437,7 +446,37 @@ class PianoChordOverlay {
         card.appendChild(header);
         card.appendChild(keyboard);
         
+        // Add click handler to play the chord
+        card.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.playChord(chord);
+            
+            // Visual feedback
+            card.classList.add('playing');
+            setTimeout(() => {
+                card.classList.remove('playing');
+            }, 300);
+        });
+        
         return card;
+    }
+    
+    async playChord(chord) {
+        // Initialize audio on first interaction (required by browsers)
+        if (!this.isAudioInitialized) {
+            try {
+                await this.audioPlayer.initialize();
+                this.isAudioInitialized = true;
+            } catch (error) {
+                console.error('Failed to initialize audio:', error);
+                return;
+            }
+        }
+        
+        // Play the chord notes
+        if (chord && chord.notes && chord.notes.length > 0) {
+            this.audioPlayer.playChord(chord.notes, 2.0, 0.6, 0.03);
+        }
     }
     
     show(sectionName, chordText) {
