@@ -28,6 +28,7 @@ class SongDetailModal {
         this.youtubeUrlSaveBtn = document.getElementById('youtubeUrlSaveBtn');
         this.youtubeUrlCancelBtn = document.getElementById('youtubeUrlCancelBtn');
         this.youtubeUrlModalClose = document.getElementById('youtubeUrlModalClose');
+        this.keyDisplay = document.getElementById('songDetailKeyDisplay');
         this.sections = {
             verse: {
                 section: document.getElementById('verseSection'),
@@ -54,6 +55,31 @@ class SongDetailModal {
         
         this.setupEventListeners();
         this.setupPianoButtons();
+    }
+
+    formatKeyText(keyText) {
+        if (!keyText) return '';
+        
+        let formatted = keyText.trim();
+        
+        // Ensure first letter is uppercase
+        if (formatted.length > 0) {
+            formatted = formatted.charAt(0).toUpperCase() + formatted.slice(1);
+        }
+        
+        // Handle minor 'm' - if it ends with 'M' or 'm', make it 'm'
+        // But be careful with keys like 'Am', 'Abm'
+        if (formatted.toLowerCase().endsWith('m')) {
+            formatted = formatted.slice(0, -1) + 'm';
+        }
+        
+        // Handle flats 'b' - ensure 'B' becomes 'b' after the note name
+        // e.g., 'AB' becomes 'Ab'
+        if (formatted.length > 1 && (formatted.charAt(1) === 'B' || formatted.charAt(1) === 'b')) {
+            formatted = formatted.charAt(0) + 'b' + formatted.slice(2);
+        }
+        
+        return formatted;
     }
 
     setSongs(songs) {
@@ -841,18 +867,29 @@ class SongDetailModal {
                 }
             }
             
-            // Display title with key in parentheses if key exists
-            if (keyText.trim()) {
-                const keyHtml = isGuessed ? `<i>(${keyText})</i>` : `<b>(${keyText})</b>`;
-                this.titleElement.innerHTML = `${titleText} ${keyHtml}`;
-            } else {
-                this.titleElement.textContent = titleText;
-            }
+            // Display title WITHOUT key (removed from here as requested)
+            this.titleElement.textContent = titleText;
             
             // Store original title without key for editing
             this.titleElement.dataset.originalTitle = titleText;
             this.titleElement.setAttribute('contenteditable', 'false');
             this.titleElement.classList.remove('editing');
+            
+            // Update the large key display
+            if (this.keyDisplay) {
+                const formattedKey = this.formatKeyText(keyText);
+                if (isGuessed) {
+                    this.keyDisplay.innerHTML = `<i>${formattedKey}</i>`;
+                } else {
+                    this.keyDisplay.textContent = formattedKey;
+                }
+                
+                if (keyText.trim()) {
+                    this.keyDisplay.classList.remove('hidden');
+                } else {
+                    this.keyDisplay.classList.add('hidden');
+                }
+            }
             
             // Add placeholder styling if empty
             if (!titleText.trim()) {
@@ -1105,17 +1142,27 @@ class SongDetailModal {
             }
         }
         
-        // Display title with key in parentheses if key exists
-        let displayText = titleText;
-        if (keyText.trim()) {
-            const keyHtml = isGuessed ? `<i>(${keyText})</i>` : `<b>(${keyText})</b>`;
-            this.titleElement.innerHTML = `${titleText} ${keyHtml}`;
-        } else {
-            this.titleElement.textContent = titleText;
-        }
+        // Display title WITHOUT key
+        this.titleElement.textContent = titleText;
         
         // Store original title without key for editing
         this.titleElement.dataset.originalTitle = titleText;
+
+        // Update the large key display
+        if (this.keyDisplay) {
+            const formattedKey = this.formatKeyText(keyText);
+            if (isGuessed) {
+                this.keyDisplay.innerHTML = `<i>${formattedKey}</i>`;
+            } else {
+                this.keyDisplay.textContent = formattedKey;
+            }
+            
+            if (keyText.trim()) {
+                this.keyDisplay.classList.remove('hidden');
+            } else {
+                this.keyDisplay.classList.add('hidden');
+            }
+        }
     }
 
     updateYouTubeButton(youtubeUrl, externalUrl) {

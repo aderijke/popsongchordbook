@@ -3140,6 +3140,44 @@ td:has(.row-edit-input.input-focused) {
     flex-direction: column;
     margin: auto;
     box-sizing: border-box;
+    position: relative;
+}
+
+.song-detail-key-display {
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
+    font-size: 2.5rem;
+    font-weight: 900;
+    color: white;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    padding: 12px 20px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+    border: 3px solid rgba(255, 255, 255, 0.3);
+    pointer-events: none;
+    user-select: none;
+    z-index: 10;
+    line-height: 1;
+    font-family: 'Inter', sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 80px;
+}
+
+@media (max-width: 768px) {
+    .song-detail-key-display {
+        font-size: 1.8rem;
+        padding: 8px 15px;
+        bottom: 8px;
+        right: 12px;
+        min-width: 60px;
+    }
+}
+
+.song-detail-key-display.hidden {
+    display: none;
 }
 
 .song-detail-header {
