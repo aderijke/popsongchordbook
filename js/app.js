@@ -11,6 +11,7 @@ class App {
         this.songManager = new SongManager(this.firebaseManager);
         this.setlistManager = new SetlistManager(this.firebaseManager);
         this.sorter = new Sorter();
+        this.keyDetector = new KeyDetector();
         this.chordModal = new ChordModal();
         this.songDetailModal = new SongDetailModal(
             this.songManager,
@@ -18,7 +19,8 @@ class App {
             () => this.loadAndRender(), // Refresh table when song is updated
             this.chordModal, // Pass chordModal for chord button
             (songId) => this.handleToggleFavorite(songId), // Pass favorite toggle handler
-            (songId) => this.handlePlayYouTube(songId) // Pass YouTube play handler
+            (songId) => this.handlePlayYouTube(songId), // Pass YouTube play handler
+            this.keyDetector
         );
         this.chordDetectorOverlay = new ChordDetectorOverlay();
         this.currentFilter = {
@@ -38,7 +40,8 @@ class App {
             (songId) => this.handleDelete(songId),
             this.chordModal,
             (songId) => this.handleToggleFavorite(songId),
-            (songId) => this.handlePlayYouTube(songId)
+            (songId) => this.handlePlayYouTube(songId),
+            this.keyDetector
         );
 
         this.init();
@@ -348,7 +351,19 @@ class App {
         }
         
         if (this.currentFilter.key && this.currentFilter.key.trim() !== '') {
-            allSongs = allSongs.filter(song => song.key && song.key.trim().toLowerCase() === this.currentFilter.key.trim().toLowerCase());
+            const filterKey = this.currentFilter.key.trim().toLowerCase();
+            allSongs = allSongs.filter(song => {
+                const explicitKey = (song.key || '').trim().toLowerCase();
+                if (explicitKey === filterKey) return true;
+                
+                // If no explicit key, check detected key
+                if (!explicitKey && this.keyDetector) {
+                    const detectedKey = (this.keyDetector.detectFromSong(song) || '').trim().toLowerCase();
+                    return detectedKey === filterKey;
+                }
+                
+                return false;
+            });
         }
         
         if (this.currentFilter.withYouTube) {
@@ -490,17 +505,29 @@ class App {
         const filterKeySelect = document.getElementById('filterKeySelect');
         if (!filterKeySelect) return;
         
-        // Get all unique keys from songs
+        // Get all unique keys from songs (both explicit and detected)
         const allSongs = this.songManager.getAllSongs();
-        const keys = [...new Set(allSongs.map(song => song.key).filter(key => key && key.trim() !== ''))];
-        keys.sort();
+        const keys = new Set();
+        
+        allSongs.forEach(song => {
+            if (song.key && song.key.trim() !== '') {
+                keys.add(song.key.trim());
+            } else if (this.keyDetector) {
+                const detectedKey = this.keyDetector.detectFromSong(song);
+                if (detectedKey) {
+                    keys.add(detectedKey);
+                }
+            }
+        });
+        
+        const sortedKeys = Array.from(keys).sort();
         
         // Save current selection
         const currentValue = filterKeySelect.value;
         
         // Clear and populate
         filterKeySelect.innerHTML = '<option value="">Alle toonsoorten</option>';
-        keys.forEach(key => {
+        sortedKeys.forEach(key => {
             const option = document.createElement('option');
             option.value = key;
             option.textContent = key;
@@ -998,7 +1025,19 @@ class App {
                 }
                 
                 if (this.currentFilter.key && this.currentFilter.key.trim() !== '') {
-                    songsToSort = songsToSort.filter(song => song.key && song.key.trim().toLowerCase() === this.currentFilter.key.trim().toLowerCase());
+                    const filterKey = this.currentFilter.key.trim().toLowerCase();
+                    songsToSort = songsToSort.filter(song => {
+                        const explicitKey = (song.key || '').trim().toLowerCase();
+                        if (explicitKey === filterKey) return true;
+                        
+                        // If no explicit key, check detected key
+                        if (!explicitKey && this.keyDetector) {
+                            const detectedKey = (this.keyDetector.detectFromSong(song) || '').trim().toLowerCase();
+                            return detectedKey === filterKey;
+                        }
+                        
+                        return false;
+                    });
                 }
                 
                 if (this.currentFilter.withYouTube) {

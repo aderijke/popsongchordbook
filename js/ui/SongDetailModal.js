@@ -1,12 +1,13 @@
 // SongDetailModal - Modal voor song details weergave
 class SongDetailModal {
-    constructor(songManager, onNavigate, onUpdate = null, chordModal = null, onToggleFavorite = null, onPlayYouTube = null) {
+    constructor(songManager, onNavigate, onUpdate = null, chordModal = null, onToggleFavorite = null, onPlayYouTube = null, keyDetector = null) {
         this.songManager = songManager;
         this.onNavigate = onNavigate;
         this.onUpdate = onUpdate;
         this.chordModal = chordModal;
         this.onToggleFavorite = onToggleFavorite;
         this.onPlayYouTube = onPlayYouTube;
+        this.keyDetector = keyDetector;
         this.currentSongId = null;
         this.allSongs = [];
         this.modal = document.getElementById('songDetailModal');
@@ -828,13 +829,26 @@ class SongDetailModal {
         }
         if (this.titleElement) {
             const titleText = song.title || '';
-            const keyText = song.key || '';
-            // Display title with key in parentheses if key exists
-            let displayText = titleText;
-            if (keyText.trim()) {
-                displayText = `${titleText} (${keyText})`;
+            let keyText = song.key || '';
+            let isGuessed = false;
+            
+            // If no explicit key, try to detect it
+            if (!keyText.trim() && this.keyDetector) {
+                const detectedKey = this.keyDetector.detectFromSong(song);
+                if (detectedKey) {
+                    keyText = detectedKey;
+                    isGuessed = true;
+                }
             }
-            this.titleElement.textContent = displayText;
+            
+            // Display title with key in parentheses if key exists
+            if (keyText.trim()) {
+                const keyHtml = isGuessed ? `<i>(${keyText})</i>` : `<b>(${keyText})</b>`;
+                this.titleElement.innerHTML = `${titleText} ${keyHtml}`;
+            } else {
+                this.titleElement.textContent = titleText;
+            }
+            
             // Store original title without key for editing
             this.titleElement.dataset.originalTitle = titleText;
             this.titleElement.setAttribute('contenteditable', 'false');
@@ -845,7 +859,7 @@ class SongDetailModal {
                 this.titleElement.classList.add('empty-field');
                 this.titleElement.dataset.placeholder = 'Song Title';
                 // Clear display text if title is empty
-                this.titleElement.textContent = '';
+                this.titleElement.innerHTML = '';
             } else {
                 this.titleElement.classList.remove('empty-field');
                 this.titleElement.removeAttribute('data-placeholder');
@@ -1079,13 +1093,27 @@ class SongDetailModal {
         if (!song) return;
         
         const titleText = song.title || '';
-        const keyText = song.key || '';
+        let keyText = song.key || '';
+        let isGuessed = false;
+        
+        // If no explicit key, try to detect it
+        if (!keyText.trim() && this.keyDetector) {
+            const detectedKey = this.keyDetector.detectFromSong(song);
+            if (detectedKey) {
+                keyText = detectedKey;
+                isGuessed = true;
+            }
+        }
+        
         // Display title with key in parentheses if key exists
         let displayText = titleText;
         if (keyText.trim()) {
-            displayText = `${titleText} (${keyText})`;
+            const keyHtml = isGuessed ? `<i>(${keyText})</i>` : `<b>(${keyText})</b>`;
+            this.titleElement.innerHTML = `${titleText} ${keyHtml}`;
+        } else {
+            this.titleElement.textContent = titleText;
         }
-        this.titleElement.textContent = displayText;
+        
         // Store original title without key for editing
         this.titleElement.dataset.originalTitle = titleText;
     }

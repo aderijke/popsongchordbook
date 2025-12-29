@@ -1,6 +1,6 @@
 // TableRenderer - Tabel rendering en updates
 class TableRenderer {
-    constructor(songManager, onRowSelect, onCellEdit, onDelete, chordModal, onToggleFavorite, onPlayYouTube) {
+    constructor(songManager, onRowSelect, onCellEdit, onDelete, chordModal, onToggleFavorite, onPlayYouTube, keyDetector) {
         this.songManager = songManager;
         this.onRowSelect = onRowSelect;
         this.onCellEdit = onCellEdit;
@@ -8,6 +8,7 @@ class TableRenderer {
         this.chordModal = chordModal;
         this.onToggleFavorite = onToggleFavorite;
         this.onPlayYouTube = onPlayYouTube;
+        this.keyDetector = keyDetector;
         this.tbody = document.getElementById('songsTableBody');
         this.selectedRowId = null;
         this.editingRowId = null;
