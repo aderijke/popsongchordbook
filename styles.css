@@ -1744,9 +1744,15 @@ td:has(.row-edit-input.input-focused) {
     
     .header-top {
         flex-direction: column;
-        align-items: stretch;
-        gap: 10px;
+        align-items: center;
+        gap: 12px;
         position: relative;
+    }
+    
+    .header-top-actions {
+        position: static;
+        transform: none;
+        justify-content: center;
     }
     
     header h1 {
@@ -1958,6 +1964,14 @@ td:has(.row-edit-input.input-focused) {
     
     header h1 {
         font-size: 1.3em;
+    }
+    
+    .profile-btn .label {
+        display: none;
+    }
+    
+    .profile-btn {
+        padding: 6px 10px;
     }
     
     .header-subtitle {
@@ -4939,5 +4953,90 @@ td:has(.row-edit-input.input-focused) {
         width: 32px;
         height: 32px;
         font-size: 1em;
+    }
+}
+
+/* Mobile landscape fixes */
+@media (max-height: 480px) and (orientation: landscape) {
+    .container {
+        height: 100dvh; /* Keep fixed height to allow internal scrolling */
+        padding: 5px 10px;
+        overflow: hidden;
+    }
+    
+    header {
+        margin-bottom: 2px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .header-top {
+        margin-bottom: 0;
+        flex-direction: row;
+        justify-content: flex-start;
+        gap: 5px;
+        width: auto;
+        flex-shrink: 0;
+    }
+    
+    header h1 {
+        display: none; /* Hide title entirely to save vertical space */
+    }
+    
+    .header-subtitle {
+        display: none;
+    }
+    
+    .header-bar {
+        padding: 2px 8px;
+        gap: 5px;
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        justify-content: flex-start;
+        flex: 1;
+        border-radius: 8px;
+    }
+    
+    .header-section {
+        padding-bottom: 0 !important;
+        margin-bottom: 0 !important;
+        border-bottom: none !important;
+        border-right: 1px solid var(--border-color);
+        padding-right: 10px;
+        flex-shrink: 0;
+        width: auto !important;
+    }
+    
+    .header-section:last-child {
+        border-right: none;
+    }
+
+    .profile-btn .label,
+    .import-export-btn .label,
+    .add-song-btn .label,
+    .filter-btn .label,
+    .random-song-btn .label,
+    .print-btn .label,
+    .view-toggle-btn .label,
+    .section-label {
+        display: none; /* Hide all labels to save space */
+    }
+    
+    .profile-btn, 
+    .import-export-btn, 
+    .add-song-btn, 
+    .filter-btn,
+    .random-song-btn,
+    .print-btn,
+    .view-toggle-btn {
+        padding: 5px 8px;
+    }
+
+    .table-wrapper {
+        margin-top: 5px;
+        border-radius: 10px;
+        flex: 1; /* Ensure it takes remaining height */
     }
 }

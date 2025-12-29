@@ -112,6 +112,7 @@ class App {
         this.setupDeselect();
         this.setupHeaderBarToggle();
         this.setupToggleView();
+        this.setupResponsiveView();
 
         // Load data from Firebase
         await this.loadDataFromFirebase();
@@ -1537,6 +1538,27 @@ class App {
         // Ensure the latest data is shown before printing
         this.loadAndRender();
         window.print();
+    }
+
+    setupResponsiveView() {
+        const checkView = () => {
+            const isPortrait = window.innerHeight > window.innerWidth;
+            const isMobile = window.innerWidth <= 768;
+            
+            if (isPortrait && isMobile) {
+                if (this.viewMode !== 'simple') {
+                    this.viewMode = 'simple';
+                    this.updateViewMode();
+                    this.loadAndRender();
+                }
+            }
+        };
+
+        // Initial check
+        checkView();
+
+        // Listen for resize which also catches orientation changes
+        window.addEventListener('resize', checkView);
     }
 
     setupToggleView() {
