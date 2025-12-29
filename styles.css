@@ -4886,6 +4886,9 @@ td:has(.row-edit-input.input-focused) {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
 /* Piano Keyboard Styles */
