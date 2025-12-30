@@ -8,7 +8,6 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -21,33 +20,27 @@
                 </div>
                 <div class="header-top-actions">
                     <button id="profileBtn" class="profile-btn with-label" title="Profile">
-                        <span class="icon material-symbols-rounded">person</span>
+                        <span class="icon">👤</span>
                         <span class="label">Profile <span id="profileSongCount" class="song-count">(0)</span></span>
                     </button>
-                    <button id="toggleHeaderBarCollapsed" class="toggle-header-bar-btn collapsed-position" title="Show button bar">
-                        <span class="material-symbols-rounded">expand_less</span>
-                    </button>
+                    <button id="toggleHeaderBarCollapsed" class="toggle-header-bar-btn collapsed-position" title="Show button bar">▲</button>
                 </div>
             </div>
             <div class="header-bar" id="headerBar">
-                <button id="toggleHeaderBar" class="toggle-header-bar-btn normal-position" title="Hide button bar">
-                    <span class="material-symbols-rounded">expand_more</span>
-                </button>
+                <button id="toggleHeaderBar" class="toggle-header-bar-btn normal-position" title="Hide button bar">▼</button>
                 
                 <!-- Filters & Search Section -->
                 <div class="header-section filters-section">
                     <div class="filter-buttons">
                         <button id="filterBtn" class="filter-btn with-label" title="Filters">
-                            <span class="icon material-symbols-rounded">search</span>
+                            <span class="icon">🔍</span>
                             <span class="label">Filters</span>
                         </button>
                     </div>
                     <div class="search-section-container">
                         <div class="search-input-wrapper">
-                            <input type="text" id="searchInput" class="search-input" placeholder="Artist or title..." autocomplete="off" spellcheck="false">
-                            <button id="clearSearchBtn" class="clear-search-btn hidden" title="Clear search field">
-                                <span class="material-symbols-rounded">close</span>
-                            </button>
+                            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Artist or title..." autocomplete="off" spellcheck="false">
+                            <button id="clearSearchBtn" class="clear-search-btn hidden" title="Clear search field">×</button>
                         </div>
                     </div>
                 </div>
@@ -58,12 +51,10 @@
                     <div class="setlist-group">
                         <div id="chordDetectorOverlay" class="chord-detector-overlay minimized">
                             <div class="chord-detector-content">
-                                    <div class="chord-detector-header">
+                                <div class="chord-detector-header">
                                     <h3>Chord Detection</h3>
                                     <div class="chord-detector-header-buttons">
-                                        <button id="chordDetectorMinimize" class="chord-detector-minimize-btn" title="Minimize">
-                                            <span class="material-symbols-rounded">keyboard_arrow_down</span>
-                                        </button>
+                                        <button id="chordDetectorMinimize" class="chord-detector-minimize-btn" title="Minimize">🔻</button>
                                     </div>
                                 </div>
                                 <div class="chord-detector-body">
@@ -77,9 +68,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <button id="chordDetectorToggle" class="chord-detector-toggle-btn" title="Start detection">
-                                        <span class="material-symbols-rounded">mic</span>
-                                    </button>
+                                    <button id="chordDetectorToggle" class="chord-detector-toggle-btn" title="Start detection">🎤</button>
                                     <select id="microphoneSelect" class="microphone-select" title="Choose microphone"></select>
                                     
                                     <!-- Chord History -->
@@ -87,12 +76,8 @@
                                         <div class="chord-history-header">
                                             <span>History</span>
                                             <div class="chord-history-actions">
-                                                <button id="copyChordHistory" class="copy-history-btn" title="Copy to clipboard">
-                                                    <span class="material-symbols-rounded">content_copy</span>
-                                                </button>
-                                                <button id="clearChordHistory" class="clear-history-btn" title="Clear history">
-                                                    <span class="material-symbols-rounded">delete</span>
-                                                </button>
+                                                <button id="copyChordHistory" class="copy-history-btn" title="Copy to clipboard">📋</button>
+                                                <button id="clearChordHistory" class="clear-history-btn" title="Clear history">🗑️</button>
                                             </div>
                                         </div>
                                         <div id="chordHistory" class="chord-history-list"></div>
@@ -105,46 +90,42 @@
                             <select id="setlistSelect" class="setlist-select">
                                 <option value="">All Songs</option>
                             </select>
-                            <button id="createSetlistBtn" class="setlist-btn" title="New Setlist">
-                                <span class="material-symbols-rounded">add</span>
-                            </button>
-                            <button id="deleteSetlistBtn" class="setlist-btn delete-setlist-btn hidden" title="Delete setlist">
-                                <span class="material-symbols-rounded">delete</span>
-                            </button>
+                            <button id="createSetlistBtn" class="setlist-btn" title="New Setlist">+</button>
+                            <button id="deleteSetlistBtn" class="setlist-btn delete-setlist-btn hidden" title="Delete setlist">🗑️</button>
                         </div>
                     </div>
                     
                     <!-- Actions -->
                     <div class="actions-group">
                         <button id="toggleViewBtn" class="import-export-btn view-toggle-btn with-label" title="Toggle between simple and full view">
-                            <span class="icon material-symbols-rounded">view_list</span>
+                            <span class="icon">📋</span>
                             <span class="label">View</span>
                         </button>
                         <button id="randomSongBtn" class="import-export-btn random-song-btn with-label" title="Open a random song">
-                            <span class="icon material-symbols-rounded">casino</span>
+                            <span class="icon">🎲</span>
                             <span class="label">Random</span>
                         </button>
                         <button id="addSongBtn" class="add-song-btn with-label" title="Add New Song">
-                            <span class="icon material-symbols-rounded">add</span>
+                            <span class="icon">+</span>
                             <span class="label">Add</span>
                         </button>
                         <div class="import-export-controls">
                             <button id="exportBtn" class="import-export-btn with-label" title="Export">
-                                <span class="icon material-symbols-rounded">upload</span>
+                                <span class="icon">📤</span>
                                 <span class="label">Export</span>
                             </button>
                             <label for="importFile" class="import-export-btn with-label" title="Import">
-                                <span class="icon material-symbols-rounded">download</span>
+                                <span class="icon">📥</span>
                                 <span class="label">Import</span>
                             </label>
                             <input type="file" id="importFile" accept=".json" style="display: none;">
                             <button id="deleteAllSongsBtn" class="import-export-btn delete-all-btn with-label" title="Delete all songs">
-                                <span class="icon material-symbols-rounded">delete_forever</span>
+                                <span class="icon">🗑️</span>
                                 <span class="label">Delete</span>
                             </button>
                         </div>
                         <button id="printTableBtn" class="import-export-btn print-btn with-label" title="Print full table">
-                            <span class="icon material-symbols-rounded">print</span>
+                            <span class="icon">🖨️</span>
                             <span class="label">Print</span>
                         </button>
                     </div>
@@ -159,9 +140,7 @@
                 <span class="separator">-</span>
                 <span id="selectedTitle" class="selected-title"></span>
             </div>
-            <button id="deselectBtn" class="deselect-btn" title="Close (Escape)">
-                <span class="material-symbols-rounded">close</span>
-            </button>
+            <button id="deselectBtn" class="deselect-btn" title="Close (Escape)">×</button>
         </div>
         
         <!-- Black overlay when row is selected -->
@@ -187,7 +166,7 @@
                             <span class="sort-indicator"></span>
                         </th>
                         <th class="sortable favorite-column" data-column="favorite">
-                            <span class="material-symbols-rounded">star</span>
+                            ⭐
                             <span class="sort-indicator"></span>
                         </th>
                         <th>Verse</th>
@@ -210,9 +189,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3 id="authModalTitle">Login</h3>
-                <button class="modal-close" id="authModalClose">
-                    <span class="material-symbols-rounded">close</span>
-                </button>
+                <button class="modal-close" id="authModalClose">&times;</button>
             </div>
             <div class="modal-body">
                 <!-- Login Form -->
@@ -267,9 +244,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Profile</h3>
-                <button class="modal-close" id="profileModalClose">
-                    <span class="material-symbols-rounded">close</span>
-                </button>
+                <button class="modal-close" id="profileModalClose">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="profile-info-section">
@@ -319,9 +294,7 @@
         <div class="chord-modal-content">
             <div class="chord-modal-header">
                 <h3>Select Chords</h3>
-                <button class="chord-modal-close" id="chordModalClose">
-                    <span class="material-symbols-rounded">close</span>
-                </button>
+                <button class="chord-modal-close" id="chordModalClose">&times;</button>
             </div>
             <div class="chord-modal-body">
                 <div class="chord-categories">
@@ -362,9 +335,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>New Setlist</h3>
-                <button class="modal-close" id="setlistModalClose">
-                    <span class="material-symbols-rounded">close</span>
-                </button>
+                <button class="modal-close" id="setlistModalClose">&times;</button>
             </div>
             <div class="modal-body">
                 <input type="text" id="setlistNameInput" placeholder="Setlist name..." spellcheck="false" />
@@ -378,9 +349,7 @@
         <div class="modal-content modal-large">
             <div class="modal-header">
                 <h3 id="addSongsModalTitle">Add songs to setlist</h3>
-                <button class="modal-close" id="addSongsModalClose">
-                    <span class="material-symbols-rounded">close</span>
-                </button>
+                <button class="modal-close" id="addSongsModalClose">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="songs-selection-container">
@@ -406,7 +375,7 @@
         <div class="song-detail-modal-content">
             <div class="song-detail-header">
                 <button class="song-detail-nav-btn song-detail-prev with-label" id="songDetailPrev" title="Previous song">
-                    <span class="icon material-symbols-rounded">chevron_left</span>
+                    <span class="icon">‹</span>
                     <span class="label">Previous</span>
                 </button>
                 <div class="song-detail-title-section">
@@ -416,29 +385,34 @@
                 </div>
                 <div class="song-detail-action-buttons">
                     <button id="songDetailYouTubePlayBtn" class="song-detail-action-btn with-label hidden" title="Play YouTube video">
-                        <span class="icon material-symbols-rounded">smart_display</span>
+                        <span class="icon youtube-icon">
+                            <svg viewBox="0 0 68 48" xmlns="http://www.w3.org/2000/svg" width="20" height="20">
+                                <path d="M66.52,7.74c-0.78-2.93-2.49-5.41-5.42-6.19C55.79,.13,34,0,34,0S12.21,.13,6.9,1.55 C3.97,2.33,2.27,4.81,1.48,7.74C0.06,13.05,0,24,0,24s0.06,10.95,1.48,16.26c0.78,2.93,2.49,5.41,5.42,6.19 C12.21,47.87,34,48,34,48s21.79-0.13,27.1-1.55c2.93-0.78,4.63-3.26,5.42-6.19C67.94,34.95,68,24,68,24S67.94,13.05,66.52,7.74z" fill="#FF0000"/>
+                                <path d="M 45,24 27,14 27,34" fill="#fff"/>
+                            </svg>
+                        </span>
                         <span class="label">Play</span>
                     </button>
                     <button id="songDetailYouTubeBtn" class="song-detail-action-btn with-label" title="Edit song details">
-                        <span class="icon material-symbols-rounded">settings</span>
+                        <span class="icon">⚙️</span>
                         <span class="label">Details</span>
                     </button>
                     <button id="songDetailExternalUrlBtn" class="song-detail-action-btn with-label hidden" title="Open external website">
-                        <span class="icon material-symbols-rounded">public</span>
+                        <span class="icon">🌐</span>
                         <span class="label">Website</span>
                     </button>
                     <button id="songDetailFavoriteBtn" class="song-detail-action-btn with-label" title="Add to favorites">
-                        <span class="icon material-symbols-rounded">star</span>
+                        <span class="icon">☆</span>
                         <span class="label">Favorite</span>
                     </button>
                 </div>
                 <div class="song-detail-header-right">
                     <button class="song-detail-nav-btn song-detail-next with-label" id="songDetailNext" title="Next song">
-                        <span class="icon material-symbols-rounded">chevron_right</span>
+                        <span class="icon">›</span>
                         <span class="label">Next</span>
                     </button>
                     <button class="song-detail-close with-label" id="songDetailModalClose" title="Close">
-                        <span class="icon material-symbols-rounded">close</span>
+                        <span class="icon">&times;</span>
                         <span class="label">Close</span>
                     </button>
                 </div>
@@ -448,12 +422,8 @@
                     <div class="chord-section-header">
                         <h3 class="chord-section-title">Verse</h3>
                         <div class="chord-section-buttons">
-                            <button class="piano-chord-btn" data-section="verse" title="Show piano chords">
-                                <span class="material-symbols-rounded">piano</span>
-                            </button>
-                            <button class="chord-editor-btn" data-section="verse" title="Chord progression editor">
-                                <span class="material-symbols-rounded">edit_note</span>
-                            </button>
+                            <button class="piano-chord-btn" data-section="verse" title="Show piano chords">🎹</button>
+                            <button class="chord-editor-btn" data-section="verse" title="Chord progression editor">?</button>
                         </div>
                     </div>
                     <div class="chord-section-content editable-field" data-field="verse" id="verseContent" contenteditable="false" spellcheck="false"></div>
@@ -462,12 +432,8 @@
                     <div class="chord-section-header">
                         <h3 class="chord-section-title">Chorus</h3>
                         <div class="chord-section-buttons">
-                            <button class="piano-chord-btn" data-section="chorus" title="Show piano chords">
-                                <span class="material-symbols-rounded">piano</span>
-                            </button>
-                            <button class="chord-editor-btn" data-section="chorus" title="Chord progression editor">
-                                <span class="material-symbols-rounded">edit_note</span>
-                            </button>
+                            <button class="piano-chord-btn" data-section="chorus" title="Show piano chords">🎹</button>
+                            <button class="chord-editor-btn" data-section="chorus" title="Chord progression editor">?</button>
                         </div>
                     </div>
                     <div class="chord-section-content editable-field" data-field="chorus" id="chorusContent" contenteditable="false" spellcheck="false"></div>
@@ -476,12 +442,8 @@
                     <div class="chord-section-header">
                         <h3 class="chord-section-title">Pre-Chorus</h3>
                         <div class="chord-section-buttons">
-                            <button class="piano-chord-btn" data-section="preChorus" title="Show piano chords">
-                                <span class="material-symbols-rounded">piano</span>
-                            </button>
-                            <button class="chord-editor-btn" data-section="preChorus" title="Chord progression editor">
-                                <span class="material-symbols-rounded">edit_note</span>
-                            </button>
+                            <button class="piano-chord-btn" data-section="preChorus" title="Show piano chords">🎹</button>
+                            <button class="chord-editor-btn" data-section="preChorus" title="Chord progression editor">?</button>
                         </div>
                     </div>
                     <div class="chord-section-content editable-field" data-field="preChorus" id="preChorusContent" contenteditable="false" spellcheck="false"></div>
@@ -490,19 +452,15 @@
                     <div class="chord-section-header">
                         <h3 class="chord-section-title">Bridge</h3>
                         <div class="chord-section-buttons">
-                            <button class="piano-chord-btn" data-section="bridge" title="Show piano chords">
-                                <span class="material-symbols-rounded">piano</span>
-                            </button>
-                            <button class="chord-editor-btn" data-section="bridge" title="Chord progression editor">
-                                <span class="material-symbols-rounded">edit_note</span>
-                            </button>
+                            <button class="piano-chord-btn" data-section="bridge" title="Show piano chords">🎹</button>
+                            <button class="chord-editor-btn" data-section="bridge" title="Chord progression editor">?</button>
                         </div>
                     </div>
                     <div class="chord-section-content editable-field" data-field="bridge" id="bridgeContent" contenteditable="false" spellcheck="false"></div>
                 </div>
                 <div class="song-detail-actions">
                     <button id="songDetailSaveBtn" class="song-detail-save-btn with-label hidden">
-                        <span class="icon material-symbols-rounded">save</span>
+                        <span class="icon">💾</span>
                         <span class="label">Save</span>
                     </button>
                 </div>
@@ -516,9 +474,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Song Details</h3>
-                <button class="modal-close" id="youtubeUrlModalClose">
-                    <span class="material-symbols-rounded">close</span>
-                </button>
+                <button class="modal-close" id="youtubeUrlModalClose">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="url-input-group">
@@ -546,16 +502,13 @@
         <div class="modal-content">
             <div class="modal-header">
                 <h3>Filters</h3>
-                <button class="modal-close" id="filterModalClose">
-                    <span class="material-symbols-rounded">close</span>
-                </button>
+                <button class="modal-close" id="filterModalClose">&times;</button>
             </div>
             <div class="modal-body">
                 <div class="filter-option-group">
                     <label class="filter-checkbox-label">
                         <input type="checkbox" id="filterFavoritesCheckbox" class="filter-checkbox">
-                        <span class="material-symbols-rounded" style="font-size: 1.2em; color: #f59e0b;">star</span>
-                        <span>Alleen favorieten</span>
+                        <span>⭐ Alleen favorieten</span>
                     </label>
                 </div>
                 
@@ -594,12 +547,8 @@
             <div class="youtube-mini-player-header">
                 <span id="youtubePlayerTitle" class="youtube-player-title"></span>
                 <div class="youtube-player-controls">
-                    <button id="youtubePlayerMinimize" class="youtube-player-minimize-btn" title="Minimize">
-                        <span class="material-symbols-rounded">keyboard_arrow_down</span>
-                    </button>
-                    <button id="youtubePlayerClose" class="youtube-player-close-btn" title="Close">
-                        <span class="material-symbols-rounded">close</span>
-                    </button>
+                    <button id="youtubePlayerMinimize" class="youtube-player-minimize-btn" title="Minimize">🔻</button>
+                    <button id="youtubePlayerClose" class="youtube-player-close-btn" title="Close">×</button>
                 </div>
             </div>
             <div class="youtube-mini-player-body">
