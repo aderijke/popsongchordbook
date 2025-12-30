@@ -1,0 +1,6 @@
+# Firebase configuration (contains sensitive API keys)
+js/config/firebase-config.js
+
+# OS files
+.DS_Store
+
