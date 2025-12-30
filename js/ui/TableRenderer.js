@@ -262,6 +262,8 @@ class TableRenderer {
                 input.dataset.field = field;
                 input.dataset.songId = songId;
                 input.spellcheck = false;
+                input.setAttribute('autocorrect', 'off');
+                input.setAttribute('autocapitalize', 'none');
                 inputs.push(input);
                 
                 // Make input wider on focus to show all content
@@ -352,6 +354,8 @@ class TableRenderer {
                 input.dataset.field = field;
                 input.dataset.songId = songId;
                 input.spellcheck = false;
+                input.setAttribute('autocorrect', 'off');
+                input.setAttribute('autocapitalize', 'none');
                 inputs.push(input);
 
                 // Make input wider on focus to show all content
@@ -548,6 +552,8 @@ class TableRenderer {
         input.value = currentValue;
         input.className = 'edit-input';
         input.spellcheck = false;
+        input.setAttribute('autocorrect', 'off');
+        input.setAttribute('autocapitalize', 'none');
 
         // Define field order for tab navigation
         const fieldOrder = ['artist', 'title', 'verse', 'chorus', 'preChorus', 'bridge'];

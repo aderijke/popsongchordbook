@@ -554,6 +554,8 @@ class SongDetailModal {
         // Enable editing
         element.setAttribute('contenteditable', 'true');
         element.setAttribute('spellcheck', 'false');
+        element.setAttribute('autocorrect', 'off');
+        element.setAttribute('autocapitalize', 'none');
         element.classList.add('editing');
         
         // Add chord button for chord fields (verse, preChorus, chorus, bridge)
