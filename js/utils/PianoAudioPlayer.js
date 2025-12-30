@@ -5,6 +5,7 @@ class PianoAudioPlayer {
         this.masterGain = null;
         this.isInitialized = false;
         this.activeNotes = new Map(); // Track active notes for cleanup
+        this.noiseBuffer = null; // Pre-computed hammer noise
         
         // Piano sound parameters
         this.baseVolume = 0.3;
@@ -17,14 +18,13 @@ class PianoAudioPlayer {
         
         // Harmonic overtones for realistic piano sound
         // Each overtone has: [frequency multiplier, amplitude, decay rate]
+        // Reduced number of harmonics for better performance on mobile
         this.harmonics = [
             [1, 1.0, 1.0],      // Fundamental
             [2, 0.5, 1.2],      // 2nd harmonic
             [3, 0.25, 1.5],     // 3rd harmonic
             [4, 0.15, 1.8],     // 4th harmonic
             [5, 0.1, 2.0],      // 5th harmonic
-            [6, 0.08, 2.2],     // 6th harmonic
-            [8, 0.04, 2.5],     // 8th harmonic
         ];
     }
     
@@ -43,6 +43,9 @@ class PianoAudioPlayer {
             // Add a subtle reverb/room effect using convolution
             this.createReverbEffect();
             
+            // Pre-compute hammer noise buffer
+            this.precomputeNoise();
+            
             this.isInitialized = true;
         } catch (error) {
             console.error('Failed to initialize audio context:', error);
@@ -50,14 +53,24 @@ class PianoAudioPlayer {
         }
     }
     
+    precomputeNoise() {
+        const bufferSize = this.audioContext.sampleRate * 0.02; // 20ms of noise
+        this.noiseBuffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
+        const output = this.noiseBuffer.getChannelData(0);
+        
+        for (let i = 0; i < bufferSize; i++) {
+            output[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.2));
+        }
+    }
+    
     createReverbEffect() {
         // Create a simple synthetic reverb using delay and feedback
         this.reverbGain = this.audioContext.createGain();
-        this.reverbGain.gain.value = 0.15;
+        this.reverbGain.gain.value = 0.12; // Slightly reduced
         
-        // Create a simple delay-based reverb
-        const delays = [0.03, 0.05, 0.08, 0.12];
-        const gains = [0.4, 0.3, 0.2, 0.1];
+        // Simplified reverb with fewer nodes for better mobile performance
+        const delays = [0.05, 0.08];
+        const gains = [0.4, 0.2];
         
         delays.forEach((delayTime, i) => {
             const delay = this.audioContext.createDelay(0.5);
@@ -83,7 +96,7 @@ class PianoAudioPlayer {
     }
     
     // Play a single note with piano-like sound
-    playNote(semitone, duration = 1.5, velocity = 0.7) {
+    playNote(semitone, duration = 1.5, velocity = 0.7, startTime = null) {
         if (!this.isInitialized) {
             console.warn('Audio not initialized. Call initialize() first.');
             return;
@@ -94,7 +107,7 @@ class PianoAudioPlayer {
             this.audioContext.resume();
         }
         
-        const now = this.audioContext.currentTime;
+        const now = startTime || this.audioContext.currentTime;
         const frequency = this.semitoneToFrequency(semitone);
         
         // Create a gain node for this note's envelope
@@ -118,12 +131,13 @@ class PianoAudioPlayer {
         
         // Create oscillators for each harmonic
         const oscillators = [];
+        const harmonicGains = [];
         
         this.harmonics.forEach(([multiplier, amplitude, decayRate]) => {
             const harmonicFreq = frequency * multiplier;
             
-            // Skip harmonics above 8000 Hz to avoid aliasing and harsh sounds
-            if (harmonicFreq > 8000) return;
+            // Skip harmonics above 6000 Hz to avoid aliasing and harsh sounds on mobile
+            if (harmonicFreq > 6000) return;
             
             // Create oscillator
             const osc = this.audioContext.createOscillator();
@@ -149,6 +163,7 @@ class PianoAudioPlayer {
             osc.stop(releaseEnd + 0.1);
             
             oscillators.push(osc);
+            harmonicGains.push(harmonicGain);
         });
         
         // Add a subtle "hammer" noise for attack realism
@@ -156,26 +171,30 @@ class PianoAudioPlayer {
         
         // Store reference for potential cleanup
         const noteId = `${semitone}-${now}`;
-        this.activeNotes.set(noteId, { oscillators, noteGain });
+        this.activeNotes.set(noteId, { oscillators, harmonicGains, noteGain });
         
-        // Clean up after note ends
+        // Clean up nodes after note ends to save memory and CPU
+        const cleanupTime = (releaseEnd - this.audioContext.currentTime + 0.5) * 1000;
         setTimeout(() => {
-            this.activeNotes.delete(noteId);
-        }, (releaseEnd - now + 0.2) * 1000);
+            if (this.activeNotes.has(noteId)) {
+                const note = this.activeNotes.get(noteId);
+                note.oscillators.forEach(osc => {
+                    try { osc.disconnect(); } catch (e) {}
+                });
+                note.harmonicGains.forEach(g => {
+                    try { g.disconnect(); } catch (e) {}
+                });
+                try { note.noteGain.disconnect(); } catch (e) {}
+                this.activeNotes.delete(noteId);
+            }
+        }, Math.max(0, cleanupTime));
     }
     
     addHammerNoise(destination, startTime, velocity) {
-        // Create a brief noise burst to simulate hammer hitting string
-        const bufferSize = this.audioContext.sampleRate * 0.02; // 20ms of noise
-        const noiseBuffer = this.audioContext.createBuffer(1, bufferSize, this.audioContext.sampleRate);
-        const output = noiseBuffer.getChannelData(0);
-        
-        for (let i = 0; i < bufferSize; i++) {
-            output[i] = (Math.random() * 2 - 1) * Math.exp(-i / (bufferSize * 0.2));
-        }
+        if (!this.noiseBuffer) return;
         
         const noise = this.audioContext.createBufferSource();
-        noise.buffer = noiseBuffer;
+        noise.buffer = this.noiseBuffer;
         
         // Filter the noise to sound more like a piano hammer
         const filter = this.audioContext.createBiquadFilter();
@@ -191,6 +210,15 @@ class PianoAudioPlayer {
         noiseGain.connect(destination);
         
         noise.start(startTime);
+        
+        // Cleanup noise nodes
+        setTimeout(() => {
+            try {
+                noise.disconnect();
+                filter.disconnect();
+                noiseGain.disconnect();
+            } catch (e) {}
+        }, 100);
     }
     
     // Play a chord (array of semitones)
@@ -210,16 +238,18 @@ class PianoAudioPlayer {
             this.audioContext.resume();
         }
         
+        const now = this.audioContext.currentTime;
+        
         // Sort notes from low to high
         const sortedNotes = [...semitones].sort((a, b) => a - b);
         
         // Play each note with a slight stagger (like a human strumming)
+        // Using Web Audio timing instead of setTimeout for better performance and precision
         sortedNotes.forEach((semitone, index) => {
-            setTimeout(() => {
-                // Vary velocity slightly for more natural sound
-                const noteVelocity = velocity * (0.9 + Math.random() * 0.2);
-                this.playNote(semitone, duration, noteVelocity);
-            }, index * stagger * 1000);
+            // Vary velocity slightly for more natural sound
+            const noteVelocity = velocity * (0.9 + Math.random() * 0.2);
+            const startTime = now + (index * stagger);
+            this.playNote(semitone, duration, noteVelocity, startTime);
         });
     }
     
@@ -272,4 +302,5 @@ class PianoAudioPlayer {
 
 // Make it globally available
 window.PianoAudioPlayer = PianoAudioPlayer;
+
 

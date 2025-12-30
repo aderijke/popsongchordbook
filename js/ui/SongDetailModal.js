@@ -51,11 +51,14 @@ class SongDetailModal {
         this.originalSongData = null;
         this.isRandomMode = false;
         
-        // Initialize Piano Chord Overlay
-        this.pianoChordOverlay = new PianoChordOverlay();
+        // Initialize a single shared audio player
+        this.sharedAudioPlayer = new PianoAudioPlayer();
         
-        // Initialize Chord Progression Editor
-        this.chordProgressionEditor = new ChordProgressionEditor();
+        // Initialize Piano Chord Overlay with shared player
+        this.pianoChordOverlay = new PianoChordOverlay(this.sharedAudioPlayer);
+        
+        // Initialize Chord Progression Editor with shared player
+        this.chordProgressionEditor = new ChordProgressionEditor(this.sharedAudioPlayer);
         
         this.setupEventListeners();
         this.setupPianoButtons();

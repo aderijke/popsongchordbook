@@ -1,6 +1,6 @@
 // ChordProgressionEditor - Modal for building chord progressions with drag & drop
 class ChordProgressionEditor {
-    constructor() {
+    constructor(audioPlayer = null) {
         this.overlay = null;
         this.isVisible = false;
         this.currentKey = 'C';
@@ -10,7 +10,7 @@ class ChordProgressionEditor {
         this.draggedProgressionBlock = null;
         
         // Initialize audio player (reuse PianoAudioPlayer)
-        this.audioPlayer = new PianoAudioPlayer();
+        this.audioPlayer = audioPlayer || new PianoAudioPlayer();
         this.isAudioInitialized = false;
         
         // Define scale degrees for each key

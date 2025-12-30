@@ -1,6 +1,6 @@
 // PianoChordOverlay - Modal for displaying piano chord fingerings
 class PianoChordOverlay {
-    constructor() {
+    constructor(audioPlayer = null) {
         this.overlay = null;
         this.isVisible = false;
         this.currentChords = [];
@@ -12,7 +12,7 @@ class PianoChordOverlay {
         this.chordDefinitions = this.initializeChordDefinitions();
         
         // Initialize piano audio player
-        this.audioPlayer = new PianoAudioPlayer();
+        this.audioPlayer = audioPlayer || new PianoAudioPlayer();
         this.isAudioInitialized = false;
         
         this.createOverlay();
