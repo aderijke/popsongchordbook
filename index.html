@@ -354,6 +354,10 @@
             <div class="modal-body">
                 <div class="songs-selection-container">
                     <div class="selection-controls">
+                        <div class="selection-search">
+                            <input type="text" id="addSongsSearchInput" class="selection-search-input" placeholder="Search by artist or title..." spellcheck="false" autocorrect="off" autocapitalize="none" />
+                            <button id="clearAddSongsSearch" class="selection-clear-btn hidden" aria-label="Clear search">&times;</button>
+                        </div>
                         <button id="selectAllSongs" class="selection-btn">Select all</button>
                         <button id="deselectAllSongs" class="selection-btn">Deselect all</button>
                         <span id="selectedCount" class="selected-count">0 selected</span>
