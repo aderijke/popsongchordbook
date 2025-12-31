@@ -950,7 +950,21 @@ class App {
         const container = document.getElementById('songsListContainer');
         container.innerHTML = '';
 
-        const searchTerm = (this.addSongsSearchTerm || '').trim().toLowerCase();
+        // Always read the live search input value so filtering reacts instantly
+        const searchInput = document.getElementById('addSongsSearchInput');
+        const clearSearchBtn = document.getElementById('clearAddSongsSearch');
+        const rawSearchTerm = searchInput ? searchInput.value : (this.addSongsSearchTerm || '');
+        const searchTerm = rawSearchTerm.trim().toLowerCase();
+
+        // Keep the stored search term and clear button state in sync with the UI
+        this.addSongsSearchTerm = rawSearchTerm;
+        if (clearSearchBtn) {
+            if (searchTerm) {
+                clearSearchBtn.classList.remove('hidden');
+            } else {
+                clearSearchBtn.classList.add('hidden');
+            }
+        }
         const allSongs = this.songManager.getAllSongs()
             .slice()
             .sort((a, b) => {
