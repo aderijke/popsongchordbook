@@ -2496,6 +2496,43 @@ td:has(.row-edit-input.input-focused) {
     margin-bottom: 15px;
     padding-bottom: 15px;
     border-bottom: 2px solid var(--border-color);
+    flex-wrap: wrap;
+}
+
+.selection-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1 1 260px;
+    background: rgba(255, 255, 255, 0.9);
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    padding: 6px 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.selection-search-input {
+    border: none;
+    outline: none;
+    font-size: 0.95em;
+    width: 100%;
+    background: transparent;
+}
+
+.selection-clear-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-light);
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.selection-clear-btn:hover {
+    color: var(--secondary-color);
 }
 
 .selection-btn {
@@ -2526,6 +2563,15 @@ td:has(.row-edit-input.input-focused) {
     display: flex;
     flex-direction: column;
     gap: 8px;
+}
+
+.no-songs-message {
+    padding: 12px 14px;
+    background: rgba(255, 255, 255, 0.8);
+    border: 2px dashed var(--border-color);
+    border-radius: 8px;
+    color: var(--text-light);
+    font-weight: 600;
 }
 
 .song-item {

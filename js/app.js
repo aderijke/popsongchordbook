@@ -31,6 +31,7 @@ class App {
         };
         this.currentSetlistId = null;
         this.searchTerm = '';
+        this.addSongsSearchTerm = '';
         this.viewMode = 'full'; // 'simple' or 'full'
         
         this.tableRenderer = new TableRenderer(
@@ -826,6 +827,17 @@ class App {
         const addSelectedBtn = document.getElementById('addSelectedSongsBtn');
         const songsContainer = document.getElementById('songsListContainer');
         const selectedCountSpan = document.getElementById('selectedCount');
+        const searchInput = document.getElementById('addSongsSearchInput');
+        const clearSearchBtn = document.getElementById('clearAddSongsSearch');
+
+        const updateSearchClearButton = () => {
+            if (!clearSearchBtn) return;
+            if (this.addSongsSearchTerm && this.addSongsSearchTerm.trim() !== '') {
+                clearSearchBtn.classList.remove('hidden');
+            } else {
+                clearSearchBtn.classList.add('hidden');
+            }
+        };
 
         closeBtn.addEventListener('click', () => {
             modal.classList.add('hidden');
@@ -856,6 +868,45 @@ class App {
             checkboxes.forEach(cb => cb.checked = false);
             this.updateSelectedCount();
         });
+
+        if (searchInput) {
+            searchInput.addEventListener('input', () => {
+                this.addSongsSearchTerm = searchInput.value;
+                const setlist = this.setlistManager.getSetlist(this.currentSetlistId);
+                if (setlist) {
+                    this.populateSongsList(setlist);
+                }
+                updateSearchClearButton();
+            });
+
+            searchInput.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    searchInput.value = '';
+                    this.addSongsSearchTerm = '';
+                    const setlist = this.setlistManager.getSetlist(this.currentSetlistId);
+                    if (setlist) {
+                        this.populateSongsList(setlist);
+                    }
+                    searchInput.blur();
+                    updateSearchClearButton();
+                }
+            });
+        }
+
+        if (clearSearchBtn) {
+            clearSearchBtn.addEventListener('click', () => {
+                if (searchInput) {
+                    searchInput.value = '';
+                    searchInput.focus();
+                }
+                this.addSongsSearchTerm = '';
+                const setlist = this.setlistManager.getSetlist(this.currentSetlistId);
+                if (setlist) {
+                    this.populateSongsList(setlist);
+                }
+                updateSearchClearButton();
+            });
+        }
 
         addSelectedBtn.addEventListener('click', async () => {
             const checkboxes = songsContainer.querySelectorAll('input[type="checkbox"]:checked:not(:disabled)');
@@ -891,14 +942,45 @@ class App {
         songsContainer.addEventListener('change', () => {
             this.updateSelectedCount();
         });
+
+        updateSearchClearButton();
     }
 
     populateSongsList(setlist) {
         const container = document.getElementById('songsListContainer');
         container.innerHTML = '';
-        
-        const allSongs = this.songManager.getAllSongs();
+
+        const searchTerm = (this.addSongsSearchTerm || '').trim().toLowerCase();
+        const allSongs = this.songManager.getAllSongs()
+            .slice()
+            .sort((a, b) => {
+                const artistA = (a.artist || '').toLowerCase();
+                const artistB = (b.artist || '').toLowerCase();
+
+                if (artistA !== artistB) {
+                    return artistA.localeCompare(artistB);
+                }
+
+                const titleA = (a.title || '').toLowerCase();
+                const titleB = (b.title || '').toLowerCase();
+                return titleA.localeCompare(titleB);
+            })
+            .filter(song => {
+                if (!searchTerm) return true;
+                const artist = (song.artist || '').toLowerCase();
+                const title = (song.title || '').toLowerCase();
+                return artist.includes(searchTerm) || title.includes(searchTerm);
+            });
         const songsInSetlist = setlist.songIds || [];
+
+        if (allSongs.length === 0) {
+            const emptyMessage = document.createElement('p');
+            emptyMessage.className = 'no-songs-message';
+            emptyMessage.textContent = searchTerm ? 'No songs match your search.' : 'No songs available.';
+            container.appendChild(emptyMessage);
+            this.updateSelectedCount();
+            return;
+        }
 
         allSongs.forEach(song => {
             const isInSetlist = songsInSetlist.includes(song.id);
@@ -1158,12 +1240,24 @@ class App {
     openAddSongsToSetlistModal() {
         const modal = document.getElementById('addSongsToSetlistModal');
         const modalTitle = document.getElementById('addSongsModalTitle');
+        const searchInput = document.getElementById('addSongsSearchInput');
+        const clearSearchBtn = document.getElementById('clearAddSongsSearch');
         const setlist = this.setlistManager.getSetlist(this.currentSetlistId);
-        
+
         if (setlist) {
+            this.addSongsSearchTerm = '';
+            if (searchInput) {
+                searchInput.value = '';
+            }
+            if (clearSearchBtn) {
+                clearSearchBtn.classList.add('hidden');
+            }
             modalTitle.textContent = `Add songs to "${setlist.name}"`;
             this.populateSongsList(setlist);
             modal.classList.remove('hidden');
+            if (searchInput) {
+                searchInput.focus();
+            }
         }
     }
 
