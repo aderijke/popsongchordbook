@@ -968,16 +968,16 @@ class App {
         const allSongs = this.songManager.getAllSongs()
             .slice()
             .sort((a, b) => {
-                const artistA = (a.artist || '').toLowerCase();
-                const artistB = (b.artist || '').toLowerCase();
+                const titleA = (a.title || '').trim().toLowerCase();
+                const titleB = (b.title || '').trim().toLowerCase();
 
-                if (artistA !== artistB) {
-                    return artistA.localeCompare(artistB);
+                if (titleA !== titleB) {
+                    return titleA.localeCompare(titleB);
                 }
 
-                const titleA = (a.title || '').toLowerCase();
-                const titleB = (b.title || '').toLowerCase();
-                return titleA.localeCompare(titleB);
+                const artistA = (a.artist || '').trim().toLowerCase();
+                const artistB = (b.artist || '').trim().toLowerCase();
+                return artistA.localeCompare(artistB);
             })
             .filter(song => {
                 if (!searchTerm) return true;
