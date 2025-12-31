@@ -34,6 +34,7 @@ class App {
         this.addSongsSearchTerm = '';
         this.addSongsSortField = 'title';
         this.addSongsSortDirection = 'asc';
+        this.lastAddSongsSetlistId = null;
         this.viewMode = 'full'; // 'simple' or 'full'
         
         this.tableRenderer = new TableRenderer(
@@ -834,6 +835,10 @@ class App {
         const sortButtons = Array.from(document.querySelectorAll('.sort-option'));
         const sortDirectionBtn = document.getElementById('toggleSortDirection');
 
+        const getActiveSetlist = () => {
+            return this.setlistManager.getSetlist(this.currentSetlistId || this.lastAddSongsSetlistId);
+        };
+
         const updateSearchClearButton = () => {
             if (!clearSearchBtn) return;
             if (this.addSongsSearchTerm && this.addSongsSearchTerm.trim() !== '') {
@@ -895,7 +900,7 @@ class App {
                 const field = btn.dataset.field;
                 if (field && field !== this.addSongsSortField) {
                     this.addSongsSortField = field;
-                    const setlist = this.setlistManager.getSetlist(this.currentSetlistId);
+                    const setlist = getActiveSetlist();
                     if (setlist) {
                         this.populateSongsList(setlist);
                     }
@@ -907,7 +912,7 @@ class App {
         if (sortDirectionBtn) {
             sortDirectionBtn.addEventListener('click', () => {
                 this.addSongsSortDirection = this.addSongsSortDirection === 'asc' ? 'desc' : 'asc';
-                const setlist = this.setlistManager.getSetlist(this.currentSetlistId);
+                const setlist = getActiveSetlist();
                 if (setlist) {
                     this.populateSongsList(setlist);
                 }
@@ -918,7 +923,7 @@ class App {
         if (searchInput) {
             searchInput.addEventListener('input', () => {
                 this.addSongsSearchTerm = searchInput.value;
-                const setlist = this.setlistManager.getSetlist(this.currentSetlistId);
+                const setlist = getActiveSetlist();
                 if (setlist) {
                     this.populateSongsList(setlist);
                 }
@@ -929,7 +934,7 @@ class App {
                 if (e.key === 'Escape') {
                     searchInput.value = '';
                     this.addSongsSearchTerm = '';
-                    const setlist = this.setlistManager.getSetlist(this.currentSetlistId);
+                    const setlist = getActiveSetlist();
                     if (setlist) {
                         this.populateSongsList(setlist);
                     }
@@ -946,7 +951,7 @@ class App {
                     searchInput.focus();
                 }
                 this.addSongsSearchTerm = '';
-                const setlist = this.setlistManager.getSetlist(this.currentSetlistId);
+                const setlist = getActiveSetlist();
                 if (setlist) {
                     this.populateSongsList(setlist);
                 }
@@ -1314,6 +1319,7 @@ class App {
         const setlist = this.setlistManager.getSetlist(this.currentSetlistId);
 
         if (setlist) {
+            this.lastAddSongsSetlistId = setlist.id;
             this.addSongsSearchTerm = '';
             if (searchInput) {
                 searchInput.value = '';
