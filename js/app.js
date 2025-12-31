@@ -32,6 +32,8 @@ class App {
         this.currentSetlistId = null;
         this.searchTerm = '';
         this.addSongsSearchTerm = '';
+        this.addSongsSortField = 'title';
+        this.addSongsSortDirection = 'asc';
         this.viewMode = 'full'; // 'simple' or 'full'
         
         this.tableRenderer = new TableRenderer(
@@ -829,6 +831,8 @@ class App {
         const selectedCountSpan = document.getElementById('selectedCount');
         const searchInput = document.getElementById('addSongsSearchInput');
         const clearSearchBtn = document.getElementById('clearAddSongsSearch');
+        const sortButtons = Array.from(document.querySelectorAll('.sort-option'));
+        const sortDirectionBtn = document.getElementById('toggleSortDirection');
 
         const updateSearchClearButton = () => {
             if (!clearSearchBtn) return;
@@ -836,6 +840,23 @@ class App {
                 clearSearchBtn.classList.remove('hidden');
             } else {
                 clearSearchBtn.classList.add('hidden');
+            }
+        };
+
+        const updateSortControls = () => {
+            sortButtons.forEach(btn => {
+                if (!btn.dataset.field) return;
+                if (btn.dataset.field === this.addSongsSortField) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            if (sortDirectionBtn) {
+                const isAsc = this.addSongsSortDirection === 'asc';
+                sortDirectionBtn.textContent = isAsc ? 'A → Z' : 'Z → A';
+                sortDirectionBtn.title = isAsc ? 'Sorteer van A naar Z' : 'Sorteer van Z naar A';
             }
         };
 
@@ -868,6 +889,31 @@ class App {
             checkboxes.forEach(cb => cb.checked = false);
             this.updateSelectedCount();
         });
+
+        sortButtons.forEach(btn => {
+            btn.addEventListener('click', () => {
+                const field = btn.dataset.field;
+                if (field && field !== this.addSongsSortField) {
+                    this.addSongsSortField = field;
+                    const setlist = this.setlistManager.getSetlist(this.currentSetlistId);
+                    if (setlist) {
+                        this.populateSongsList(setlist);
+                    }
+                }
+                updateSortControls();
+            });
+        });
+
+        if (sortDirectionBtn) {
+            sortDirectionBtn.addEventListener('click', () => {
+                this.addSongsSortDirection = this.addSongsSortDirection === 'asc' ? 'desc' : 'asc';
+                const setlist = this.setlistManager.getSetlist(this.currentSetlistId);
+                if (setlist) {
+                    this.populateSongsList(setlist);
+                }
+                updateSortControls();
+            });
+        }
 
         if (searchInput) {
             searchInput.addEventListener('input', () => {
@@ -907,6 +953,9 @@ class App {
                 updateSearchClearButton();
             });
         }
+
+        this.updateAddSongsSortControls = updateSortControls;
+        updateSortControls();
 
         addSelectedBtn.addEventListener('click', async () => {
             const checkboxes = songsContainer.querySelectorAll('input[type="checkbox"]:checked:not(:disabled)');
@@ -950,6 +999,10 @@ class App {
         const container = document.getElementById('songsListContainer');
         container.innerHTML = '';
 
+        if (typeof this.updateAddSongsSortControls === 'function') {
+            this.updateAddSongsSortControls();
+        }
+
         // Always read the live search input value so filtering reacts instantly
         const searchInput = document.getElementById('addSongsSearchInput');
         const clearSearchBtn = document.getElementById('clearAddSongsSearch');
@@ -965,19 +1018,21 @@ class App {
                 clearSearchBtn.classList.add('hidden');
             }
         }
+        const sortField = this.addSongsSortField || 'title';
+        const secondaryField = sortField === 'artist' ? 'title' : 'artist';
+        const directionMultiplier = this.addSongsSortDirection === 'desc' ? -1 : 1;
+        const normalize = (value) => (value || '').trim().toLowerCase();
+
         const allSongs = this.songManager.getAllSongs()
             .slice()
             .sort((a, b) => {
-                const titleA = (a.title || '').trim().toLowerCase();
-                const titleB = (b.title || '').trim().toLowerCase();
-
-                if (titleA !== titleB) {
-                    return titleA.localeCompare(titleB);
+                const primaryCompare = normalize(a[sortField]).localeCompare(normalize(b[sortField]));
+                if (primaryCompare !== 0) {
+                    return primaryCompare * directionMultiplier;
                 }
 
-                const artistA = (a.artist || '').trim().toLowerCase();
-                const artistB = (b.artist || '').trim().toLowerCase();
-                return artistA.localeCompare(artistB);
+                const secondaryCompare = normalize(a[secondaryField]).localeCompare(normalize(b[secondaryField]));
+                return secondaryCompare * directionMultiplier;
             })
             .filter(song => {
                 if (!searchTerm) return true;
