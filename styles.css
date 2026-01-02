@@ -22,15 +22,6 @@
 }
 
 /* Disable spellcheck for all input and contenteditable elements */
-input[type="text"],
-input[type="email"],
-input[type="password"],
-input[type="url"],
-[contenteditable="true"],
-[contenteditable="false"] {
-    -webkit-user-modify: read-write-plaintext-only;
-    user-modify: read-write-plaintext-only;
-}
 
 body {
     font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
@@ -2485,6 +2476,11 @@ td:has(.row-edit-input.input-focused) {
     overflow-x: hidden;
 }
 
+/* Override for Share Songs Modal - body should not scroll */
+#shareSongsModal.modal .modal-content.modal-large .modal-body {
+    overflow: hidden;
+}
+
 .modal-body input:not([type="checkbox"]) {
     width: 100%;
     padding: 12px 16px;
@@ -2641,12 +2637,124 @@ td:has(.row-edit-input.input-focused) {
     flex-wrap: wrap;
 }
 
+/* Share Songs Modal - Search field above buttons, styled like email field */
+#shareSongsModal .songs-selection-container {
+    display: flex;
+    flex-direction: column;
+}
+
+/* Move search field out of selection-controls and style like email field */
+#shareSongsModal .selection-search {
+    order: -1;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
+    border-bottom: 2px solid var(--border-color);
+    flex: none;
+    width: 100%;
+    background: white;
+    border: 2px solid var(--border-color);
+    border-radius: 10px;
+    padding: 12px 16px;
+    box-shadow: none;
+    position: relative;
+}
+
+#shareSongsModal .selection-search-input {
+    border: none;
+    outline: none;
+    font-size: 1em;
+    width: 100%;
+    background: transparent;
+    padding: 0;
+}
+
+#shareSongsModal .selection-search-input:focus {
+    outline: none;
+}
+
+#shareSongsModal .selection-search:focus-within {
+    border-color: var(--secondary-color);
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
+}
+
+#shareSongsModal .selection-clear-btn {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: transparent;
+    border: none;
+    color: var(--text-light);
+    font-size: 1.2em;
+    cursor: pointer;
+    padding: 0;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Keep all buttons on one line, no horizontal scroll */
+#shareSongsModal .selection-controls {
+    flex-wrap: wrap;
+    gap: 1px;
+    overflow-x: visible;
+    align-items: center;
+}
+
+/* Make all buttons in share songs modal smaller to fit on one line */
+#shareSongsModal .selection-btn {
+    flex-shrink: 0;
+    white-space: nowrap;
+    padding: 0px;
+    font-size: 8px;
+    line-height: 1;
+    height: auto !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Make sort direction button smaller */
+#shareSongsModal .sort-direction-btn {
+    height: auto !important;
+    padding: 0px;
+    font-size: 8px;
+    line-height: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#shareSongsModal .sorting-label {
+    flex-shrink: 0;
+    font-size: 0.75em;
+}
+
+#shareSongsModal .selected-count {
+    flex-shrink: 0;
+    margin-left: auto;
+    white-space: nowrap;
+    font-size: 0.75em;
+}
+
 .selection-sorting {
     display: flex;
     align-items: center;
     gap: 10px;
     flex: 1 1 280px;
     flex-wrap: wrap;
+}
+
+/* Reduce gaps in share songs modal sorting */
+#shareSongsModal .selection-sorting {
+    gap: 6px;
+    flex-shrink: 0;
+}
+
+#shareSongsModal .sorting-options {
+    gap: 4px;
 }
 
 .sorting-label {
@@ -2810,10 +2918,26 @@ td:has(.row-edit-input.input-focused) {
 }
 
 /* Share Songs Modal */
+/* Ensure modal-content has proper height */
+#shareSongsModal .modal-content.modal-large {
+    height: 80vh;
+    min-height: 500px;
+}
+
+/* Ensure modal-body doesn't scroll - only songs-list should scroll */
+#shareSongsModal .modal-body {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-height: 0;
+}
+
 .share-songs-email-section {
-    margin-bottom: 20px;
-    padding-bottom: 20px;
+    margin-bottom: 12px;
+    padding-bottom: 12px;
     border-bottom: 2px solid var(--border-color);
+    flex-shrink: 0;
 }
 
 .share-songs-email-section label {
@@ -2822,6 +2946,42 @@ td:has(.row-edit-input.input-focused) {
     color: var(--text-color);
     font-weight: 500;
     font-size: 0.95em;
+}
+
+/* Ensure songs-selection-container takes available space */
+#shareSongsModal .songs-selection-container {
+    flex: 1 1 auto;
+    min-height: 300px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+}
+
+/* Selection controls should not grow */
+#shareSongsModal .selection-controls {
+    flex-shrink: 0;
+    flex-grow: 0;
+}
+
+/* Songs list should take all remaining space */
+#shareSongsModal .songs-selection-container .songs-list,
+#shareSongsModal #shareSongsListContainer {
+    flex: 1 1 auto;
+    min-height: 200px;
+    max-height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    position: relative;
+}
+
+/* Modal actions should not shrink */
+#shareSongsModal .modal-actions {
+    flex-shrink: 0;
 }
 
 /* Accept Songs Modal - Pending Song Items */
@@ -2877,6 +3037,311 @@ td:has(.row-edit-input.input-focused) {
 .modal-actions .modal-cancel-btn {
     flex: 1;
     min-width: 120px;
+}
+
+/* Share Songs Modal - Mobile Optimizations */
+@media (max-width: 768px) {
+    #shareSongsModal .modal-content {
+        max-height: 95vh;
+        height: 95vh;
+    }
+    
+    #shareSongsModal .modal-header {
+        padding: 10px 12px;
+        flex-shrink: 0;
+    }
+    
+    #shareSongsModal .modal-header h3 {
+        font-size: 1em;
+    }
+    
+    #shareSongsModal .modal-body {
+        padding: 12px;
+        overflow: hidden;
+    }
+    
+    #shareSongsModal .share-songs-email-section {
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+        flex-shrink: 0;
+    }
+    
+    #shareSongsModal .share-songs-email-section label {
+        margin-bottom: 5px;
+        font-size: 0.85em;
+    }
+    
+    #shareSongsModal .share-songs-email-section input {
+        padding: 8px 12px;
+        font-size: 0.9em;
+    }
+    
+    /* Search field above buttons, styled like email field */
+    #shareSongsModal .selection-search {
+        order: -1;
+        margin-bottom: 10px;
+        padding-bottom: 10px;
+        border-bottom: 2px solid var(--border-color);
+        width: 100%;
+        background: white;
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        padding: 10px 14px;
+        box-shadow: none;
+    }
+    
+    #shareSongsModal .selection-search-input {
+        padding: 0;
+        font-size: 0.9em;
+    }
+    
+    #shareSongsModal .selection-controls {
+        margin-bottom: 6px;
+        padding-bottom: 6px;
+        gap: 1px; /* Verkleind */
+        flex-shrink: 0;
+        flex-wrap: wrap;
+        overflow-x: visible;
+    }
+    
+    #shareSongsModal .selection-btn {
+        padding: 0px 2px;
+        font-size: 0.5em;
+        flex-shrink: 0;
+        line-height: 1;
+        height: auto !important;
+    }
+    
+    #shareSongsModal .sort-direction-btn {
+        height: auto !important;
+        padding: 0px 2px;
+        font-size: 0.5em;
+        line-height: 1;
+    }
+    
+#shareSongsModal .selection-sorting {
+    gap: 1px; /* Verkleind */
+    }
+    
+#shareSongsModal .sorting-options {
+    gap: 1px; /* Verkleind */
+    }
+    
+    #shareSongsModal .sorting-label {
+        font-size: 0.7em;
+        flex-shrink: 0;
+    }
+    
+    #shareSongsModal .selection-sorting {
+        gap: 4px;
+        margin-bottom: 0;
+        flex-shrink: 0;
+    }
+    
+    #shareSongsModal .sorting-label {
+        font-size: 0.8em;
+    }
+    
+    #shareSongsModal .selection-btn {
+        padding: 5px 8px;
+        font-size: 0.8em;
+    }
+    
+    #shareSongsModal .selected-count {
+        font-size: 0.8em;
+    }
+    
+    #shareSongsModal .modal-actions {
+        margin-top: 10px;
+        padding-top: 10px;
+        gap: 8px;
+        flex-shrink: 0;
+    }
+    
+    #shareSongsModal .modal-actions button {
+        padding: 8px 12px;
+        font-size: 0.9em;
+    }
+    
+    /* Make song items more compact on mobile */
+    #shareSongsModal .song-item {
+        padding: 6px 8px;
+        gap: 8px;
+    }
+    
+    #shareSongsModal .song-item input[type="checkbox"] {
+        width: 18px;
+        height: 18px;
+    }
+    
+    #shareSongsModal .song-item label {
+        font-size: 0.9em;
+    }
+}
+
+@media (max-width: 480px) {
+    #shareSongsModal .modal-content {
+        max-height: 98vh;
+        height: 98vh;
+        width: 95%;
+    }
+    
+    #shareSongsModal .modal-header {
+        padding: 8px 10px;
+        flex-shrink: 0;
+    }
+    
+    #shareSongsModal .modal-header h3 {
+        font-size: 0.95em;
+    }
+    
+    #shareSongsModal .modal-close {
+        font-size: 1.4em;
+        width: 30px;
+        height: 30px;
+        padding: 0;
+    }
+    
+    #shareSongsModal .modal-body {
+        padding: 10px;
+        overflow: hidden;
+    }
+    
+    #shareSongsModal .share-songs-email-section {
+        margin-bottom: 6px;
+        padding-bottom: 6px;
+        flex-shrink: 0;
+    }
+    
+    #shareSongsModal .share-songs-email-section label {
+        margin-bottom: 4px;
+        font-size: 0.8em;
+    }
+    
+    #shareSongsModal .share-songs-email-section input {
+        padding: 6px 10px;
+        font-size: 0.85em;
+    }
+    
+    /* Search field above buttons, styled like email field */
+    #shareSongsModal .selection-search {
+        order: -1;
+        margin-bottom: 8px;
+        padding-bottom: 8px;
+        border-bottom: 2px solid var(--border-color);
+        width: 100%;
+        background: white;
+        border: 2px solid var(--border-color);
+        border-radius: 10px;
+        padding: 8px 12px;
+        box-shadow: none;
+    }
+    
+    #shareSongsModal .selection-search-input {
+        padding: 0;
+        font-size: 0.85em;
+    }
+    
+    #shareSongsModal .selection-controls {
+        flex-direction: row;
+        align-items: center;
+        margin-bottom: 5px;
+        padding-bottom: 5px;
+        gap: 0px; /* Nog kleiner */
+        flex-shrink: 0;
+        flex-wrap: wrap;
+        overflow-x: visible;
+    }
+    
+    #shareSongsModal .selection-btn {
+        padding: 0px 2px;
+        font-size: 0.5em;
+        flex-shrink: 0;
+        white-space: nowrap;
+        line-height: 1;
+        height: auto !important;
+    }
+    
+    #shareSongsModal .sort-direction-btn {
+        height: auto !important;
+        padding: 0px 2px;
+        font-size: 0.5em;
+        line-height: 1;
+    }
+    
+    #shareSongsModal .sorting-label {
+        font-size: 0.65em;
+        flex-shrink: 0;
+    }
+    
+    #shareSongsModal .selection-sorting {
+        gap: 0px; /* Nog kleiner */
+        flex-shrink: 0;
+        margin-bottom: 0;
+    }
+    
+    #shareSongsModal .sorting-options {
+        gap: 0px; /* Nog kleiner */
+    }
+    
+    #shareSongsModal .selected-count {
+        font-size: 0.65em;
+        margin-left: auto;
+        flex-shrink: 0;
+        white-space: nowrap;
+    }
+    
+    #shareSongsModal .sorting-label {
+        font-size: 0.75em;
+    }
+    
+    #shareSongsModal .selection-btn {
+        padding: 4px 6px;
+        font-size: 0.75em;
+        flex: 1;
+    }
+    
+    #shareSongsModal .selected-count {
+        font-size: 0.75em;
+        text-align: center;
+        width: 100%;
+        margin-top: 3px;
+    }
+    
+    #shareSongsModal .modal-actions {
+        margin-top: 8px;
+        padding-top: 8px;
+        flex-direction: column;
+        gap: 6px;
+        flex-shrink: 0;
+    }
+    
+    #shareSongsModal .modal-actions .modal-submit-btn,
+    #shareSongsModal .modal-actions .modal-cancel-btn {
+        width: 100%;
+        min-width: unset;
+        padding: 8px 12px;
+        font-size: 0.85em;
+    }
+    
+    /* Make song items even more compact on small mobile */
+    #shareSongsModal .song-item {
+        padding: 5px 6px;
+        gap: 6px;
+    }
+    
+    #shareSongsModal .song-item input[type="checkbox"] {
+        width: 16px;
+        height: 16px;
+    }
+    
+    #shareSongsModal .song-item label {
+        font-size: 0.85em;
+    }
+    
+    #shareSongsModal .songs-list {
+        gap: 4px;
+    }
 }
 
 .chord-modal {
