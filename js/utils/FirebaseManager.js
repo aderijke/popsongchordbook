@@ -35,7 +35,12 @@ class FirebaseManager {
             this.initialized = true;
 
             // Initialize App Check (if available and configured)
-            if (typeof firebase.appCheck !== 'undefined' && typeof recaptchaSiteKey !== 'undefined' && recaptchaSiteKey !== 'JOUW_RECAPTCHA_SITE_KEY') {
+            // Skip App Check on localhost as reCAPTCHA domains need to be registered
+            const isLocalhost = window.location.hostname === 'localhost' || 
+                               window.location.hostname === '127.0.0.1' ||
+                               window.location.hostname === '';
+            
+            if (!isLocalhost && typeof firebase.appCheck !== 'undefined' && typeof recaptchaSiteKey !== 'undefined' && recaptchaSiteKey !== 'JOUW_RECAPTCHA_SITE_KEY') {
                 try {
                     const appCheck = firebase.appCheck();
                     // Activate App Check with reCAPTCHA v3
@@ -47,7 +52,9 @@ class FirebaseManager {
                     // Don't fail Firebase initialization if App Check fails
                 }
             } else {
-                if (typeof firebase.appCheck === 'undefined') {
+                if (isLocalhost) {
+                    console.log('App Check skipped on localhost (reCAPTCHA requires registered domains)');
+                } else if (typeof firebase.appCheck === 'undefined') {
                     console.warn('Firebase App Check SDK not loaded. Make sure firebase-app-check-compat.js is included.');
                 } else if (typeof recaptchaSiteKey === 'undefined' || recaptchaSiteKey === 'JOUW_RECAPTCHA_SITE_KEY') {
                     console.warn('reCAPTCHA site key not configured. App Check will not be active.');
