@@ -3315,9 +3315,9 @@ td:has(.row-edit-input.input-focused) {
     flex: 1 1 auto;
     color: white;
     display: flex;
-    align-items: center;
-    gap: 10px;
-    flex-wrap: nowrap !important;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
     min-width: 0;
     overflow: hidden;
 }
@@ -3863,10 +3863,9 @@ td:has(.row-edit-input.input-focused) {
     }
     
     .song-detail-title-section {
-        gap: 8px;
-        flex-direction: row;
-        align-items: baseline;
-        flex-wrap: nowrap !important;
+        gap: 4px;
+        flex-direction: column;
+        align-items: flex-start;
     }
     
     .song-detail-separator {
@@ -3943,8 +3942,9 @@ td:has(.row-edit-input.input-focused) {
         padding-bottom: 8px;
         border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         display: flex;
+        flex-direction: column;
         align-items: center;
-        gap: 8px;
+        gap: 4px;
     }
 
     .song-detail-artist {

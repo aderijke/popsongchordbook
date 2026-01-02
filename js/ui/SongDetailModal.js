@@ -21,6 +21,8 @@ class SongDetailModal {
         this.youtubeBtn = document.getElementById('songDetailYouTubeBtn');
         this.youtubePlayBtn = document.getElementById('songDetailYouTubePlayBtn');
         this.externalUrlBtn = document.getElementById('songDetailExternalUrlBtn');
+        this.transposeUpBtn = document.getElementById('songDetailTransposeUp');
+        this.transposeDownBtn = document.getElementById('songDetailTransposeDown');
         this.youtubeUrlModal = document.getElementById('youtubeUrlModal');
         this.songKeyInput = document.getElementById('songKeyInput');
         this.youtubeUrlInput = document.getElementById('youtubeUrlInput');
@@ -101,7 +103,7 @@ class SongDetailModal {
         
         if (this.saveBtn) {
             this.saveBtn.addEventListener('click', async () => {
-                await this.saveChanges(true);
+                await this.saveChanges(false);
             });
         }
         
@@ -135,6 +137,21 @@ class SongDetailModal {
             this.externalUrlBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 this.openExternalUrl();
+            });
+        }
+        
+        // Setup Transpose buttons
+        if (this.transposeUpBtn) {
+            this.transposeUpBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.transposeChords(1);
+            });
+        }
+        
+        if (this.transposeDownBtn) {
+            this.transposeDownBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                this.transposeChords(-1);
             });
         }
         
@@ -1331,6 +1348,131 @@ class SongDetailModal {
                 url = 'https://' + url;
             }
             window.open(url, '_blank');
+        }
+    }
+
+    transposeChords(semitones) {
+        if (!this.currentSongId) return;
+        
+        // Mapping van noten naar semitones en terug
+        const noteToSemitone = {
+            'C': 0, 'C#': 1, 'Db': 1,
+            'D': 2, 'D#': 3, 'Eb': 3,
+            'E': 4, 'Fb': 4,
+            'F': 5, 'F#': 6, 'Gb': 6,
+            'G': 7, 'G#': 8, 'Ab': 8,
+            'A': 9, 'A#': 10, 'Bb': 10,
+            'B': 11, 'Cb': 11
+        };
+        
+        const semitoneToNote = {
+            0: ['C'],
+            1: ['C#', 'Db'],
+            2: ['D'],
+            3: ['D#', 'Eb'],
+            4: ['E'],
+            5: ['F'],
+            6: ['F#', 'Gb'],
+            7: ['G'],
+            8: ['G#', 'Ab'],
+            9: ['A'],
+            10: ['A#', 'Bb'],
+            11: ['B']
+        };
+        
+        // Functie om een enkel akkoord te transponeeren
+        const transposeSingleChord = (chord) => {
+            if (!chord || typeof chord !== 'string') return chord;
+            
+            // Match root note (met optionele sharp/flat)
+            const rootMatch = chord.match(/^([A-Ga-g])([#b]?)/);
+            if (!rootMatch) return chord;
+            
+            const rootNote = rootMatch[1].toUpperCase();
+            const accidental = rootMatch[2];
+            const rootKey = rootNote + accidental;
+            
+            const rootSemitone = noteToSemitone[rootKey];
+            if (rootSemitone === undefined) return chord;
+            
+            // Bereken nieuwe semitone
+            let newSemitone = (rootSemitone + semitones + 12) % 12;
+            
+            // Kies de notenaam (voorkeur voor dezelfde accidental als origineel, anders de eerste optie)
+            const newNoteOptions = semitoneToNote[newSemitone];
+            let newNote;
+            if (accidental === '#' && newNoteOptions.includes(rootNote + '#')) {
+                newNote = rootNote + '#';
+            } else if (accidental === 'b' && newNoteOptions.includes(rootNote + 'b')) {
+                newNote = rootNote + 'b';
+            } else {
+                // Gebruik de eerste optie, maar probeer consistent te blijven
+                newNote = newNoteOptions[0];
+            }
+            
+            // Vervang de root note in het akkoord
+            const suffix = chord.slice(rootMatch[0].length);
+            return newNote + suffix;
+        };
+        
+        // Functie om een hele chord string te transponeeren
+        const transposeChordString = (chordString) => {
+            if (!chordString || typeof chordString !== 'string') return chordString;
+            
+            // Pattern om akkoorden te vinden (inclusief accidentals en suffixes)
+            const chordPattern = /([A-Ga-g][#b]?(?:m|min|maj|dim|aug|sus|add)?[0-9]?(?:sus[24]?|add[29]|maj[79]?|min[79]?|dim[79]?|aug)?[0-9]?(?:\/[A-Ga-g][#b]?)?)/g;
+            
+            return chordString.replace(chordPattern, (match) => {
+                // Voor slash chords (bijv. C/G), transponeer beide delen
+                if (match.includes('/')) {
+                    const parts = match.split('/');
+                    const root = transposeSingleChord(parts[0]);
+                    const bass = transposeSingleChord(parts[1]);
+                    return root + '/' + bass;
+                } else {
+                    return transposeSingleChord(match);
+                }
+            });
+        };
+        
+        // Transponeer alle secties
+        const sectionsToTranspose = ['verse', 'chorus', 'preChorus', 'bridge'];
+        let hasChanges = false;
+        
+        sectionsToTranspose.forEach(sectionKey => {
+            const section = this.sections[sectionKey];
+            if (section && section.content) {
+                const currentText = section.content.textContent || '';
+                if (currentText.trim()) {
+                    const transposedText = transposeChordString(currentText);
+                    if (transposedText !== currentText) {
+                        section.content.textContent = transposedText;
+                        hasChanges = true;
+                    }
+                }
+            }
+        });
+        
+        // Transponeer ook de toonsoort (key) als die bestaat
+        const song = this.songManager.getSongById(this.currentSongId);
+        if (song && song.key && song.key.trim()) {
+            const transposedKey = transposeSingleChord(song.key.trim());
+            if (transposedKey !== song.key.trim()) {
+                // Update de key in de song (direct opslaan omdat key een metadata veld is)
+                this.songManager.updateSong(this.currentSongId, { key: transposedKey });
+                // Update de key display
+                this.updateTitleWithKey();
+                // Update originalSongData zodat change tracking correct blijft
+                if (this.originalSongData) {
+                    this.originalSongData.key = transposedKey;
+                }
+                hasChanges = true;
+            }
+        }
+        
+        if (hasChanges) {
+            // Markeer als gewijzigd
+            this.checkForChanges();
         }
     }
 

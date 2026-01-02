@@ -185,7 +185,7 @@ class PianoAudioPlayer {
                     try { g.disconnect(); } catch (e) {}
                 });
                 try { note.noteGain.disconnect(); } catch (e) {}
-                this.activeNotes.delete(noteId);
+            this.activeNotes.delete(noteId);
             }
         }, Math.max(0, cleanupTime));
     }
@@ -246,8 +246,8 @@ class PianoAudioPlayer {
         // Play each note with a slight stagger (like a human strumming)
         // Using Web Audio timing instead of setTimeout for better performance and precision
         sortedNotes.forEach((semitone, index) => {
-            // Vary velocity slightly for more natural sound
-            const noteVelocity = velocity * (0.9 + Math.random() * 0.2);
+                // Vary velocity slightly for more natural sound
+                const noteVelocity = velocity * (0.9 + Math.random() * 0.2);
             const startTime = now + (index * stagger);
             this.playNote(semitone, duration, noteVelocity, startTime);
         });
