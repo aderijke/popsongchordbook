@@ -306,7 +306,11 @@
         <div class="modal-content modal-large">
             <div class="modal-header">
                 <h3>Share Songs</h3>
-                <button class="modal-close" id="shareSongsModalClose">&times;</button>
+                <div class="modal-header-actions">
+                    <button id="shareSelectedSongsBtn" class="modal-header-btn share-btn">Share...</button>
+                    <button id="cancelShareSongsBtn" class="modal-header-btn cancel-btn">Cancel</button>
+                    <button class="modal-close" id="shareSongsModalClose">&times;</button>
+                </div>
             </div>
             <div class="modal-body">
                 <div class="share-songs-email-section">
@@ -335,10 +339,6 @@
                     <div class="songs-list" id="shareSongsListContainer">
                         <!-- Songs will be dynamically inserted here -->
                     </div>
-                </div>
-                <div class="modal-actions">
-                    <button id="shareSelectedSongsBtn" class="modal-submit-btn">Share selected songs</button>
-                    <button id="cancelShareSongsBtn" class="modal-cancel-btn">Cancel</button>
                 </div>
             </div>
         </div>

@@ -184,7 +184,7 @@ class ShareSongsModal {
         if (!this.songsContainer) return;
 
         const allSongs = this.songManager.getAllSongs();
-        
+
         // Filter by search term
         let filteredSongs = allSongs;
         if (this.searchTerm && this.searchTerm.trim() !== '') {
@@ -200,7 +200,7 @@ class ShareSongsModal {
         filteredSongs.sort((a, b) => {
             let aValue = a[this.sortField] || '';
             let bValue = b[this.sortField] || '';
-            
+
             if (typeof aValue === 'string') {
                 aValue = aValue.toLowerCase();
             }
@@ -319,12 +319,12 @@ class ShareSongsModal {
         try {
             // Find recipient user
             const recipientUserId = await this.firebaseManager.getUserByEmail(email);
-            
+
             if (!recipientUserId) {
                 this.showError('Geen gebruiker gevonden met dit e-mailadres. De gebruiker moet eerst een keer inloggen om gevonden te kunnen worden.');
                 if (this.shareBtn) {
                     this.shareBtn.disabled = false;
-                    this.shareBtn.textContent = 'Share selected songs';
+                    this.shareBtn.textContent = 'Share...';
                 }
                 return;
             }
@@ -335,13 +335,13 @@ class ShareSongsModal {
                 this.showError('Je bent niet ingelogd.');
                 if (this.shareBtn) {
                     this.shareBtn.disabled = false;
-                    this.shareBtn.textContent = 'Share selected songs';
+                    this.shareBtn.textContent = 'Share...';
                 }
                 return;
             }
 
             // Get selected songs
-            const songsToShare = this.songManager.getAllSongs().filter(song => 
+            const songsToShare = this.songManager.getAllSongs().filter(song =>
                 selectedIds.includes(song.id)
             );
 
@@ -349,7 +349,7 @@ class ShareSongsModal {
                 this.showError('Geen songs gevonden om te delen.');
                 if (this.shareBtn) {
                     this.shareBtn.disabled = false;
-                    this.shareBtn.textContent = 'Share selected songs';
+                    this.shareBtn.textContent = 'Share...';
                 }
                 return;
             }
@@ -377,7 +377,7 @@ class ShareSongsModal {
         } finally {
             if (this.shareBtn) {
                 this.shareBtn.disabled = false;
-                this.shareBtn.textContent = 'Share selected songs';
+                this.shareBtn.textContent = 'Share...';
             }
         }
     }

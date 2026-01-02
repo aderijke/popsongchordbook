@@ -264,7 +264,8 @@ header h1 {
 
 /* When header bar is collapsed, make title smaller and hide subtitle */
 .header-top.header-bar-collapsed {
-    margin-bottom: 5px; /* Reduce space between title and table */
+    margin-bottom: 5px;
+    /* Reduce space between title and table */
 }
 
 .header-top.header-bar-collapsed h1 {
@@ -307,9 +308,11 @@ header h1 {
 }
 
 /* Remove gap between filters-section and right-section when on same line */
-.header-bar > .filters-section + .right-section {
-    margin-left: -15px; /* Negative margin to remove gap from header-bar gap */
-    padding-left: 0; /* Remove any padding */
+.header-bar>.filters-section+.right-section {
+    margin-left: -15px;
+    /* Negative margin to remove gap from header-bar gap */
+    padding-left: 0;
+    /* Remove any padding */
 }
 
 /* On smaller screens, allow wrapping */
@@ -318,14 +321,14 @@ header h1 {
         flex-wrap: wrap;
         align-items: flex-start;
     }
-    
-    .header-bar > .filters-section + .right-section {
+
+    .header-bar>.filters-section+.right-section {
         margin-left: 0;
         width: 100%;
         margin-top: 10px;
         padding-left: 0;
     }
-    
+
     /* Ensure setlist-group aligns properly when wrapped */
     .right-section .setlist-group {
         margin-left: 0;
@@ -414,7 +417,8 @@ header h1 {
     align-items: center;
     gap: 12px;
     min-width: 0;
-    margin-right: 0; /* Remove margin after filters section */
+    margin-right: 0;
+    /* Remove margin after filters section */
     overflow: hidden;
 }
 
@@ -429,7 +433,8 @@ header h1 {
 .search-section-container {
     flex: 1 1 0;
     min-width: 80px;
-    margin-right: 0; /* Remove margin after search field */
+    margin-right: 0;
+    /* Remove margin after search field */
     overflow: hidden;
 }
 
@@ -879,7 +884,8 @@ header h1 {
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-    min-height: 200px; /* Ensure minimum height to prevent empty appearance */
+    min-height: 200px;
+    /* Ensure minimum height to prevent empty appearance */
 }
 
 .focused-table {
@@ -965,12 +971,12 @@ header h1 {
         padding: 15px 20px;
         margin-bottom: 15px;
     }
-    
+
     .selected-song-info {
         font-size: 1.1em;
         gap: 8px;
     }
-    
+
     .deselect-btn {
         width: 35px;
         height: 35px;
@@ -1041,8 +1047,10 @@ header h1 {
     max-width: 100%;
     -webkit-overflow-scrolling: touch;
     /* Hide scrollbar but keep scrolling functionality */
-    scrollbar-width: none; /* Firefox */
-    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* IE and Edge */
     /* Prevent horizontal wobbling on iPad */
     overscroll-behavior-x: none;
     overscroll-behavior-y: auto;
@@ -1062,7 +1070,8 @@ table {
     border-collapse: separate;
     border-spacing: 0;
     table-layout: auto;
-    min-width: 800px; /* Reduced minimum width for better tablet fit */
+    min-width: 800px;
+    /* Reduced minimum width for better tablet fit */
 }
 
 /* Simple view - only show Artist and Title columns */
@@ -1583,7 +1592,8 @@ td:has(.row-edit-input.input-focused) {
     z-index: 10000;
     transition: all 0.3s ease;
     overflow: hidden;
-    touch-action: none; /* Prevent default touch behavior for dragging */
+    touch-action: none;
+    /* Prevent default touch behavior for dragging */
 }
 
 .youtube-mini-player.hidden {
@@ -1663,7 +1673,8 @@ td:has(.row-edit-input.input-focused) {
 .youtube-player-container {
     position: relative;
     width: 100%;
-    padding-bottom: 56.25%; /* 16:9 aspect ratio */
+    padding-bottom: 56.25%;
+    /* 16:9 aspect ratio */
     height: 0;
     overflow: hidden;
 }
@@ -1755,15 +1766,15 @@ td:has(.row-edit-input.input-focused) {
     .container {
         padding: 15px 10px;
     }
-    
+
     header {
         margin-bottom: 10px;
     }
-    
+
     header::before {
         display: none;
     }
-    
+
     .header-top {
         flex-direction: column;
         align-items: center;
@@ -1771,7 +1782,7 @@ td:has(.row-edit-input.input-focused) {
         position: relative;
         padding-top: 10px;
     }
-    
+
     .header-top-actions {
         position: absolute;
         right: 0;
@@ -1780,24 +1791,25 @@ td:has(.row-edit-input.input-focused) {
     }
 
     .header-title-group {
-        padding: 0 45px; /* Voorkom overlap met knoppen rechtsboven */
+        padding: 0 45px;
+        /* Voorkom overlap met knoppen rechtsboven */
     }
-    
+
     header h1 {
         font-size: 1.5em;
         text-align: center;
     }
-    
+
     .header-subtitle {
         font-size: 0.8em;
     }
-    
+
     .search-section {
         max-width: 100%;
         margin-left: 0;
         width: 100%;
     }
-    
+
     .header-bar {
         flex-direction: column;
         align-items: stretch;
@@ -1805,23 +1817,23 @@ td:has(.row-edit-input.input-focused) {
         padding: 10px 15px;
         overflow: visible;
     }
-    
+
     .header-section {
         width: 100%;
         justify-content: flex-start;
         flex-wrap: wrap;
         overflow: visible;
     }
-    
+
     .header-section:not(:last-child)::after {
         display: none;
     }
-    
+
     .header-section:not(:last-child) {
         border-bottom: 1px solid var(--border-color);
         padding-bottom: 10px;
     }
-    
+
     .filters-section,
     .right-section {
         width: 100%;
@@ -1831,36 +1843,36 @@ td:has(.row-edit-input.input-focused) {
         gap: 8px;
         overflow: visible;
     }
-    
+
     .search-section-container {
         flex: 1 1 auto;
         min-width: 80px;
         max-width: 100%;
     }
-    
+
     .section-label {
         width: auto;
         margin-bottom: 0;
         font-size: 0.8em;
         flex-shrink: 0;
     }
-    
+
     .filter-buttons {
         width: auto;
         flex-wrap: wrap;
         flex-shrink: 1;
     }
-    
+
     .setlist-controls {
         flex: 1 1 auto;
         flex-wrap: wrap;
     }
-    
+
     .filter-btn {
         padding: 6px 10px;
         font-size: 0.8em;
     }
-    
+
     .setlist-group,
     .actions-group {
         width: 100%;
@@ -1869,7 +1881,7 @@ td:has(.row-edit-input.input-focused) {
         align-items: center;
         gap: 8px;
     }
-    
+
     .setlist-select {
         flex: 1;
         min-width: 0;
@@ -1877,81 +1889,82 @@ td:has(.row-edit-input.input-focused) {
         height: 36px;
         font-size: 0.85em;
     }
-    
+
     .actions-group {
         flex-direction: row;
         justify-content: stretch;
     }
-    
+
     .add-song-btn {
         flex-shrink: 1;
         min-width: 0;
         height: 36px;
     }
-    
+
     .add-song-btn.with-label {
         min-width: 45px;
         max-width: 45px;
         padding: 5px 7px;
     }
-    
+
     .actions-group {
         gap: clamp(5px, 1.5vw, 10px);
         flex-wrap: nowrap;
     }
-    
+
     .import-export-controls {
         flex: 0 0 auto;
         flex-wrap: nowrap;
         gap: clamp(5px, 1.5vw, 10px);
     }
-    
+
     .import-export-btn {
         height: 36px;
         min-width: 36px;
         flex-shrink: 1;
     }
-    
+
     .import-export-btn.with-label {
         min-width: 45px;
         max-width: 45px;
         padding: 5px 7px;
     }
-    
+
     .table-wrapper {
         border-radius: 10px;
     }
-    
+
     table {
         font-size: 0.85em;
         min-width: 100%;
         table-layout: fixed;
     }
-    
-    th, td {
+
+    th,
+    td {
         padding: 8px 6px;
     }
-    
+
     th {
         font-size: 0.7em;
         padding: 10px 6px;
     }
-    
+
     td {
         font-size: 0.75em;
     }
-    
+
     /* Adjust column min-widths for mobile */
     th:first-child,
     td:first-child {
         min-width: 0;
     }
-    
+
     th:nth-child(2),
     td:nth-child(2) {
         min-width: 0;
     }
-    
+
     th:nth-child(4),
     td:nth-child(4),
     th:nth-child(5),
@@ -1962,12 +1975,12 @@ td:has(.row-edit-input.input-focused) {
     td:nth-child(7) {
         min-width: 0;
     }
-    
+
     .delete-btn {
         padding: 4px 8px;
         font-size: 0.7em;
     }
-    
+
 }
 
 @media (min-width: 769px) {
@@ -1976,25 +1989,25 @@ td:has(.row-edit-input.input-focused) {
         align-items: center;
         justify-content: center;
     }
-    
+
     header h1 {
         text-align: center;
     }
-    
+
     .header-bar {
         flex-direction: row;
         align-items: center;
     }
-    
+
     .header-section:not(:last-child)::after {
         display: block;
     }
-    
+
     .setlist-section {
         flex: 1;
         justify-content: center;
     }
-    
+
     .actions-section {
         justify-content: flex-end;
     }
@@ -2004,32 +2017,32 @@ td:has(.row-edit-input.input-focused) {
     .container {
         padding: 10px 8px;
     }
-    
+
     header {
         margin-bottom: 8px;
     }
-    
+
     header h1 {
         font-size: 1.3em;
     }
-    
+
     .profile-btn .label {
         display: none;
     }
-    
+
     .profile-btn {
         padding: 6px 10px;
     }
-    
+
     .header-subtitle {
         font-size: 0.75em;
     }
-    
+
     .header-bar {
         padding: 8px 12px;
         gap: 8px;
     }
-    
+
     .add-song-btn {
         padding: 6px 8px;
         font-size: 0.85em;
@@ -2037,46 +2050,47 @@ td:has(.row-edit-input.input-focused) {
         flex-shrink: 1;
         min-width: 0;
     }
-    
+
     .add-song-btn.with-label {
         min-width: 42px;
         max-width: 42px;
         padding: 4px 6px;
     }
-    
+
     .actions-group {
         gap: clamp(4px, 1.5vw, 8px);
         flex-wrap: nowrap;
     }
-    
+
     .import-export-btn.with-label {
         min-width: 42px;
         max-width: 42px;
         padding: 4px 6px;
     }
-    
+
     .table-wrapper {
         border-radius: 8px;
     }
-    
+
     table {
         font-size: 0.75em;
     }
-    
-    th, td {
+
+    th,
+    td {
         padding: 6px 4px;
     }
-    
+
     th {
         font-size: 0.65em;
         padding: 8px 4px;
     }
-    
+
     .delete-btn {
         padding: 3px 6px;
         font-size: 0.65em;
     }
-    
+
 }
 
 /* Chord Selection Modal */
@@ -2147,6 +2161,47 @@ td:has(.row-edit-input.input-focused) {
     font-weight: 700;
 }
 
+/* Modal header actions container for buttons next to close button */
+.modal-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* Header action buttons */
+.modal-header-btn {
+    padding: 6px 12px;
+    border-radius: 6px;
+    font-size: 0.85em;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    white-space: nowrap;
+}
+
+.modal-header-btn.share-btn {
+    background: var(--bg-gradient);
+    color: white;
+    border: none;
+}
+
+.modal-header-btn.share-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 8px rgba(99, 102, 241, 0.3);
+}
+
+.modal-header-btn.cancel-btn {
+    background: rgba(107, 114, 128, 0.1);
+    color: var(--text-color);
+    border: 1px solid rgba(107, 114, 128, 0.3);
+}
+
+.modal-header-btn.cancel-btn:hover {
+    background: rgba(107, 114, 128, 0.15);
+    border-color: rgba(107, 114, 128, 0.5);
+}
+
 .modal-close {
     background: transparent;
     border: none;
@@ -2207,11 +2262,11 @@ td:has(.row-edit-input.input-focused) {
     #profileModal .modal-content {
         max-height: 95vh;
     }
-    
+
     #profileModal .modal-body {
         padding: 15px 20px;
     }
-    
+
     .profile-info-section,
     .profile-password-section,
     .profile-actions-section {
@@ -2219,7 +2274,7 @@ td:has(.row-edit-input.input-focused) {
         padding-bottom: 15px;
         padding-top: 15px;
     }
-    
+
     .auth-form-group {
         margin-bottom: 15px;
     }
@@ -2231,15 +2286,15 @@ td:has(.row-edit-input.input-focused) {
         max-width: 95vw;
         border-radius: 15px;
     }
-    
+
     #profileModal .modal-header {
         padding: 15px 20px;
     }
-    
+
     #profileModal .modal-body {
         padding: 15px 20px;
     }
-    
+
     .profile-info-section,
     .profile-password-section,
     .profile-actions-section {
@@ -2695,23 +2750,24 @@ td:has(.row-edit-input.input-focused) {
     justify-content: center;
 }
 
-/* Keep all buttons on one line, no horizontal scroll */
+/* Selection controls - allow wrapping to keep buttons visible */
 #shareSongsModal .selection-controls {
     flex-wrap: wrap;
-    gap: 1px;
+    gap: 4px;
     overflow-x: visible;
     align-items: center;
+    justify-content: flex-start;
 }
 
-/* Make all buttons in share songs modal smaller to fit on one line */
+/* Make all buttons in share songs modal smaller to fit */
 #shareSongsModal .selection-btn {
     flex-shrink: 0;
     white-space: nowrap;
-    padding: 0px;
-    font-size: 8px;
-    line-height: 1;
+    padding: 4px 8px;
+    font-size: 0.75em;
+    line-height: 1.2;
     height: auto !important;
-    display: flex;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
 }
@@ -2719,12 +2775,13 @@ td:has(.row-edit-input.input-focused) {
 /* Make sort direction button smaller */
 #shareSongsModal .sort-direction-btn {
     height: auto !important;
-    padding: 0px;
-    font-size: 8px;
-    line-height: 1;
-    display: flex;
+    padding: 4px 8px;
+    font-size: 0.75em;
+    line-height: 1.2;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 #shareSongsModal .sorting-label {
@@ -2734,7 +2791,6 @@ td:has(.row-edit-input.input-focused) {
 
 #shareSongsModal .selected-count {
     flex-shrink: 0;
-    margin-left: auto;
     white-space: nowrap;
     font-size: 0.75em;
 }
@@ -2747,14 +2803,18 @@ td:has(.row-edit-input.input-focused) {
     flex-wrap: wrap;
 }
 
-/* Reduce gaps in share songs modal sorting */
+/* Reduce gaps in share songs modal sorting - prevent growing */
 #shareSongsModal .selection-sorting {
-    gap: 6px;
+    gap: 4px;
     flex-shrink: 0;
+    flex-grow: 0;
+    flex-basis: auto;
+    flex-wrap: nowrap;
 }
 
 #shareSongsModal .sorting-options {
-    gap: 4px;
+    gap: 3px;
+    flex-wrap: nowrap;
 }
 
 .sorting-label {
@@ -2979,10 +3039,7 @@ td:has(.row-edit-input.input-focused) {
     position: relative;
 }
 
-/* Modal actions should not shrink */
-#shareSongsModal .modal-actions {
-    flex-shrink: 0;
-}
+/* Note: Share/Cancel buttons are now in the modal header */
 
 /* Accept Songs Modal - Pending Song Items */
 .pending-song-item {
@@ -3045,37 +3102,37 @@ td:has(.row-edit-input.input-focused) {
         max-height: 95vh;
         height: 95vh;
     }
-    
+
     #shareSongsModal .modal-header {
         padding: 10px 12px;
         flex-shrink: 0;
     }
-    
+
     #shareSongsModal .modal-header h3 {
         font-size: 1em;
     }
-    
+
     #shareSongsModal .modal-body {
         padding: 12px;
         overflow: hidden;
     }
-    
+
     #shareSongsModal .share-songs-email-section {
         margin-bottom: 8px;
         padding-bottom: 8px;
         flex-shrink: 0;
     }
-    
+
     #shareSongsModal .share-songs-email-section label {
         margin-bottom: 5px;
         font-size: 0.85em;
     }
-    
+
     #shareSongsModal .share-songs-email-section input {
         padding: 8px 12px;
         font-size: 0.9em;
     }
-    
+
     /* Search field above buttons, styled like email field */
     #shareSongsModal .selection-search {
         order: -1;
@@ -3089,91 +3146,82 @@ td:has(.row-edit-input.input-focused) {
         padding: 10px 14px;
         box-shadow: none;
     }
-    
+
     #shareSongsModal .selection-search-input {
         padding: 0;
         font-size: 0.9em;
     }
-    
+
     #shareSongsModal .selection-controls {
         margin-bottom: 6px;
         padding-bottom: 6px;
-        gap: 1px; /* Verkleind */
+        gap: 3px;
         flex-shrink: 0;
         flex-wrap: wrap;
         overflow-x: visible;
     }
-    
+
     #shareSongsModal .selection-btn {
-        padding: 0px 2px;
-        font-size: 0.5em;
-        flex-shrink: 0;
-        line-height: 1;
-        height: auto !important;
-    }
-    
-    #shareSongsModal .sort-direction-btn {
-        height: auto !important;
-        padding: 0px 2px;
-        font-size: 0.5em;
-        line-height: 1;
-    }
-    
-#shareSongsModal .selection-sorting {
-    gap: 1px; /* Verkleind */
-    }
-    
-#shareSongsModal .sorting-options {
-    gap: 1px; /* Verkleind */
-    }
-    
-    #shareSongsModal .sorting-label {
+        padding: 3px 6px;
         font-size: 0.7em;
         flex-shrink: 0;
+        line-height: 1.2;
+        height: auto !important;
     }
-    
+
+    #shareSongsModal .sort-direction-btn {
+        height: auto !important;
+        padding: 3px 6px;
+        font-size: 0.7em;
+        line-height: 1.2;
+        flex-shrink: 0;
+    }
+
     #shareSongsModal .selection-sorting {
-        gap: 4px;
+        gap: 3px;
         margin-bottom: 0;
         flex-shrink: 0;
+        flex-grow: 0;
+        flex-basis: auto;
+        flex-wrap: nowrap;
     }
-    
+
+    #shareSongsModal .sorting-options {
+        gap: 2px;
+        flex-wrap: nowrap;
+    }
+
     #shareSongsModal .sorting-label {
-        font-size: 0.8em;
-    }
-    
-    #shareSongsModal .selection-btn {
-        padding: 5px 8px;
-        font-size: 0.8em;
-    }
-    
-    #shareSongsModal .selected-count {
-        font-size: 0.8em;
-    }
-    
-    #shareSongsModal .modal-actions {
-        margin-top: 10px;
-        padding-top: 10px;
-        gap: 8px;
+        font-size: 0.65em;
         flex-shrink: 0;
     }
-    
-    #shareSongsModal .modal-actions button {
-        padding: 8px 12px;
-        font-size: 0.9em;
+
+    #shareSongsModal .selected-count {
+        font-size: 0.65em;
+        flex-shrink: 0;
     }
-    
+
+    /* Header buttons responsive - 768px */
+    #shareSongsModal .modal-header-actions {
+        gap: 6px;
+    }
+
+    #shareSongsModal .modal-header-btn {
+        padding: 5px 10px;
+        font-size: 0.8em;
+    }
+
     /* Make song items more compact on mobile */
     #shareSongsModal .song-item {
         padding: 6px 8px;
         gap: 8px;
     }
-    
+
     #shareSongsModal .song-item input[type="checkbox"] {
         width: 18px;
         height: 18px;
     }
-    
+
     #shareSongsModal .song-item label {
         font-size: 0.9em;
     }
@@ -3185,44 +3233,44 @@ td:has(.row-edit-input.input-focused) {
         height: 98vh;
         width: 95%;
     }
-    
+
     #shareSongsModal .modal-header {
         padding: 8px 10px;
         flex-shrink: 0;
     }
-    
+
     #shareSongsModal .modal-header h3 {
         font-size: 0.95em;
     }
-    
+
     #shareSongsModal .modal-close {
         font-size: 1.4em;
         width: 30px;
         height: 30px;
         padding: 0;
     }
-    
+
     #shareSongsModal .modal-body {
         padding: 10px;
         overflow: hidden;
     }
-    
+
     #shareSongsModal .share-songs-email-section {
         margin-bottom: 6px;
         padding-bottom: 6px;
         flex-shrink: 0;
     }
-    
+
     #shareSongsModal .share-songs-email-section label {
         margin-bottom: 4px;
         font-size: 0.8em;
     }
-    
+
     #shareSongsModal .share-songs-email-section input {
         padding: 6px 10px;
         font-size: 0.85em;
     }
-    
+
     /* Search field above buttons, styled like email field */
     #shareSongsModal .selection-search {
         order: -1;
@@ -3236,109 +3284,90 @@ td:has(.row-edit-input.input-focused) {
         padding: 8px 12px;
         box-shadow: none;
     }
-    
+
     #shareSongsModal .selection-search-input {
         padding: 0;
         font-size: 0.85em;
     }
-    
+
     #shareSongsModal .selection-controls {
         flex-direction: row;
         align-items: center;
         margin-bottom: 5px;
         padding-bottom: 5px;
-        gap: 0px; /* Nog kleiner */
+        gap: 2px;
         flex-shrink: 0;
         flex-wrap: wrap;
         overflow-x: visible;
     }
-    
+
     #shareSongsModal .selection-btn {
-        padding: 0px 2px;
-        font-size: 0.5em;
+        padding: 2px 4px;
+        font-size: 0.6em;
         flex-shrink: 0;
         white-space: nowrap;
-        line-height: 1;
+        line-height: 1.2;
         height: auto !important;
     }
-    
+
     #shareSongsModal .sort-direction-btn {
         height: auto !important;
-        padding: 0px 2px;
-        font-size: 0.5em;
-        line-height: 1;
+        padding: 2px 4px;
+        font-size: 0.6em;
+        line-height: 1.2;
+        flex-shrink: 0;
     }
-    
+
     #shareSongsModal .sorting-label {
-        font-size: 0.65em;
+        font-size: 0.55em;
         flex-shrink: 0;
     }
-    
+
     #shareSongsModal .selection-sorting {
-        gap: 0px; /* Nog kleiner */
+        gap: 2px;
         flex-shrink: 0;
+        flex-grow: 0;
+        flex-basis: auto;
         margin-bottom: 0;
+        flex-wrap: nowrap;
     }
-    
+
     #shareSongsModal .sorting-options {
-        gap: 0px; /* Nog kleiner */
+        gap: 1px;
+        flex-wrap: nowrap;
     }
-    
+
     #shareSongsModal .selected-count {
-        font-size: 0.65em;
-        margin-left: auto;
+        font-size: 0.55em;
         flex-shrink: 0;
         white-space: nowrap;
     }
-    
-    #shareSongsModal .sorting-label {
-        font-size: 0.75em;
+
+    /* Header buttons responsive - 480px */
+    #shareSongsModal .modal-header-actions {
+        gap: 4px;
     }
-    
-    #shareSongsModal .selection-btn {
-        padding: 4px 6px;
-        font-size: 0.75em;
-        flex: 1;
+
+    #shareSongsModal .modal-header-btn {
+        padding: 4px 8px;
+        font-size: 0.7em;
     }
-    
-    #shareSongsModal .selected-count {
-        font-size: 0.75em;
-        text-align: center;
-        width: 100%;
-        margin-top: 3px;
-    }
-    
-    #shareSongsModal .modal-actions {
-        margin-top: 8px;
-        padding-top: 8px;
-        flex-direction: column;
-        gap: 6px;
-        flex-shrink: 0;
-    }
-    
-    #shareSongsModal .modal-actions .modal-submit-btn,
-    #shareSongsModal .modal-actions .modal-cancel-btn {
-        width: 100%;
-        min-width: unset;
-        padding: 8px 12px;
-        font-size: 0.85em;
-    }
-    
+
     /* Make song items even more compact on small mobile */
     #shareSongsModal .song-item {
         padding: 5px 6px;
         gap: 6px;
     }
-    
+
     #shareSongsModal .song-item input[type="checkbox"] {
         width: 16px;
         height: 16px;
     }
-    
+
     #shareSongsModal .song-item label {
         font-size: 0.85em;
     }
-    
+
     #shareSongsModal .songs-list {
         gap: 4px;
     }
@@ -3367,6 +3396,7 @@ td:has(.row-edit-input.input-focused) {
     from {
         opacity: 0;
     }
+
     to {
         opacity: 1;
     }
@@ -3391,6 +3421,7 @@ td:has(.row-edit-input.input-focused) {
         transform: translateY(50px);
         opacity: 0;
     }
+
     to {
         transform: translateY(0);
         opacity: 1;
@@ -3607,44 +3638,44 @@ td:has(.row-edit-input.input-focused) {
     .container {
         padding: 15px;
     }
-    
+
     header {
         margin-bottom: 10px;
     }
-    
+
     header h1 {
         font-size: 1.5em;
     }
-    
+
     .header-subtitle {
         font-size: 0.85em;
     }
-    
+
     header::before {
         display: none;
     }
-    
+
     .header-bar {
         padding: 10px 40px 10px 15px;
         gap: 10px;
     }
-    
+
     .section-label {
         font-size: 0.8em;
     }
-    
+
     .filter-btn {
         padding: 6px 12px;
         font-size: 0.8em;
     }
-    
+
     .setlist-select {
         padding: 6px 10px;
         font-size: 0.8em;
         min-width: 100px;
         height: 32px;
     }
-    
+
     .setlist-btn,
     .import-export-btn,
     .add-song-btn {
@@ -3653,107 +3684,107 @@ td:has(.row-edit-input.input-focused) {
         min-width: 32px;
         height: 32px;
     }
-    
+
     .search-section-container {
         max-width: none;
     }
-    
+
     .search-input {
         padding: 8px 35px 8px 12px;
         font-size: 0.85em;
     }
-    
+
     .table-wrapper {
         border-radius: 12px;
     }
-    
+
     table {
         min-width: 700px;
     }
-    
+
     th {
         padding: 10px 8px;
         font-size: 0.75em;
     }
-    
+
     td {
         padding: 8px 6px;
         font-size: 0.8em;
         min-height: 40px;
     }
-    
+
     td.title-cell {
         font-size: 0.85em;
         min-width: 150px;
     }
-    
+
     .favorite-btn {
         font-size: 1.2em;
     }
-    
+
     .edit-btn,
     .delete-btn {
         padding: 4px 8px;
         font-size: 0.75em;
     }
-    
+
     .chord-modal-content {
         width: 95%;
         max-width: 600px;
         max-height: calc(100vh - 20px);
         height: calc(100vh - 20px);
     }
-    
+
     .chord-modal-header {
         padding: 15px 20px;
     }
-    
+
     .chord-modal-header h3 {
         font-size: 1.3em;
     }
-    
+
     .chord-modal-close {
         width: 35px;
         height: 35px;
         font-size: 1.8em;
     }
-    
+
     .chord-modal-body {
         padding: 15px 20px;
     }
-    
+
     .chord-categories {
         gap: 10px;
         margin-bottom: 12px;
     }
-    
+
     .chord-category h4 {
         font-size: 0.9em;
         padding-bottom: 5px;
     }
-    
+
     .chord-btn {
         padding: 6px 12px;
         font-size: 0.85em;
         min-width: 45px;
     }
-    
+
     .chord-input-section {
         margin-top: 12px;
         padding-top: 12px;
     }
-    
+
     .chord-input-section label {
         font-size: 0.9em;
         margin-bottom: 6px;
     }
-    
+
     #chordCustomInput {
         padding: 10px;
         font-size: 0.9em;
         margin-bottom: 10px;
     }
-    
+
     .chord-add-btn {
         padding: 8px 20px;
         font-size: 0.9em;
@@ -3765,48 +3796,48 @@ td:has(.row-edit-input.input-focused) {
     .container {
         padding: 10px;
     }
-    
+
     header {
         margin-bottom: 8px;
     }
-    
+
     header h1 {
         font-size: 1.3em;
     }
-    
+
     .header-subtitle {
         font-size: 0.75em;
     }
-    
+
     header::before {
         display: none;
     }
-    
+
     .header-bar {
         padding: 8px 35px 8px 12px;
         gap: 8px;
         flex-direction: column;
     }
-    
+
     .table-wrapper {
         border-radius: 10px;
     }
-    
+
     table {
         min-width: 100%;
         table-layout: fixed;
     }
-    
+
     th {
         padding: 8px 4px;
         font-size: 0.65em;
     }
-    
+
     td {
         padding: 6px 4px;
         font-size: 0.7em;
     }
-    
+
     td.title-cell {
         font-size: 0.75em;
         min-width: 0;
@@ -3818,25 +3849,25 @@ td:has(.row-edit-input.input-focused) {
     .container {
         padding: 10px 15px;
     }
-    
+
     header {
         margin-bottom: 8px;
     }
-    
+
     header::before {
         display: none;
     }
-    
+
     table {
         min-width: 100%;
         table-layout: fixed;
     }
-    
+
     th {
         padding: 8px 6px;
         font-size: 0.7em;
     }
-    
+
     td {
         padding: 6px 5px;
         font-size: 0.75em;
@@ -3851,57 +3882,57 @@ td:has(.row-edit-input.input-focused) {
         max-height: calc(100vh - 20px);
         height: calc(100vh - 20px);
     }
-    
+
     .chord-categories {
         gap: 10px;
         margin-bottom: 12px;
     }
-    
+
     .chord-modal-header {
         padding: 15px 18px;
     }
-    
+
     .chord-modal-header h3 {
         font-size: 1.3em;
     }
-    
+
     .chord-modal-close {
         width: 35px;
         height: 35px;
         font-size: 1.8em;
     }
-    
+
     .chord-modal-body {
         padding: 15px 18px;
     }
-    
+
     .chord-category h4 {
         font-size: 0.85em;
         padding-bottom: 5px;
     }
-    
+
     .chord-btn {
         padding: 6px 10px;
         font-size: 0.8em;
         min-width: 40px;
     }
-    
+
     .chord-input-section {
         margin-top: 10px;
         padding-top: 10px;
     }
-    
+
     .chord-input-section label {
         font-size: 0.9em;
         margin-bottom: 6px;
     }
-    
+
     #chordCustomInput {
         padding: 10px;
         font-size: 0.85em;
         margin-bottom: 10px;
     }
-    
+
     .chord-add-btn {
         padding: 8px 18px;
         font-size: 0.85em;
@@ -4486,42 +4517,42 @@ td:has(.row-edit-input.input-focused) {
     .song-detail-modal {
         padding: 10px;
     }
-    
+
     .song-detail-modal-content {
         max-width: calc(100vw - 20px);
         max-height: calc(100vh - 20px);
     }
-    
+
     .song-detail-header {
         padding: 18px 20px;
     }
-    
+
     .song-detail-artist {
         font-size: 1em;
     }
-    
+
     .song-detail-title {
         font-size: 1.5em;
     }
-    
+
     .song-detail-body {
         padding: 12px 20px;
         gap: 8px;
     }
-    
+
     .song-chord-section {
         padding: 10px;
     }
-    
+
     .chord-section-title {
         font-size: 0.85em;
         margin-bottom: 6px;
     }
-    
+
     .chord-section-content {
         font-size: 1.3em;
     }
-    
+
     .song-chord-section.chorus-section .chord-section-content {
         font-size: 1.5em;
     }
@@ -4532,90 +4563,90 @@ td:has(.row-edit-input.input-focused) {
     .song-detail-modal {
         padding: 10px;
     }
-    
+
     .song-detail-modal-content {
         max-width: calc(100vw - 20px);
         max-height: calc(100vh - 20px);
         border-radius: 15px;
     }
-    
+
     .song-detail-header {
         padding: 18px 15px;
         flex-direction: row;
         gap: 10px;
         border-radius: 15px 15px 0 0;
     }
-    
+
     .song-detail-nav-btn {
         width: 38px;
         height: 38px;
         font-size: 1.4em;
     }
-    
+
     .song-detail-title-section {
         gap: 4px;
         flex-direction: column;
         align-items: flex-start;
     }
-    
+
     .song-detail-separator {
         font-size: 1em;
     }
-    
+
     .song-detail-artist {
         font-size: 1em;
     }
-    
+
     .song-detail-title {
         font-size: 1.3em;
     }
-    
+
     .song-detail-header-right {
         gap: 8px;
     }
-    
+
     .song-detail-action-buttons {
         gap: clamp(4px, 1vw, 6px);
         flex-wrap: nowrap;
     }
-    
+
     .song-detail-action-btn.with-label {
         width: clamp(36px, 7vw, 42px);
         height: clamp(36px, 7vw, 42px);
         flex-shrink: 1;
         min-width: 0;
     }
-    
+
     .song-detail-action-btn .icon {
         font-size: clamp(16px, 3.5vw, 20px);
         width: clamp(16px, 3.5vw, 20px);
         height: clamp(16px, 3.5vw, 20px);
     }
-    
+
     .song-detail-close {
         width: 38px;
         height: 38px;
         font-size: 1.3em;
     }
-    
+
     .song-detail-body {
         padding: 12px 15px;
         gap: 8px;
     }
-    
+
     .song-chord-section {
         padding: 10px;
     }
-    
+
     .chord-section-title {
         font-size: 0.85em;
         margin-bottom: 6px;
     }
-    
+
     .chord-section-content {
         font-size: 1.4em;
     }
-    
+
     .song-chord-section.chorus-section .chord-section-content {
         font-size: 1.5em;
     }
@@ -4625,25 +4656,27 @@ td:has(.row-edit-input.input-focused) {
     .song-detail-modal {
         padding: 8px;
     }
-    
+
     .song-detail-modal-content {
         max-width: calc(100vw - 16px);
         max-height: calc(100vh - 16px);
         border-radius: 12px;
     }
-    
+
     .song-detail-header {
         padding: 10px 12px;
         border-radius: 12px 12px 0 0;
-        flex-wrap: wrap; /* Toestaan dat elementen naar de volgende regel gaan */
+        flex-wrap: wrap;
+        /* Toestaan dat elementen naar de volgende regel gaan */
         justify-content: space-between;
         align-items: center;
         gap: 10px;
     }
-    
+
     .song-detail-title-section {
         width: 100%;
-        order: -1; /* Zorg dat de titel bovenaan staat */
+        order: -1;
+        /* Zorg dat de titel bovenaan staat */
         justify-content: center;
         text-align: center;
         flex: none;
@@ -4660,7 +4693,7 @@ td:has(.row-edit-input.input-focused) {
         white-space: normal;
         overflow: visible;
     }
-    
+
     .song-detail-title {
         font-size: 1.1em;
         white-space: normal;
@@ -4668,9 +4701,23 @@ td:has(.row-edit-input.input-focused) {
     }
 
     /* Knoppen op de tweede regel */
-    .song-detail-prev { order: 0; }
-    .song-detail-action-buttons { order: 1; flex: 1; justify-content: center; display: flex; gap: 8px; }
-    .song-detail-header-right { order: 2; display: flex; gap: 8px; }
+    .song-detail-prev {
+        order: 0;
+    }
+
+    .song-detail-action-buttons {
+        order: 1;
+        flex: 1;
+        justify-content: center;
+        display: flex;
+        gap: 8px;
+    }
+
+    .song-detail-header-right {
+        order: 2;
+        display: flex;
+        gap: 8px;
+    }
 
     /* Verberg labels en maak knoppen compact */
     .song-detail-header .label {
@@ -4688,36 +4735,36 @@ td:has(.row-edit-input.input-focused) {
         flex-shrink: 1;
         min-width: 0;
     }
-    
+
     .song-detail-action-buttons {
         gap: clamp(3px, 1vw, 6px);
         flex-wrap: nowrap;
     }
-    
+
     .song-detail-action-btn .icon {
         font-size: clamp(16px, 3.5vw, 20px);
         width: clamp(16px, 3.5vw, 20px);
         height: clamp(16px, 3.5vw, 20px);
     }
-    
+
     .song-detail-body {
         padding: 10px 12px;
         gap: 6px;
     }
-    
+
     .song-chord-section {
         padding: 8px;
     }
-    
+
     .chord-section-title {
         font-size: 0.8em;
         margin-bottom: 4px;
     }
-    
+
     .chord-section-content {
         font-size: 1.3em;
     }
-    
+
     .song-chord-section.chorus-section .chord-section-content {
         font-size: 1.4em;
     }
@@ -4807,7 +4854,7 @@ td:has(.row-edit-input.input-focused) {
     display: none !important;
 }
 
-.chord-detector-overlay.minimized .chord-detector-body > *:not(.chord-detector-toggle-btn) {
+.chord-detector-overlay.minimized .chord-detector-body>*:not(.chord-detector-toggle-btn) {
     display: none !important;
 }
 
@@ -4828,7 +4875,8 @@ td:has(.row-edit-input.input-focused) {
     width: 30px !important;
     height: 30px !important;
     margin: 0 !important;
-    cursor: move; /* Show move cursor when minimized */
+    cursor: move;
+    /* Show move cursor when minimized */
 }
 
 .chord-detector-content {
@@ -4985,9 +5033,12 @@ td:has(.row-edit-input.input-focused) {
 }
 
 @keyframes pulse {
-    0%, 100% {
+
+    0%,
+    100% {
         transform: scale(1);
     }
+
     50% {
         transform: scale(1.1);
     }
@@ -5108,9 +5159,12 @@ td:has(.row-edit-input.input-focused) {
 }
 
 @keyframes pulse-button {
-    0%, 100% {
+
+    0%,
+    100% {
         box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
     }
+
     50% {
         box-shadow: 0 4px 20px rgba(239, 68, 68, 0.6);
     }
@@ -5254,6 +5308,7 @@ td:has(.row-edit-input.input-focused) {
         opacity: 0;
         transform: scale(0.8);
     }
+
     to {
         opacity: 1;
         transform: scale(1);
@@ -5313,12 +5368,12 @@ td:has(.row-edit-input.input-focused) {
         max-width: none;
         min-width: auto;
     }
-    
+
     .detected-chord-display {
         font-size: 2.5em;
         min-height: 60px;
     }
-    
+
     .chord-detector-body {
         padding: 15px;
     }
@@ -5330,20 +5385,20 @@ td:has(.row-edit-input.input-focused) {
         right: 5px;
         left: 5px;
     }
-    
+
     .chord-detector-header {
         padding: 12px 15px;
     }
-    
+
     .chord-detector-header h3 {
         font-size: 1em;
     }
-    
+
     .detected-chord-display {
         font-size: 2em;
         min-height: 50px;
     }
-    
+
     .chord-detector-toggle-btn {
         width: 50px;
         height: 50px;
@@ -5362,7 +5417,8 @@ td:has(.row-edit-input.input-focused) {
         text-shadow: none !important;
     }
 
-    body, html {
+    body,
+    html {
         background: white;
         margin: 0;
         padding: 0;
@@ -5531,8 +5587,13 @@ td:has(.row-edit-input.input-focused) {
 }
 
 @keyframes fadeIn {
-    from { opacity: 0; }
-    to { opacity: 1; }
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
 }
 
 .piano-chord-modal {
@@ -5553,6 +5614,7 @@ td:has(.row-edit-input.input-focused) {
         opacity: 0;
         transform: translateY(30px);
     }
+
     to {
         opacity: 1;
         transform: translateY(0);
@@ -5642,9 +5704,11 @@ td:has(.row-edit-input.input-focused) {
     0% {
         transform: scaleY(1);
     }
+
     30% {
         transform: scaleY(0.95);
     }
+
     100% {
         transform: scaleY(1);
     }
@@ -5677,9 +5741,11 @@ td:has(.row-edit-input.input-focused) {
     0% {
         transform: scale(1);
     }
+
     50% {
         transform: scale(1.3);
     }
+
     100% {
         transform: scale(1);
     }
@@ -5800,12 +5866,11 @@ td:has(.row-edit-input.input-focused) {
     left: 8px;
     right: 8px;
     height: 1px;
-    background: linear-gradient(90deg, 
-        transparent 0%, 
-        rgba(255, 255, 255, 0.2) 15%, 
-        rgba(255, 255, 255, 0.2) 85%, 
-        transparent 100%
-    );
+    background: linear-gradient(90deg,
+            transparent 0%,
+            rgba(255, 255, 255, 0.2) 15%,
+            rgba(255, 255, 255, 0.2) 85%,
+            transparent 100%);
 }
 
 .octave-hint::before {
@@ -5876,40 +5941,40 @@ td:has(.row-edit-input.input-focused) {
     .piano-chord-overlay {
         padding: 10px;
     }
-    
+
     .piano-chord-modal {
         max-height: 95vh;
         border-radius: 16px;
     }
-    
+
     .piano-chord-header {
         padding: 15px 20px;
     }
-    
+
     .piano-chord-header h3 {
         font-size: 1.2em;
     }
-    
+
     .piano-chord-body {
         padding: 15px;
     }
-    
+
     .piano-chord-card {
         padding: 15px;
         flex: 0 0 calc(50% - 10px);
         min-width: 200px;
         max-width: 100%;
     }
-    
+
     .chord-card-header .chord-name {
         font-size: 1.3em;
     }
-    
+
     .piano-keyboard {
         height: 150px;
         padding: 12px 8px 8px;
     }
-    
+
     .black-key {
         width: 6%;
     }
@@ -5919,27 +5984,27 @@ td:has(.row-edit-input.input-focused) {
     .piano-chord-header h3 {
         font-size: 1em;
     }
-    
+
     .piano-chord-close {
         width: 36px;
         height: 36px;
         font-size: 1.3em;
     }
-    
+
     .piano-keyboard {
         height: 120px;
     }
-    
+
     .piano-chord-card {
         flex: 0 0 100%;
         min-width: 100%;
         max-width: 100%;
     }
-    
+
     .chord-card-header .chord-name {
         font-size: 1.2em;
     }
-    
+
     .piano-chord-btn {
         width: 32px;
         height: 32px;
@@ -5950,11 +6015,12 @@ td:has(.row-edit-input.input-focused) {
 /* Mobile landscape fixes */
 @media (max-height: 480px) and (orientation: landscape) {
     .container {
-        height: 100dvh; /* Keep fixed height to allow internal scrolling */
+        height: 100dvh;
+        /* Keep fixed height to allow internal scrolling */
         padding: 5px 10px;
         overflow: hidden;
     }
-    
+
     header {
         margin-bottom: 2px;
         display: flex;
@@ -5962,7 +6028,7 @@ td:has(.row-edit-input.input-focused) {
         align-items: center;
         gap: 10px;
     }
-    
+
     .header-top {
         margin-bottom: 0;
         flex-direction: row;
@@ -5971,15 +6037,16 @@ td:has(.row-edit-input.input-focused) {
         width: auto;
         flex-shrink: 0;
     }
-    
+
     header h1 {
-        display: none; /* Hide title entirely to save vertical space */
+        display: none;
+        /* Hide title entirely to save vertical space */
     }
-    
+
     .header-subtitle {
         display: none;
     }
-    
+
     .header-bar {
         padding: 2px 8px;
         gap: 5px;
@@ -5989,7 +6056,7 @@ td:has(.row-edit-input.input-focused) {
         flex: 1;
         border-radius: 8px;
     }
-    
+
     .header-section {
         padding-bottom: 0 !important;
         margin-bottom: 0 !important;
@@ -5999,7 +6066,7 @@ td:has(.row-edit-input.input-focused) {
         flex-shrink: 0;
         width: auto !important;
     }
-    
+
     .header-section:last-child {
         border-right: none;
     }
@@ -6012,12 +6079,13 @@ td:has(.row-edit-input.input-focused) {
     .print-btn .label,
     .view-toggle-btn .label,
     .section-label {
-        display: none; /* Hide all labels to save space */
+        display: none;
+        /* Hide all labels to save space */
     }
-    
-    .profile-btn, 
-    .import-export-btn, 
-    .add-song-btn, 
+
+    .profile-btn,
+    .import-export-btn,
+    .add-song-btn,
     .filter-btn,
     .random-song-btn,
     .print-btn,
@@ -6028,7 +6096,8 @@ td:has(.row-edit-input.input-focused) {
     .table-wrapper {
         margin-top: 5px;
         border-radius: 10px;
-        flex: 1; /* Ensure it takes remaining height */
+        flex: 1;
+        /* Ensure it takes remaining height */
     }
 }
 
@@ -6234,15 +6303,34 @@ td:has(.row-edit-input.input-focused) {
 }
 
 @keyframes chordPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.1); box-shadow: 0 0 20px rgba(102, 126, 234, 0.6); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.1);
+        box-shadow: 0 0 20px rgba(102, 126, 234, 0.6);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
 @keyframes chordAdded {
-    0% { transform: scale(1); }
-    30% { transform: scale(1.15); box-shadow: 0 0 25px rgba(34, 197, 94, 0.7); }
-    100% { transform: scale(1); box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3); }
+    0% {
+        transform: scale(1);
+    }
+
+    30% {
+        transform: scale(1.15);
+        box-shadow: 0 0 25px rgba(34, 197, 94, 0.7);
+    }
+
+    100% {
+        transform: scale(1);
+        box-shadow: 0 3px 10px rgba(102, 126, 234, 0.3);
+    }
 }
 
 .chord-block.dragging {
@@ -6343,9 +6431,18 @@ td:has(.row-edit-input.input-focused) {
 }
 
 @keyframes blockPulse {
-    0% { transform: scale(1); }
-    50% { transform: scale(1.08); box-shadow: 0 0 20px rgba(59, 130, 246, 0.6); }
-    100% { transform: scale(1); }
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.08);
+        box-shadow: 0 0 20px rgba(59, 130, 246, 0.6);
+    }
+
+    100% {
+        transform: scale(1);
+    }
 }
 
 .progression-block.dragging {
@@ -6426,8 +6523,15 @@ td:has(.row-edit-input.input-focused) {
 }
 
 @keyframes indicatorPulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
 }
 
 .progression-hint {
@@ -6488,30 +6592,30 @@ td:has(.row-edit-input.input-focused) {
     .chord-progression-overlay {
         padding: 10px;
     }
-    
+
     .chord-progression-modal {
         max-height: 95vh;
         border-radius: 16px;
     }
-    
+
     .chord-progression-header {
         padding: 15px 20px;
     }
-    
+
     .chord-progression-header h3 {
         font-size: 1.1em;
     }
-    
+
     .chord-progression-body {
         padding: 15px;
     }
-    
+
     .chord-block {
         padding: 10px 14px;
         font-size: 1em;
         min-width: 48px;
     }
-    
+
     .chord-editor-btn {
         width: 28px;
         height: 28px;
@@ -6523,33 +6627,33 @@ td:has(.row-edit-input.input-focused) {
     .chord-progression-header h3 {
         font-size: 1em;
     }
-    
+
     .chord-progression-close {
         width: 32px;
         height: 32px;
         font-size: 1.2em;
     }
-    
+
     .key-selector {
         min-width: 120px;
         padding: 8px 12px;
     }
-    
+
     .chord-block {
         padding: 8px 12px;
         font-size: 0.95em;
         min-width: 42px;
     }
-    
+
     .progression-input {
         font-size: 1em;
         padding: 12px;
     }
-    
+
     .chord-progression-footer {
         padding: 12px 15px;
     }
-    
+
     .chord-progression-footer .btn-cancel,
     .chord-progression-footer .btn-done {
         padding: 10px 18px;
