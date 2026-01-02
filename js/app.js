@@ -96,8 +96,17 @@ class App {
     async initializeApp() {
         this.isAuthenticated = true;
         
+        // Setup sharing modals
+        this.shareSongsModal = new ShareSongsModal(this.firebaseManager, this.songManager);
+        this.acceptSongsModal = new AcceptSongsModal(this.firebaseManager, this.songManager);
+        
         // Setup profile modal
-        this.profileModal = new ProfileModal(this.firebaseManager, () => this.handleSignOut());
+        this.profileModal = new ProfileModal(
+            this.firebaseManager,
+            () => this.handleSignOut(),
+            () => this.shareSongsModal.show(),
+            () => this.acceptSongsModal.show()
+        );
         this.profileModal.onAuthSuccess = (user) => {
             this.updateProfileLabel(user);
         };
@@ -124,6 +133,12 @@ class App {
         // Setup real-time sync
         this.setupRealtimeSync();
 
+        // Initialize pending songs count
+        const userId = this.firebaseManager.getCurrentUser().uid;
+        this.firebaseManager.getPendingSongsCount(userId).then(count => {
+            this.updatePendingSongsCount(count);
+        });
+
         // Load and render songs (no default songs for new users)
         this.loadAndRender();
     }
@@ -134,6 +149,16 @@ class App {
             await this.checkAndMigrateData(user);
             await this.initializeApp();
         }
+        
+        // Ensure email index exists for this user (for existing users)
+        if (user && user.email) {
+            try {
+                await this.firebaseManager.ensureEmailIndex(user.uid, user.email);
+            } catch (error) {
+                console.error('Error ensuring email index:', error);
+            }
+        }
+        
         this.updateProfileLabel(user);
     }
 
@@ -150,6 +175,12 @@ class App {
     }
 
     handleSignOut() {
+        // Remove pending songs listener
+        const userId = this.firebaseManager.getCurrentUser()?.uid;
+        if (userId) {
+            this.firebaseManager.removePendingSongsListener(userId);
+        }
+        this.updatePendingSongsCount(0);
         this.isAuthenticated = false;
         // Disable sync
         this.songManager.disableSync();
@@ -295,6 +326,27 @@ class App {
             this.loadAndRender();
         };
         this.setlistManager.enableSync(userId);
+
+        // Setup pending songs sync
+        this.firebaseManager.onPendingSongsChange(userId, (pendingSongs) => {
+            this.updatePendingSongsCount(pendingSongs.length);
+            // Update accept songs button if profile modal is open
+            if (this.profileModal) {
+                this.profileModal.updateAcceptSongsButton();
+            }
+        });
+    }
+
+    updatePendingSongsCount(count) {
+        const badge = document.getElementById('profileNotificationBadge');
+        if (!badge) return;
+
+        if (count > 0) {
+            badge.textContent = count > 99 ? '99+' : count.toString();
+            badge.classList.remove('hidden');
+        } else {
+            badge.classList.add('hidden');
+        }
     }
     
     setupHeaderBarToggle() {
@@ -674,6 +726,7 @@ class App {
         this.updateSetlistSelect();
         this.setupSetlistSelect();
         this.setupCreateSetlist();
+        this.setupEditSetlist();
         this.setupDeleteSetlist();
     }
 
@@ -711,12 +764,16 @@ class App {
 
     updateButtonsForSetlistMode() {
         const deleteBtn = document.getElementById('deleteSetlistBtn');
+        const editBtn = document.getElementById('editSetlistBtn');
         const addSongBtn = document.getElementById('addSongBtn');
         const importControls = document.querySelector('.import-export-controls');
         const deleteAllBtn = document.getElementById('deleteAllSongsBtn');
         
         if (this.currentSetlistId) {
-            // Show setlist delete button
+            // Show setlist edit and delete buttons
+            if (editBtn) {
+                editBtn.classList.remove('hidden');
+            }
             if (deleteBtn) {
                 deleteBtn.classList.remove('hidden');
             }
@@ -735,7 +792,10 @@ class App {
                 deleteAllBtn.style.display = 'none';
             }
         } else {
-            // Hide setlist delete button
+            // Hide setlist edit and delete buttons
+            if (editBtn) {
+                editBtn.classList.add('hidden');
+            }
             if (deleteBtn) {
                 deleteBtn.classList.add('hidden');
             }
@@ -762,39 +822,89 @@ class App {
         const closeBtn = document.getElementById('setlistModalClose');
         const nameInput = document.getElementById('setlistNameInput');
         const submitBtn = document.getElementById('setlistCreateBtn');
+        const modalTitle = document.getElementById('setlistModalTitle');
+        let editingSetlistId = null;
+
+        const resetModal = () => {
+            editingSetlistId = null;
+            nameInput.value = '';
+            if (modalTitle) {
+                modalTitle.textContent = 'Create Setlist';
+            }
+            if (submitBtn) {
+                submitBtn.textContent = 'Create';
+            }
+        };
 
         createBtn.addEventListener('click', () => {
+            resetModal();
             modal.classList.remove('hidden');
-            nameInput.value = '';
             nameInput.focus();
         });
 
         closeBtn.addEventListener('click', () => {
             modal.classList.add('hidden');
+            resetModal();
         });
 
         modal.addEventListener('click', (e) => {
             if (e.target === modal) {
                 modal.classList.add('hidden');
+                resetModal();
             }
         });
 
-        const createSetlist = async () => {
+        const saveSetlist = async () => {
             const name = nameInput.value.trim();
             if (name) {
-                await this.setlistManager.createSetlist(name);
+                if (editingSetlistId) {
+                    // Edit mode
+                    await this.setlistManager.updateSetlistName(editingSetlistId, name);
+                } else {
+                    // Create mode
+                    await this.setlistManager.createSetlist(name);
+                }
                 this.updateSetlistSelect();
                 modal.classList.add('hidden');
-                nameInput.value = '';
+                resetModal();
             }
         };
 
-        submitBtn.addEventListener('click', createSetlist);
+        submitBtn.addEventListener('click', saveSetlist);
         nameInput.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
-                createSetlist();
+                saveSetlist();
             } else if (e.key === 'Escape') {
                 modal.classList.add('hidden');
+                resetModal();
+            }
+        });
+
+        // Store function to open modal in edit mode
+        this.openEditSetlistModal = (setlistId) => {
+            const setlist = this.setlistManager.getSetlist(setlistId);
+            if (setlist) {
+                editingSetlistId = setlistId;
+                if (modalTitle) {
+                    modalTitle.textContent = 'Edit Setlist';
+                }
+                if (submitBtn) {
+                    submitBtn.textContent = 'Save';
+                }
+                nameInput.value = setlist.name;
+                modal.classList.remove('hidden');
+                nameInput.focus();
+                nameInput.select();
+            }
+        };
+    }
+
+    setupEditSetlist() {
+        const editBtn = document.getElementById('editSetlistBtn');
+        
+        editBtn.addEventListener('click', () => {
+            if (this.currentSetlistId && this.openEditSetlistModal) {
+                this.openEditSetlistModal(this.currentSetlistId);
             }
         });
     }

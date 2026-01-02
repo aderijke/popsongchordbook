@@ -20,6 +20,7 @@
                 </div>
                 <div class="header-top-actions">
                     <button id="profileBtn" class="profile-btn with-label" title="Profile">
+                        <span id="profileNotificationBadge" class="notification-badge hidden">0</span>
                         <span class="icon">👤</span>
                         <span class="label">Profile <span id="profileSongCount" class="song-count">(0)</span></span>
                     </button>
@@ -91,6 +92,7 @@
                                 <option value="">All Songs</option>
                             </select>
                             <button id="createSetlistBtn" class="setlist-btn" title="New Setlist">+</button>
+                            <button id="editSetlistBtn" class="setlist-btn edit-setlist-btn hidden" title="Edit setlist name">✏️</button>
                             <button id="deleteSetlistBtn" class="setlist-btn delete-setlist-btn hidden" title="Delete setlist">🗑️</button>
                         </div>
                     </div>
@@ -282,8 +284,88 @@
                     </form>
                 </div>
                 
+                <div class="profile-sharing-section">
+                    <h4>Share Songs</h4>
+                    <button id="profileShareSongsBtn" class="modal-submit-btn">Share Songs</button>
+                </div>
+                
+                <div class="profile-pending-section">
+                    <h4>Pending Songs</h4>
+                    <button id="profileAcceptSongsBtn" class="modal-submit-btn hidden">Accept New Songs</button>
+                </div>
+                
                 <div class="profile-actions-section">
                     <button id="profileLogoutBtn" class="modal-cancel-btn logout-btn">Logout</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Share Songs Modal -->
+    <div id="shareSongsModal" class="modal hidden">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3>Share Songs</h3>
+                <button class="modal-close" id="shareSongsModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="share-songs-email-section">
+                    <label for="shareSongsEmailInput">Recipient Email:</label>
+                    <input type="email" id="shareSongsEmailInput" class="auth-input" placeholder="user@example.com" spellcheck="false" autocorrect="off" autocapitalize="none" />
+                    <div id="shareSongsEmailError" class="auth-error hidden"></div>
+                </div>
+                <div class="songs-selection-container">
+                    <div class="selection-controls">
+                        <div class="selection-search">
+                            <input type="text" id="shareSongsSearchInput" class="selection-search-input" placeholder="Search by artist or title..." spellcheck="false" autocorrect="off" autocapitalize="none" />
+                            <button id="clearShareSongsSearch" class="selection-clear-btn hidden" aria-label="Clear search">&times;</button>
+                        </div>
+                        <div class="selection-sorting">
+                            <span class="sorting-label">Sorteer op:</span>
+                            <div class="sorting-options">
+                                <button class="selection-btn sort-option active" data-field="title" type="button">Song</button>
+                                <button class="selection-btn sort-option" data-field="artist" type="button">Artist</button>
+                            </div>
+                            <button id="toggleShareSongsSortDirection" class="selection-btn sort-direction-btn" type="button" title="Sorteer van A naar Z">A → Z</button>
+                        </div>
+                        <button id="selectAllShareSongs" class="selection-btn">Select all</button>
+                        <button id="deselectAllShareSongs" class="selection-btn">Deselect all</button>
+                        <span id="shareSongsSelectedCount" class="selected-count">0 selected</span>
+                    </div>
+                    <div class="songs-list" id="shareSongsListContainer">
+                        <!-- Songs will be dynamically inserted here -->
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button id="shareSelectedSongsBtn" class="modal-submit-btn">Share selected songs</button>
+                    <button id="cancelShareSongsBtn" class="modal-cancel-btn">Cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Accept Songs Modal -->
+    <div id="acceptSongsModal" class="modal hidden">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3>Accept New Songs</h3>
+                <button class="modal-close" id="acceptSongsModalClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="songs-selection-container">
+                    <div class="selection-controls">
+                        <button id="selectAllAcceptSongs" class="selection-btn">Select all</button>
+                        <button id="deselectAllAcceptSongs" class="selection-btn">Deselect all</button>
+                        <span id="acceptSongsSelectedCount" class="selected-count">0 selected</span>
+                    </div>
+                    <div class="songs-list" id="acceptSongsListContainer">
+                        <!-- Pending songs will be dynamically inserted here -->
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button id="acceptSelectedSongsBtn" class="modal-submit-btn">Accept selected songs</button>
+                    <button id="rejectSelectedSongsBtn" class="modal-cancel-btn">Reject selected songs</button>
+                    <button id="cancelAcceptSongsBtn" class="modal-cancel-btn">Cancel</button>
                 </div>
             </div>
         </div>
@@ -334,7 +416,7 @@
     <div id="setlistModal" class="modal hidden">
         <div class="modal-content">
             <div class="modal-header">
-                <h3>New Setlist</h3>
+                <h3 id="setlistModalTitle">Create Setlist</h3>
                 <button class="modal-close" id="setlistModalClose">&times;</button>
             </div>
             <div class="modal-body">
@@ -604,6 +686,8 @@
     <script src="js/ui/ChordProgressionEditor.js"></script>
     <script src="js/ui/AuthModal.js"></script>
     <script src="js/ui/ProfileModal.js"></script>
+    <script src="js/ui/ShareSongsModal.js"></script>
+    <script src="js/ui/AcceptSongsModal.js"></script>
     <!-- Main App -->
     <script src="js/app.js"></script>
 </body>

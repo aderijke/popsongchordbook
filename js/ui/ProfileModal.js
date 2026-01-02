@@ -1,8 +1,10 @@
 // ProfileModal - Profile modal for viewing profile and changing password
 class ProfileModal {
-    constructor(firebaseManager, onSignOut = null) {
+    constructor(firebaseManager, onSignOut = null, onShareSongs = null, onAcceptSongs = null) {
         this.firebaseManager = firebaseManager;
         this.onSignOut = onSignOut;
+        this.onShareSongs = onShareSongs;
+        this.onAcceptSongs = onAcceptSongs;
         this.modal = document.getElementById('profileModal');
         
         // Profile elements
@@ -16,6 +18,8 @@ class ProfileModal {
         this.changePasswordError = document.getElementById('profileChangePasswordError');
         this.changePasswordSuccess = document.getElementById('profileChangePasswordSuccess');
         this.logoutBtn = document.getElementById('profileLogoutBtn');
+        this.shareSongsBtn = document.getElementById('profileShareSongsBtn');
+        this.acceptSongsBtn = document.getElementById('profileAcceptSongsBtn');
         this.closeBtn = document.getElementById('profileModalClose');
         
         this.setupEventListeners();
@@ -52,6 +56,24 @@ class ProfileModal {
             });
         }
 
+        // Share Songs button
+        if (this.shareSongsBtn) {
+            this.shareSongsBtn.addEventListener('click', () => {
+                if (this.onShareSongs) {
+                    this.onShareSongs();
+                }
+            });
+        }
+
+        // Accept Songs button
+        if (this.acceptSongsBtn) {
+            this.acceptSongsBtn.addEventListener('click', () => {
+                if (this.onAcceptSongs) {
+                    this.onAcceptSongs();
+                }
+            });
+        }
+
         // Close button
         if (this.closeBtn) {
             this.closeBtn.addEventListener('click', () => {
@@ -78,7 +100,7 @@ class ProfileModal {
         }
     }
 
-    show() {
+    async show() {
         if (!this.modal) return;
         
         const user = this.firebaseManager.getCurrentUser();
@@ -90,6 +112,9 @@ class ProfileModal {
                 this.usernameInput.value = user.displayName || '';
             }
         }
+        
+        // Update accept songs button visibility
+        await this.updateAcceptSongsButton();
         
         // Reset form
         this.clearErrors();
@@ -104,6 +129,29 @@ class ProfileModal {
                 this.currentPasswordInput.focus();
             }
         }, 100);
+    }
+
+    async updateAcceptSongsButton() {
+        if (!this.acceptSongsBtn) return;
+
+        const user = this.firebaseManager.getCurrentUser();
+        if (!user || !user.uid) {
+            this.acceptSongsBtn.classList.add('hidden');
+            return;
+        }
+
+        try {
+            const count = await this.firebaseManager.getPendingSongsCount(user.uid);
+            if (count > 0) {
+                this.acceptSongsBtn.classList.remove('hidden');
+                this.acceptSongsBtn.textContent = `Accept New Songs (${count})`;
+            } else {
+                this.acceptSongsBtn.classList.add('hidden');
+            }
+        } catch (error) {
+            console.error('Error updating accept songs button:', error);
+            this.acceptSongsBtn.classList.add('hidden');
+        }
     }
 
     hide() {

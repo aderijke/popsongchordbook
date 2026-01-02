@@ -108,7 +108,25 @@ class SetlistManager {
 
     // Set setlists (used for real-time sync from Firebase)
     setSetlists(setlists, skipSave = false) {
-        this.setlists = this.normalizeSetlists(setlists);
+        const normalizedSetlists = this.normalizeSetlists(setlists);
+        
+        // Merge with existing setlists to avoid duplicates
+        // Use a Map to ensure unique IDs
+        const setlistsMap = new Map();
+        
+        // First, add existing setlists to the map
+        this.setlists.forEach(setlist => {
+            setlistsMap.set(setlist.id, setlist);
+        });
+        
+        // Then, update/add setlists from Firebase
+        normalizedSetlists.forEach(setlist => {
+            setlistsMap.set(setlist.id, setlist);
+        });
+        
+        // Convert back to array
+        this.setlists = Array.from(setlistsMap.values());
+        
         if (!skipSave) {
             // Fire and forget - don't await to avoid blocking
             this.saveSetlists().catch(err => console.error('Error saving setlists:', err));
@@ -150,6 +168,20 @@ class SetlistManager {
     async deleteSetlist(id) {
         this.setlists = this.setlists.filter(sl => sl.id !== id);
         await this.saveSetlists();
+    }
+
+    async updateSetlistName(id, newName) {
+        const setlist = this.getSetlist(id);
+        if (setlist && newName && newName.trim()) {
+            // Update the setlist directly in the array
+            const index = this.setlists.findIndex(sl => sl.id === id);
+            if (index !== -1) {
+                this.setlists[index].name = newName.trim();
+                await this.saveSetlists();
+                return true;
+            }
+        }
+        return false;
     }
 
     getSetlist(id) {

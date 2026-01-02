@@ -117,6 +117,7 @@ header::before {
 }
 
 .profile-btn {
+    position: relative;
     background: rgba(255, 255, 255, 0.95);
     border: 2px solid var(--border-color);
     color: var(--text-color);
@@ -131,6 +132,32 @@ header::before {
     align-items: center;
     gap: 6px;
     font-family: inherit;
+}
+
+/* Notification Badge */
+.notification-badge {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: #ef4444;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 0.7em;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px solid white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    min-width: 20px;
+    padding: 0 4px;
+}
+
+.notification-badge.hidden {
+    display: none;
 }
 
 .profile-btn:hover {
@@ -2067,6 +2094,9 @@ td:has(.row-edit-input.input-focused) {
 .modal-content.modal-large {
     max-width: 700px;
     max-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
 }
 
 .modal-header {
@@ -2075,6 +2105,7 @@ td:has(.row-edit-input.input-focused) {
     align-items: center;
     padding: 20px 25px;
     border-bottom: 2px solid var(--border-color);
+    flex-shrink: 0;
 }
 
 .modal-header h3 {
@@ -2241,8 +2272,60 @@ td:has(.row-edit-input.input-focused) {
     margin-bottom: 25px;
 }
 
+.profile-sharing-section {
+    margin-bottom: 25px;
+    padding-bottom: 25px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.profile-sharing-section h4 {
+    margin: 0 0 15px 0;
+    color: var(--primary-color);
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+.profile-pending-section {
+    margin-bottom: 25px;
+    padding-bottom: 25px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.profile-pending-section h4 {
+    margin: 0 0 15px 0;
+    color: var(--primary-color);
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
 .profile-password-section h4 {
     margin: 0 0 20px 0;
+    color: var(--primary-color);
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+.profile-sharing-section {
+    margin-bottom: 25px;
+    padding-bottom: 25px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.profile-sharing-section h4 {
+    margin: 0 0 15px 0;
+    color: var(--primary-color);
+    font-size: 1.1em;
+    font-weight: 600;
+}
+
+.profile-pending-section {
+    margin-bottom: 25px;
+    padding-bottom: 25px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.profile-pending-section h4 {
+    margin: 0 0 15px 0;
     color: var(--primary-color);
     font-size: 1.1em;
     font-weight: 600;
@@ -2351,6 +2434,14 @@ td:has(.row-edit-input.input-focused) {
 
 .modal-body {
     padding: 25px;
+    display: flex;
+    flex-direction: column;
+    min-height: 0;
+}
+
+.modal-content.modal-large .modal-body {
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 .modal-body input:not([type="checkbox"]) {
@@ -2485,8 +2576,18 @@ td:has(.row-edit-input.input-focused) {
 }
 
 .songs-selection-container {
-    max-height: 60vh;
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.songs-selection-container .songs-list {
+    flex: 1;
     overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
 }
 
 .selection-controls {
@@ -2605,6 +2706,15 @@ td:has(.row-edit-input.input-focused) {
     gap: 8px;
 }
 
+/* Ensure songs-list is scrollable within songs-selection-container */
+.songs-selection-container .songs-list {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    min-height: 0;
+    padding-right: 4px;
+}
+
 .no-songs-message {
     padding: 12px 14px;
     background: rgba(255, 255, 255, 0.8);
@@ -2656,6 +2766,76 @@ td:has(.row-edit-input.input-focused) {
     color: var(--text-light);
     font-size: 0.85em;
     font-style: italic;
+}
+
+/* Share Songs Modal */
+.share-songs-email-section {
+    margin-bottom: 20px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid var(--border-color);
+}
+
+.share-songs-email-section label {
+    display: block;
+    margin-bottom: 8px;
+    color: var(--text-color);
+    font-weight: 500;
+    font-size: 0.95em;
+}
+
+/* Accept Songs Modal - Pending Song Items */
+.pending-song-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 12px;
+    border: 2px solid var(--border-color);
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.pending-song-item:hover {
+    background: var(--hover-color);
+    border-color: var(--secondary-color);
+}
+
+.pending-song-info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.pending-song-title {
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 1em;
+}
+
+.pending-song-sender {
+    font-size: 0.85em;
+    color: var(--text-light);
+    font-style: italic;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 2px solid var(--border-color);
+    flex-wrap: wrap;
+    flex-shrink: 0;
+}
+
+.modal-actions .modal-submit-btn {
+    flex: 1;
+    min-width: 120px;
+}
+
+.modal-actions .modal-cancel-btn {
+    flex: 1;
+    min-width: 120px;
 }
 
 .chord-modal {

@@ -7,6 +7,7 @@ class FirebaseManager {
         this.currentUser = null;
         this.songsListeners = new Map();
         this.setlistsListeners = new Map();
+        this.pendingSongsListeners = new Map();
         this.initialized = false;
     }
 
@@ -73,6 +74,23 @@ class FirebaseManager {
                 this.currentUser = this.auth.currentUser;
             }
 
+            // Store email in database for email lookup
+            if (this.currentUser && this.currentUser.uid) {
+                try {
+                    const normalizedEmail = email.toLowerCase().trim();
+                    const userRef = this.database.ref(`users/${this.currentUser.uid}`);
+                    await userRef.update({
+                        email: normalizedEmail
+                    });
+                    
+                    // Create email index for user lookup
+                    await this.ensureEmailIndex(this.currentUser.uid, email);
+                } catch (error) {
+                    console.error('Error storing email in database:', error);
+                    // Don't fail signup if this fails
+                }
+            }
+
             return {
                 success: true,
                 user: this.currentUser
@@ -94,6 +112,35 @@ class FirebaseManager {
         try {
             const userCredential = await this.auth.signInWithEmailAndPassword(email, password);
             this.currentUser = userCredential.user;
+            
+            // Ensure email is stored in database for email lookup
+            if (this.currentUser && this.currentUser.uid) {
+                try {
+                    const normalizedEmail = email.toLowerCase().trim();
+                    const userRef = this.database.ref(`users/${this.currentUser.uid}`);
+                    const userSnapshot = await userRef.once('value');
+                    const userData = userSnapshot.val();
+                    
+                    // Only update if email is not already stored
+                    if (!userData || !userData.email) {
+                        await userRef.update({
+                            email: normalizedEmail
+                        });
+                    } else if (userData.email !== normalizedEmail) {
+                        // Update if email changed
+                        await userRef.update({
+                            email: normalizedEmail
+                        });
+                    }
+                    
+                    // Always ensure email index exists (for existing users too)
+                    await this.ensureEmailIndex(this.currentUser.uid, email);
+                } catch (error) {
+                    console.error('Error storing email in database:', error);
+                    // Don't fail signin if this fails
+                }
+            }
+            
             return {
                 success: true,
                 user: userCredential.user
@@ -139,6 +186,18 @@ class FirebaseManager {
             });
             this.songsListeners.clear();
             this.setlistsListeners.clear();
+            this.pendingSongsListeners.forEach((listener, userId) => {
+                try {
+                    if (typeof listener === 'function') {
+                        listener();
+                    } else if (listener && typeof listener.off === 'function') {
+                        listener.off();
+                    }
+                } catch (error) {
+                    console.error('Error removing pending songs listener:', error);
+                }
+            });
+            this.pendingSongsListeners.clear();
 
             // Small delay to ensure listeners are fully removed
             await new Promise(resolve => setTimeout(resolve, 100));
@@ -397,6 +456,246 @@ class FirebaseManager {
                 listener.off(); // Fallback for object with .off() method
             }
             this.setlistsListeners.delete(userId);
+        }
+    }
+
+    // Pending Songs Methods
+
+    async ensureEmailIndex(userId, email) {
+        if (!this.initialized || !userId || !email) {
+            return;
+        }
+
+        try {
+            const normalizedEmail = email.toLowerCase().trim().replace(/\./g, '_');
+            const emailIndexRef = this.database.ref(`emailToUserId/${normalizedEmail}`);
+            const snapshot = await emailIndexRef.once('value');
+            
+            // Only create if it doesn't exist or points to different user
+            const existingUserId = snapshot.val();
+            if (!existingUserId || existingUserId !== userId) {
+                await emailIndexRef.set(userId);
+                console.log('Email index created/updated for user:', email);
+            }
+        } catch (error) {
+            console.error('Error ensuring email index:', error);
+            // Don't throw - this is not critical
+        }
+    }
+
+    async getUserByEmail(email) {
+        if (!this.initialized) {
+            throw new Error('Firebase not initialized');
+        }
+
+        try {
+            // Use email index for fast lookup
+            // Replace dots with underscores in email for Firebase key compatibility
+            const normalizedEmail = email.toLowerCase().trim().replace(/\./g, '_');
+            const emailIndexRef = this.database.ref(`emailToUserId/${normalizedEmail}`);
+            const snapshot = await emailIndexRef.once('value');
+            
+            const userId = snapshot.val();
+            if (userId) {
+                return userId;
+            }
+            
+            // Fallback: try to find user by reading their own data if they're logged in
+            // This only works if the user we're looking for is the current user
+            const currentUser = this.getCurrentUser();
+            if (currentUser && currentUser.email && currentUser.email.toLowerCase().trim() === email.toLowerCase().trim()) {
+                return currentUser.uid;
+            }
+            
+            return null;
+        } catch (error) {
+            console.error('Get user by email error:', error);
+            // Provide helpful error message for permission issues
+            if (error.code === 'PERMISSION_DENIED' || error.message?.includes('permission')) {
+                throw new Error('Firebase security rules niet correct geconfigureerd. Zie FIREBASE_SECURITY_RULES.md voor instructies.');
+            }
+            throw error;
+        }
+    }
+
+    async savePendingSongs(recipientUserId, songs, senderEmail) {
+        if (!this.initialized || !recipientUserId) {
+            throw new Error('Firebase not initialized or recipient not specified');
+        }
+
+        try {
+            const pendingRef = this.database.ref(`users/${recipientUserId}/pendingSongs`);
+            const pendingObject = {};
+            
+            songs.forEach(song => {
+                const pendingId = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+                pendingObject[pendingId] = {
+                    song: song,
+                    senderEmail: senderEmail,
+                    timestamp: new Date().toISOString()
+                };
+            });
+
+            // Use update to merge with existing pending songs
+            await pendingRef.update(pendingObject);
+            return { success: true };
+        } catch (error) {
+            console.error('Save pending songs error:', error);
+            throw error;
+        }
+    }
+
+    async loadPendingSongs(userId) {
+        if (!this.initialized || !userId) {
+            throw new Error('Firebase not initialized or user not authenticated');
+        }
+
+        try {
+            const pendingRef = this.database.ref(`users/${userId}/pendingSongs`);
+            const snapshot = await pendingRef.once('value');
+            const pendingData = snapshot.val();
+            
+            if (!pendingData) {
+                return [];
+            }
+
+            // Convert object to array with pendingId
+            return Object.entries(pendingData).map(([pendingId, data]) => ({
+                pendingId: pendingId,
+                song: data.song,
+                senderEmail: data.senderEmail || '',
+                timestamp: data.timestamp || new Date().toISOString()
+            }));
+        } catch (error) {
+            console.error('Load pending songs error:', error);
+            throw error;
+        }
+    }
+
+    async acceptPendingSongs(userId, pendingIds) {
+        if (!this.initialized || !userId) {
+            throw new Error('Firebase not initialized or user not authenticated');
+        }
+
+        try {
+            // Load pending songs
+            const pendingSongs = await this.loadPendingSongs(userId);
+            
+            // Filter to only the ones we want to accept
+            const songsToAccept = pendingSongs.filter(p => pendingIds.includes(p.pendingId));
+            
+            if (songsToAccept.length === 0) {
+                return { success: false, error: 'No songs to accept' };
+            }
+
+            // Load existing songs
+            const existingSongs = await this.loadSongs(userId);
+            
+            // Generate new IDs for accepted songs and add them
+            const newSongs = songsToAccept.map(pending => {
+                const song = { ...pending.song };
+                // Generate new ID
+                song.id = Date.now().toString() + Math.random().toString(36).substr(2, 9);
+                return song;
+            });
+
+            // Merge with existing songs
+            const allSongs = [...existingSongs, ...newSongs];
+            
+            // Save updated songs
+            await this.saveSongs(userId, allSongs);
+            
+            // Delete accepted pending songs
+            await this.deletePendingSongs(userId, pendingIds);
+            
+            return { success: true, acceptedCount: newSongs.length };
+        } catch (error) {
+            console.error('Accept pending songs error:', error);
+            throw error;
+        }
+    }
+
+    async deletePendingSongs(userId, pendingIds) {
+        if (!this.initialized || !userId) {
+            throw new Error('Firebase not initialized or user not authenticated');
+        }
+
+        try {
+            const pendingRef = this.database.ref(`users/${userId}/pendingSongs`);
+            const updates = {};
+            
+            pendingIds.forEach(id => {
+                updates[id] = null; // Set to null to delete
+            });
+
+            await pendingRef.update(updates);
+            return { success: true };
+        } catch (error) {
+            console.error('Delete pending songs error:', error);
+            throw error;
+        }
+    }
+
+    async getPendingSongsCount(userId) {
+        if (!this.initialized || !userId) {
+            return 0;
+        }
+
+        try {
+            const pendingSongs = await this.loadPendingSongs(userId);
+            return pendingSongs.length;
+        } catch (error) {
+            console.error('Get pending songs count error:', error);
+            return 0;
+        }
+    }
+
+    onPendingSongsChange(userId, callback) {
+        if (!this.initialized || !userId) {
+            throw new Error('Firebase not initialized or user not authenticated');
+        }
+
+        // Remove existing listener if any
+        if (this.pendingSongsListeners.has(userId)) {
+            const oldListener = this.pendingSongsListeners.get(userId);
+            if (typeof oldListener === 'function') {
+                oldListener();
+            } else if (oldListener && typeof oldListener.off === 'function') {
+                oldListener.off();
+            }
+        }
+
+        const pendingRef = this.database.ref(`users/${userId}/pendingSongs`);
+        const listener = pendingRef.on('value', (snapshot) => {
+            if (!snapshot || !this.initialized || !this.database) {
+                return;
+            }
+            try {
+                const pendingData = snapshot.val();
+                const pendingSongs = pendingData ? Object.entries(pendingData).map(([pendingId, data]) => ({
+                    pendingId: pendingId,
+                    song: data.song,
+                    senderEmail: data.senderEmail || '',
+                    timestamp: data.timestamp || new Date().toISOString()
+                })) : [];
+                callback(pendingSongs);
+            } catch (error) {
+                console.error('Error in pending songs listener callback:', error);
+            }
+        });
+
+        this.pendingSongsListeners.set(userId, listener);
+    }
+
+    removePendingSongsListener(userId) {
+        if (this.pendingSongsListeners.has(userId)) {
+            const listener = this.pendingSongsListeners.get(userId);
+            if (typeof listener === 'function') {
+                listener();
+            } else if (listener && typeof listener.off === 'function') {
+                listener.off();
+            }
+            this.pendingSongsListeners.delete(userId);
         }
     }
 
