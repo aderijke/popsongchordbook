@@ -34,6 +34,26 @@ class FirebaseManager {
             this.database = firebase.database();
             this.initialized = true;
 
+            // Initialize App Check (if available and configured)
+            if (typeof firebase.appCheck !== 'undefined' && typeof recaptchaSiteKey !== 'undefined' && recaptchaSiteKey !== 'JOUW_RECAPTCHA_SITE_KEY') {
+                try {
+                    const appCheck = firebase.appCheck();
+                    // Activate App Check with reCAPTCHA v3
+                    // Second parameter (true) enables automatic token refresh
+                    appCheck.activate(recaptchaSiteKey, true);
+                    console.log('App Check initialized with reCAPTCHA v3');
+                } catch (error) {
+                    console.warn('App Check initialization failed:', error);
+                    // Don't fail Firebase initialization if App Check fails
+                }
+            } else {
+                if (typeof firebase.appCheck === 'undefined') {
+                    console.warn('Firebase App Check SDK not loaded. Make sure firebase-app-check-compat.js is included.');
+                } else if (typeof recaptchaSiteKey === 'undefined' || recaptchaSiteKey === 'JOUW_RECAPTCHA_SITE_KEY') {
+                    console.warn('reCAPTCHA site key not configured. App Check will not be active.');
+                }
+            }
+
             // Set auth persistence to LOCAL (default, but explicit for clarity)
             // This ensures the user stays logged in after page refresh
             this.auth.setPersistence(firebase.auth.Auth.Persistence.LOCAL)
