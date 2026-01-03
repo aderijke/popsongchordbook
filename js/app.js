@@ -1608,14 +1608,31 @@ class App {
     }
 
     async handleDelete(songId) {
-        if (await this.songManager.deleteSong(songId)) {
-            // Remove song from all setlists
-            const setlists = this.setlistManager.getAllSetlists();
-            for (const setlist of setlists) {
-                await this.setlistManager.removeSongFromSetlist(setlist.id, songId);
+        // If we're in setlist mode, only remove from setlist, not from collection
+        if (this.currentSetlistId) {
+            const setlist = this.setlistManager.getSetlist(this.currentSetlistId);
+            if (setlist) {
+                const song = this.songManager.getSongById(songId);
+                const songTitle = song ? (song.title || 'this song') : 'this song';
+                const setlistName = setlist.name || 'setlist';
+                
+                if (confirm(`Weet je zeker dat je "${songTitle}" uit "${setlistName}" wilt verwijderen?`)) {
+                    await this.setlistManager.removeSongFromSetlist(this.currentSetlistId, songId);
+                    // Re-render table
+                    this.loadAndRender();
+                }
             }
-            // Re-render table
-            this.loadAndRender();
+        } else {
+            // No setlist selected - delete song from entire collection
+            if (await this.songManager.deleteSong(songId)) {
+                // Remove song from all setlists
+                const setlists = this.setlistManager.getAllSetlists();
+                for (const setlist of setlists) {
+                    await this.setlistManager.removeSongFromSetlist(setlist.id, songId);
+                }
+                // Re-render table
+                this.loadAndRender();
+            }
         }
     }
 

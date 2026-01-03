@@ -146,10 +146,9 @@ class TableRenderer {
         deleteBtn.title = 'Delete';
         deleteBtn.addEventListener('click', (e) => {
             e.stopPropagation();
-            if (confirm(`Are you sure you want to delete "${song.title || 'this song'}"?`)) {
-                if (this.onDelete) {
-                    this.onDelete(song.id);
-                }
+            // Confirmatie wordt afgehandeld in handleDelete met juiste context (setlist vs volledige verwijdering)
+            if (this.onDelete) {
+                this.onDelete(song.id);
             }
         });
         actionsCell.appendChild(deleteBtn);
