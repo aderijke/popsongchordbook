@@ -194,10 +194,16 @@ class SetlistManager {
 
     async addSongToSetlist(setlistId, songId) {
         const setlist = this.getSetlist(setlistId);
-        if (setlist && !setlist.songIds.includes(songId)) {
-            setlist.songIds.push(songId);
-            await this.saveSetlists();
-            return true;
+        if (setlist) {
+            // Normalize IDs to strings for comparison to handle type mismatches
+            const normalizedSongId = String(songId);
+            const normalizedSetlistIds = setlist.songIds.map(id => String(id));
+            if (!normalizedSetlistIds.includes(normalizedSongId)) {
+                // Store the original songId (preserve type from song.id)
+                setlist.songIds.push(songId);
+                await this.saveSetlists();
+                return true;
+            }
         }
         return false;
     }
@@ -205,7 +211,9 @@ class SetlistManager {
     async removeSongFromSetlist(setlistId, songId) {
         const setlist = this.getSetlist(setlistId);
         if (setlist) {
-            setlist.songIds = setlist.songIds.filter(id => id !== songId);
+            // Normalize IDs to strings for comparison to handle type mismatches
+            const normalizedSongId = String(songId);
+            setlist.songIds = setlist.songIds.filter(id => String(id) !== normalizedSongId);
             await this.saveSetlists();
             return true;
         }
@@ -215,7 +223,9 @@ class SetlistManager {
     getSongsInSetlist(setlistId, allSongs) {
         const setlist = this.getSetlist(setlistId);
         if (!setlist) return [];
-        return allSongs.filter(song => setlist.songIds.includes(song.id));
+        // Normalize IDs to strings for comparison to handle type mismatches
+        const setlistSongIds = setlist.songIds.map(id => String(id));
+        return allSongs.filter(song => setlistSongIds.includes(String(song.id)));
     }
 
     async importSetlists(importedSetlists) {

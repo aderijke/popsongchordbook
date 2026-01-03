@@ -439,7 +439,9 @@ class App {
         if (this.currentSetlistId) {
             const setlist = this.setlistManager.getSetlist(this.currentSetlistId);
             if (setlist) {
-                allSongs = allSongs.filter(song => setlist.songIds.includes(song.id));
+                // Normalize IDs to strings for comparison to handle type mismatches
+                const setlistSongIds = setlist.songIds.map(id => String(id));
+                allSongs = allSongs.filter(song => setlistSongIds.includes(String(song.id)));
             }
         }
         
@@ -841,6 +843,23 @@ class App {
         const modalTitle = document.getElementById('setlistModalTitle');
         let editingSetlistId = null;
 
+        // Remove existing listeners if they exist (prevent duplicates)
+        if (this._setlistCreateHandler) {
+            createBtn.removeEventListener('click', this._setlistCreateHandler);
+        }
+        if (this._setlistCloseHandler) {
+            closeBtn.removeEventListener('click', this._setlistCloseHandler);
+        }
+        if (this._setlistModalClickHandler) {
+            modal.removeEventListener('click', this._setlistModalClickHandler);
+        }
+        if (this._setlistSubmitHandler) {
+            submitBtn.removeEventListener('click', this._setlistSubmitHandler);
+        }
+        if (this._setlistKeydownHandler) {
+            nameInput.removeEventListener('keydown', this._setlistKeydownHandler);
+        }
+
         const resetModal = () => {
             editingSetlistId = null;
             nameInput.value = '';
@@ -852,23 +871,26 @@ class App {
             }
         };
 
-        createBtn.addEventListener('click', () => {
+        this._setlistCreateHandler = () => {
             resetModal();
             modal.classList.remove('hidden');
             nameInput.focus();
-        });
+        };
+        createBtn.addEventListener('click', this._setlistCreateHandler);
 
-        closeBtn.addEventListener('click', () => {
+        this._setlistCloseHandler = () => {
             modal.classList.add('hidden');
             resetModal();
-        });
+        };
+        closeBtn.addEventListener('click', this._setlistCloseHandler);
 
-        modal.addEventListener('click', (e) => {
+        this._setlistModalClickHandler = (e) => {
             if (e.target === modal) {
                 modal.classList.add('hidden');
                 resetModal();
             }
-        });
+        };
+        modal.addEventListener('click', this._setlistModalClickHandler);
 
         const saveSetlist = async () => {
             const name = nameInput.value.trim();
@@ -886,15 +908,18 @@ class App {
             }
         };
 
-        submitBtn.addEventListener('click', saveSetlist);
-        nameInput.addEventListener('keydown', (e) => {
+        this._setlistSubmitHandler = saveSetlist;
+        submitBtn.addEventListener('click', this._setlistSubmitHandler);
+        
+        this._setlistKeydownHandler = (e) => {
             if (e.key === 'Enter') {
                 saveSetlist();
             } else if (e.key === 'Escape') {
                 modal.classList.add('hidden');
                 resetModal();
             }
-        });
+        };
+        nameInput.addEventListener('keydown', this._setlistKeydownHandler);
 
         // Store function to open modal in edit mode
         this.openEditSetlistModal = (setlistId) => {
@@ -1094,7 +1119,8 @@ class App {
             let alreadyInSetlistCount = 0;
 
             for (const cb of checkboxes) {
-                const songId = parseInt(cb.value);
+                // Use the value as-is (could be string or number) to match song.id type
+                const songId = cb.value;
                 const success = await this.setlistManager.addSongToSetlist(this.currentSetlistId, songId);
                 if (success) {
                     addedCount++;
@@ -1105,14 +1131,11 @@ class App {
 
             if (addedCount > 0 || alreadyInSetlistCount > 0) {
                 this.loadAndRender();
-                let message = '';
-                if (addedCount > 0) {
-                    message = `${addedCount} song(s) added`;
-                }
+                // Only show alert if there were songs that couldn't be added (already in setlist)
                 if (alreadyInSetlistCount > 0) {
-                    message += message ? `, ${alreadyInSetlistCount} already present` : `${alreadyInSetlistCount} song(s) already present`;
+                    const message = `${alreadyInSetlistCount} song${alreadyInSetlistCount === 1 ? '' : 's'} ${alreadyInSetlistCount === 1 ? 'staat' : 'staan'} al in deze setlist.`;
+                    alert(message);
                 }
-                alert(message);
             }
 
             modal.classList.add('hidden');
@@ -1128,7 +1151,7 @@ class App {
 
     setupSetlistSelectionModal() {
         const modal = document.getElementById('setlistSelectionModal');
-        const listContainer = document.getElementById('setlistSelectionList');
+        const dropdown = document.getElementById('setlistSelectionDropdown');
         const confirmBtn = document.getElementById('confirmSetlistSelection');
         const cancelBtn = document.getElementById('cancelSetlistSelection');
         const closeBtn = document.getElementById('setlistSelectionClose');
@@ -1136,6 +1159,9 @@ class App {
         const closeModal = () => {
             modal.classList.add('hidden');
             this.pendingSetlistSongId = null;
+            if (dropdown) {
+                dropdown.value = '';
+            }
         };
 
         const handleModalClickOutside = (event) => {
@@ -1144,89 +1170,76 @@ class App {
             }
         };
 
-        const selectDefaultSetlist = () => {
-            const preferredId = this.currentSetlistId || (this.setlistManager.getAllSetlists()[0]?.id || null);
-            if (!preferredId) return;
-
-            const defaultRadio = listContainer.querySelector(`input[name="setlistSelection"][value="${preferredId}"]`);
-            if (defaultRadio) {
-                defaultRadio.checked = true;
-            }
-        };
-
         const populateSetlists = () => {
-            listContainer.innerHTML = '';
+            if (!dropdown) return;
+            
+            // Clear existing options except the first placeholder
+            dropdown.innerHTML = '<option value="">-- Selecteer een setlist --</option>';
 
             const setlists = this.setlistManager.getAllSetlists();
             setlists.forEach(setlist => {
-                const item = document.createElement('label');
-                item.className = 'setlist-selection-item';
-
-                const radio = document.createElement('input');
-                radio.type = 'radio';
-                radio.name = 'setlistSelection';
-                radio.value = setlist.id;
-
-                const name = document.createElement('div');
-                name.className = 'setlist-selection-name';
-                name.textContent = setlist.name || 'Setlist';
-
-                const count = document.createElement('div');
-                count.className = 'setlist-selection-count';
+                const option = document.createElement('option');
+                option.value = setlist.id;
                 const totalSongs = Array.isArray(setlist.songIds) ? setlist.songIds.length : 0;
-                count.textContent = `${totalSongs} song${totalSongs === 1 ? '' : 's'}`;
-
-                const textWrapper = document.createElement('div');
-                textWrapper.className = 'setlist-selection-text';
-                textWrapper.appendChild(name);
-                textWrapper.appendChild(count);
-
-                item.appendChild(radio);
-                item.appendChild(textWrapper);
-                listContainer.appendChild(item);
-
-                item.addEventListener('click', () => {
-                    radio.checked = true;
-                });
+                option.textContent = `${setlist.name || 'Setlist'} (${totalSongs} song${totalSongs === 1 ? '' : 's'})`;
+                dropdown.appendChild(option);
             });
 
-            selectDefaultSetlist();
+            // Select default setlist if available
+            const preferredId = this.currentSetlistId || (setlists[0]?.id || null);
+            if (preferredId) {
+                dropdown.value = preferredId;
+            }
         };
 
         this.openSetlistSelectionModal = (songId) => {
             this.pendingSetlistSongId = songId;
             populateSetlists();
             modal.classList.remove('hidden');
+            if (dropdown) {
+                dropdown.focus();
+            }
         };
 
         const confirmSelection = async () => {
-            const selectedRadio = listContainer.querySelector('input[name="setlistSelection"]:checked');
             const songId = this.pendingSetlistSongId;
+            const setlistId = dropdown ? dropdown.value : null;
 
-            if (!selectedRadio || !songId) {
+            if (!setlistId || !songId) {
                 alert('Selecteer een setlist.');
                 return;
             }
 
-            const setlistId = selectedRadio.value;
             const targetSetlist = this.setlistManager.getSetlist(setlistId);
             const setlistName = targetSetlist ? targetSetlist.name : 'setlist';
             const added = await this.setlistManager.addSongToSetlist(setlistId, songId);
 
             if (added) {
+                // Song successfully added - no confirmation needed
                 this.loadAndRender();
-                alert(`Song toegevoegd aan "${setlistName}".`);
+                closeModal();
             } else {
+                // Song already in setlist - show error message
                 alert(`Deze song staat al in "${setlistName}".`);
             }
-
-            closeModal();
         };
 
         confirmBtn.addEventListener('click', confirmSelection);
         cancelBtn.addEventListener('click', closeModal);
         closeBtn.addEventListener('click', closeModal);
         modal.addEventListener('click', handleModalClickOutside);
+        
+        // Allow Enter key to confirm selection
+        if (dropdown) {
+            dropdown.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    confirmSelection();
+                } else if (e.key === 'Escape') {
+                    closeModal();
+                }
+            });
+        }
     }
 
     populateSongsList(setlist) {
@@ -1274,7 +1287,8 @@ class App {
                 const title = (song.title || '').toLowerCase();
                 return artist.includes(searchTerm) || title.includes(searchTerm);
             });
-        const songsInSetlist = setlist.songIds || [];
+        // Normalize setlist song IDs to strings for comparison
+        const songsInSetlist = (setlist.songIds || []).map(id => String(id));
 
         if (allSongs.length === 0) {
             const emptyMessage = document.createElement('p');
@@ -1286,7 +1300,7 @@ class App {
         }
 
         allSongs.forEach(song => {
-            const isInSetlist = songsInSetlist.includes(song.id);
+            const isInSetlist = songsInSetlist.includes(String(song.id));
             
             const songItem = document.createElement('div');
             songItem.className = 'song-item';
@@ -1439,7 +1453,9 @@ class App {
                 if (this.currentSetlistId) {
                     const setlist = this.setlistManager.getSetlist(this.currentSetlistId);
                     if (setlist) {
-                        songsToSort = songsToSort.filter(song => setlist.songIds.includes(song.id));
+                        // Normalize IDs to strings for comparison to handle type mismatches
+                        const setlistSongIds = setlist.songIds.map(id => String(id));
+                        songsToSort = songsToSort.filter(song => setlistSongIds.includes(String(song.id)));
                     }
                 }
                 

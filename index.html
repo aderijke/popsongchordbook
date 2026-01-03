@@ -472,11 +472,14 @@
                 <button class="modal-close" id="setlistSelectionClose">&times;</button>
             </div>
             <div class="modal-body">
-                <div id="setlistSelectionList" class="setlist-selection-list">
-                    <!-- Setlists will be injected here -->
+                <div class="setlist-selection-dropdown-wrapper">
+                    <label for="setlistSelectionDropdown" class="setlist-selection-label">Setlist:</label>
+                    <select id="setlistSelectionDropdown" class="setlist-selection-dropdown">
+                        <option value="">-- Selecteer een setlist --</option>
+                    </select>
                 </div>
             </div>
-            <div class="modal-actions">
+            <div class="modal-actions setlist-selection-actions">
                 <button id="confirmSetlistSelection" class="modal-submit-btn">Song toevoegen</button>
                 <button id="cancelSetlistSelection" class="modal-cancel-btn">Annuleren</button>
             </div>
