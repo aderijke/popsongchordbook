@@ -36,6 +36,7 @@ class App {
         this.addSongsSortField = 'title';
         this.addSongsSortDirection = 'asc';
         this.lastAddSongsSetlistId = null;
+        this.pendingSetlistSongId = null;
         this.viewMode = 'full'; // 'simple' or 'full'
         
         this.tableRenderer = new TableRenderer(
@@ -121,6 +122,7 @@ class App {
         this.setupSearch();
         this.setupSetlists();
         this.setupAddSongsToSetlistModal();
+        this.setupSetlistSelectionModal();
         this.setupImportExport();
         this.setupPrintButton();
         this.setupDeselect();
@@ -725,33 +727,14 @@ class App {
 
     async handleAddSongToSetlist(songId) {
         const setlists = this.setlistManager.getAllSetlists();
-        const setlistSelect = document.getElementById('setlistSelect');
 
         if (!setlists || setlists.length === 0) {
             alert('Maak eerst een setlist aan via de setlist-balk bovenaan.');
-            if (setlistSelect) {
-                setlistSelect.focus();
-            }
             return;
         }
 
-        if (!this.currentSetlistId) {
-            alert('Selecteer eerst een setlist in de setlist-balk om deze song toe te voegen.');
-            if (setlistSelect) {
-                setlistSelect.focus();
-            }
-            return;
-        }
-
-        const targetSetlist = this.setlistManager.getSetlist(this.currentSetlistId);
-        const setlistName = targetSetlist ? targetSetlist.name : 'setlist';
-        const added = await this.setlistManager.addSongToSetlist(this.currentSetlistId, songId);
-
-        if (added) {
-            this.loadAndRender();
-            alert(`Song toegevoegd aan "${setlistName}".`);
-        } else {
-            alert(`Deze song staat al in "${setlistName}".`);
+        if (typeof this.openSetlistSelectionModal === 'function') {
+            this.openSetlistSelectionModal(songId);
         }
     }
 
@@ -1141,6 +1124,109 @@ class App {
         });
 
         updateSearchClearButton();
+    }
+
+    setupSetlistSelectionModal() {
+        const modal = document.getElementById('setlistSelectionModal');
+        const listContainer = document.getElementById('setlistSelectionList');
+        const confirmBtn = document.getElementById('confirmSetlistSelection');
+        const cancelBtn = document.getElementById('cancelSetlistSelection');
+        const closeBtn = document.getElementById('setlistSelectionClose');
+
+        const closeModal = () => {
+            modal.classList.add('hidden');
+            this.pendingSetlistSongId = null;
+        };
+
+        const handleModalClickOutside = (event) => {
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+
+        const selectDefaultSetlist = () => {
+            const preferredId = this.currentSetlistId || (this.setlistManager.getAllSetlists()[0]?.id || null);
+            if (!preferredId) return;
+
+            const defaultRadio = listContainer.querySelector(`input[name="setlistSelection"][value="${preferredId}"]`);
+            if (defaultRadio) {
+                defaultRadio.checked = true;
+            }
+        };
+
+        const populateSetlists = () => {
+            listContainer.innerHTML = '';
+
+            const setlists = this.setlistManager.getAllSetlists();
+            setlists.forEach(setlist => {
+                const item = document.createElement('label');
+                item.className = 'setlist-selection-item';
+
+                const radio = document.createElement('input');
+                radio.type = 'radio';
+                radio.name = 'setlistSelection';
+                radio.value = setlist.id;
+
+                const name = document.createElement('div');
+                name.className = 'setlist-selection-name';
+                name.textContent = setlist.name || 'Setlist';
+
+                const count = document.createElement('div');
+                count.className = 'setlist-selection-count';
+                const totalSongs = Array.isArray(setlist.songIds) ? setlist.songIds.length : 0;
+                count.textContent = `${totalSongs} song${totalSongs === 1 ? '' : 's'}`;
+
+                const textWrapper = document.createElement('div');
+                textWrapper.className = 'setlist-selection-text';
+                textWrapper.appendChild(name);
+                textWrapper.appendChild(count);
+
+                item.appendChild(radio);
+                item.appendChild(textWrapper);
+                listContainer.appendChild(item);
+
+                item.addEventListener('click', () => {
+                    radio.checked = true;
+                });
+            });
+
+            selectDefaultSetlist();
+        };
+
+        this.openSetlistSelectionModal = (songId) => {
+            this.pendingSetlistSongId = songId;
+            populateSetlists();
+            modal.classList.remove('hidden');
+        };
+
+        const confirmSelection = async () => {
+            const selectedRadio = listContainer.querySelector('input[name="setlistSelection"]:checked');
+            const songId = this.pendingSetlistSongId;
+
+            if (!selectedRadio || !songId) {
+                alert('Selecteer een setlist.');
+                return;
+            }
+
+            const setlistId = selectedRadio.value;
+            const targetSetlist = this.setlistManager.getSetlist(setlistId);
+            const setlistName = targetSetlist ? targetSetlist.name : 'setlist';
+            const added = await this.setlistManager.addSongToSetlist(setlistId, songId);
+
+            if (added) {
+                this.loadAndRender();
+                alert(`Song toegevoegd aan "${setlistName}".`);
+            } else {
+                alert(`Deze song staat al in "${setlistName}".`);
+            }
+
+            closeModal();
+        };
+
+        confirmBtn.addEventListener('click', confirmSelection);
+        cancelBtn.addEventListener('click', closeModal);
+        closeBtn.addEventListener('click', closeModal);
+        modal.addEventListener('click', handleModalClickOutside);
     }
 
     populateSongsList(setlist) {

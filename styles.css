@@ -2604,6 +2604,50 @@ td:has(.row-edit-input.input-focused) {
     border-top: 2px solid var(--border-color);
 }
 
+.setlist-selection-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.setlist-selection-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    border: 2px solid var(--border-color);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.setlist-selection-item:hover {
+    border-color: var(--primary-color);
+    box-shadow: 0 6px 20px rgba(79, 70, 229, 0.1);
+}
+
+.setlist-selection-item input[type="radio"] {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+}
+
+.setlist-selection-text {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.setlist-selection-name {
+    font-weight: 700;
+    color: var(--primary-color);
+}
+
+.setlist-selection-count {
+    font-size: 0.95em;
+    color: var(--secondary-text-color);
+}
+
 /* Filter Modal Styles */
 .filter-option-group {
     margin-bottom: 20px;
