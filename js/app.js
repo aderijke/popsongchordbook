@@ -20,6 +20,7 @@ class App {
             this.chordModal, // Pass chordModal for chord button
             (songId) => this.handleToggleFavorite(songId), // Pass favorite toggle handler
             (songId) => this.handlePlayYouTube(songId), // Pass YouTube play handler
+            (songId) => this.handleAddSongToSetlist(songId),
             this.keyDetector
         );
         this.chordDetectorOverlay = new ChordDetectorOverlay();
@@ -720,6 +721,38 @@ class App {
     async handleToggleFavorite(songId) {
         await this.songManager.toggleFavorite(songId);
         this.loadAndRender();
+    }
+
+    async handleAddSongToSetlist(songId) {
+        const setlists = this.setlistManager.getAllSetlists();
+        const setlistSelect = document.getElementById('setlistSelect');
+
+        if (!setlists || setlists.length === 0) {
+            alert('Maak eerst een setlist aan via de setlist-balk bovenaan.');
+            if (setlistSelect) {
+                setlistSelect.focus();
+            }
+            return;
+        }
+
+        if (!this.currentSetlistId) {
+            alert('Selecteer eerst een setlist in de setlist-balk om deze song toe te voegen.');
+            if (setlistSelect) {
+                setlistSelect.focus();
+            }
+            return;
+        }
+
+        const targetSetlist = this.setlistManager.getSetlist(this.currentSetlistId);
+        const setlistName = targetSetlist ? targetSetlist.name : 'setlist';
+        const added = await this.setlistManager.addSongToSetlist(this.currentSetlistId, songId);
+
+        if (added) {
+            this.loadAndRender();
+            alert(`Song toegevoegd aan "${setlistName}".`);
+        } else {
+            alert(`Deze song staat al in "${setlistName}".`);
+        }
     }
 
     setupSetlists() {
