@@ -1,12 +1,13 @@
 // SongDetailModal - Modal voor song details weergave
 class SongDetailModal {
-    constructor(songManager, onNavigate, onUpdate = null, chordModal = null, onToggleFavorite = null, onPlayYouTube = null, keyDetector = null) {
+    constructor(songManager, onNavigate, onUpdate = null, chordModal = null, onToggleFavorite = null, onPlayYouTube = null, onAddToSetlist = null, keyDetector = null) {
         this.songManager = songManager;
         this.onNavigate = onNavigate;
         this.onUpdate = onUpdate;
         this.chordModal = chordModal;
         this.onToggleFavorite = onToggleFavorite;
         this.onPlayYouTube = onPlayYouTube;
+        this.onAddToSetlist = onAddToSetlist;
         this.keyDetector = keyDetector;
         this.currentSongId = null;
         this.allSongs = [];
@@ -21,6 +22,7 @@ class SongDetailModal {
         this.youtubeBtn = document.getElementById('songDetailYouTubeBtn');
         this.youtubePlayBtn = document.getElementById('songDetailYouTubePlayBtn');
         this.externalUrlBtn = document.getElementById('songDetailExternalUrlBtn');
+        this.addToSetlistBtn = document.getElementById('songDetailAddToSetlistBtn');
         this.transposeUpBtn = document.getElementById('songDetailTransposeUp');
         this.transposeDownBtn = document.getElementById('songDetailTransposeDown');
         this.youtubeUrlModal = document.getElementById('youtubeUrlModal');
@@ -137,6 +139,15 @@ class SongDetailModal {
             this.externalUrlBtn.addEventListener('click', (e) => {
                 e.stopPropagation();
                 this.openExternalUrl();
+            });
+        }
+
+        if (this.addToSetlistBtn) {
+            this.addToSetlistBtn.addEventListener('click', async (e) => {
+                e.stopPropagation();
+                if (this.onAddToSetlist && this.currentSongId) {
+                    await this.onAddToSetlist(this.currentSongId);
+                }
             });
         }
         

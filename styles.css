@@ -4043,7 +4043,7 @@ td:has(.row-edit-input.input-focused) {
 .song-detail-action-buttons {
     display: flex;
     align-items: center;
-    gap: clamp(4px, 1.5vw, 8px);
+    gap: clamp(3px, 1.2vw, 7px);
     flex-shrink: 0;
     flex-wrap: nowrap;
     min-width: 0;
@@ -4068,8 +4068,8 @@ td:has(.row-edit-input.input-focused) {
 .song-detail-action-btn.with-label {
     flex-direction: column;
     gap: 2px;
-    width: clamp(40px, 8vw, 55px);
-    height: clamp(38px, 7vw, 45px);
+    width: clamp(38px, 7.5vw, 52px);
+    height: clamp(36px, 7vw, 44px);
     box-sizing: border-box;
     flex-shrink: 1;
     min-width: 0;
