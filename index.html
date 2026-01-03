@@ -463,7 +463,26 @@
             </div>
         </div>
     </div>
-    
+
+    <!-- Select Setlist for Song Modal -->
+    <div id="setlistSelectionModal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Selecteer setlist</h3>
+                <button class="modal-close" id="setlistSelectionClose">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="setlistSelectionList" class="setlist-selection-list">
+                    <!-- Setlists will be injected here -->
+                </div>
+            </div>
+            <div class="modal-actions">
+                <button id="confirmSetlistSelection" class="modal-submit-btn">Song toevoegen</button>
+                <button id="cancelSetlistSelection" class="modal-cancel-btn">Annuleren</button>
+            </div>
+        </div>
+    </div>
+
     <!-- Song Detail Modal -->
     <div id="songDetailModal" class="song-detail-modal hidden">
         <div class="song-detail-modal-content">
